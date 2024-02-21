@@ -24,14 +24,14 @@ const typeDefs = `
     me: User
     users: [User]
     chats: [Chat]
-    messages: [Message]
+    messages(chatId: ID!): [Message]
   }
 
   type Mutation {
     login(email: String!, password: String!): Auth
     addUser(username: String!, email: String!, password: String!): Auth
     addChat(chatName: String!, users: [User]!): Chat
-    addMessage(content: String!): Message
+    addMessage(content: String!, chatId: ID!): Message
   }
 
   type Auth {
