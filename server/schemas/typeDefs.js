@@ -11,7 +11,14 @@ type User {
   }
 
   type Mutation {
-    addUser(firstName: String!, lastName: String!, email: String!, password: String!): Auth
-    login(email: String!, password: String!): Auth
+        login(email: String!, password: String!): Auth
+        addUser(username: String!, email: String!, password: String!): Auth
   }
+  
+    type Auth {
+        token: ID!
+        user: User
+    }
 `;
+
+module.exports = typeDefs;
