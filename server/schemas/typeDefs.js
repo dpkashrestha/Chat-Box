@@ -3,6 +3,7 @@ const typeDefs = `
     _id: ID!
     username: String!
     email: String!
+    password: String!
     chats: [Chat]!
   }
 
@@ -19,7 +20,7 @@ const typeDefs = `
     sender: User!
     chat: Chat!
   }
-
+  
   type Query {
     me: User
     users: [User]
