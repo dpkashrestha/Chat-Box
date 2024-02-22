@@ -3,15 +3,19 @@ const typeDefs = `
     _id: ID!
     username: String!
     email: String!
-    password: String!
-    chats: [Chat]!
+    password: String
+  }
+
+  input UserInput {
+    _id: ID!
+    username: String!
+    email: String!
   }
 
   type Chat {
     _id: ID!
     chatName: String!
     users: [User]!
-    messages: [Message]
   }
 
   type Message {
@@ -31,7 +35,7 @@ const typeDefs = `
   type Mutation {
     login(email: String!, password: String!): Auth
     addUser(username: String!, email: String!, password: String!): Auth
-    addChat(chatName: String!, users: [User]!): Chat
+    addChat(chatName: String!, users: [UserInput]!): Chat
     addMessage(content: String!, chatId: ID!): Message
   }
 
