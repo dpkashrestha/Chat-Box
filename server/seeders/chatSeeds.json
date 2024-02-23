@@ -3,6 +3,7 @@
     "_id": "65d8265cce5401d6d319275c",
     "chatName": "test",
     "users": ["65d80f6defcb47888bc2a431", "65d80f6defcb47888bc2a43b"],
+    "groupAdmin": "65d80f6defcb47888bc2a43b",
     "createdAt": "2024-02-23T03:22:21.142Z",
     "updatedAt": "2024-02-23T06:40:06.543Z",
     "__v": 0
@@ -15,6 +16,7 @@
       "65d80f6defcb47888bc2a432",
       "65d80f6defcb47888bc2a43b"
     ],
+    "groupAdmin": "65d80f6defcb47888bc2a43b",
     "createdAt": "2024-02-23T03:22:21.142Z",
     "updatedAt": "2024-02-23T06:55:50.091Z",
     "__v": 0,

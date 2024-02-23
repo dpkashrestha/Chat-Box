@@ -1,6 +1,8 @@
 const db = require("../config/connection");
 const { User, Chat, Message } = require("../models");
 const userSeeds = require("./userSeeds.json");
+const chatSeeds = require("./chatSeeds.json");
+const messageSeeds = require("./messageSeeds.json");
 const cleanDB = require("./cleanDB");
 
 db.once("open", async () => {
