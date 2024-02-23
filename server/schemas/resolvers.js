@@ -83,12 +83,17 @@ const resolvers = {
 
       return chat;
     },
-    addMessage: async (parent, { content, chatId }) => {
+    addMessage: async (parent, { content, chatId }, context) => {
       const chat = await Chat.findById(chatId);
-
+      const sender = await User.findById(context.user._id, {
+        __v: false,
+        createdAt: false,
+        updatedAt: false,
+        password: false,
+      });
       // adds current user and chat to message
       const newMessage = {
-        sender: context.user._id,
+        sender,
         content,
         chat,
       };
