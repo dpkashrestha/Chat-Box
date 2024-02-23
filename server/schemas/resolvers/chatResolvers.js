@@ -2,7 +2,7 @@ const { Chat, User } = require("../../models/index");
 
 const chatResolvers = {
   Query: {
-    chats: async (parent, args, context) => {
+    allChats: async (parent, args, context) => {
       if (context.user) {
         // find chats which contain a user with the current user's id
         const chats = await Chat.find({

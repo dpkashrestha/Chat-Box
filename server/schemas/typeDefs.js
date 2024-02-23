@@ -33,7 +33,7 @@ const typeDefs = `
   type Query {
     me: User
     users(userSearch: String): [User]
-    chats: [Chat]
+    allChats: [Chat]
     messages(chatId: ID!): [Message]
   }
 

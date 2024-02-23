@@ -12,7 +12,7 @@ export const QUERY_USERS = gql`
 
 export const QUERY_CHATS = gql`
   query {
-    chats {
+    allChats {
       _id
       chatName
       users {
