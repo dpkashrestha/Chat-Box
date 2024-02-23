@@ -23,7 +23,9 @@ const resolvers = {
         /* const user = await User.findById(context.user._id); */
 
         // find chats which contain a user with the current user's id
-        const chats = await Chat.find({ "users._id": context.user._id });
+        const chats = await Chat.find({
+          users: { _id: context.user._id },
+        }).populate({ path: "users", select: ["username", "email"] });
         return chats;
       }
 
@@ -74,7 +76,10 @@ const resolvers = {
       users.push(me);
       // creates a chat with the entered name and user array
       console.log(users);
-      const chat = (await Chat.create({ chatName, users })).populate("users");
+      const chat = (await Chat.create({ chatName, users })).populate({
+        path: "users",
+        select: ["username", "email"],
+      });
 
       return chat;
     },
