@@ -12,7 +12,6 @@ import {
   Avatar,
   ConversationHeader,
   VoiceCallButton,
-  EllipsisButton,
   VideoCallButton,
   TypingIndicator,
   MessageSeparator,
@@ -21,6 +20,7 @@ import {
 import { useState } from "react";
 import { useQuery } from "@apollo/client";
 import { QUERY_USERS } from "../utils/queries";
+import Auth from "../utils/auth";
 
 const ChatPage = () => {
   const [messageInputValue, setMessageInputValue] = useState("");
@@ -52,6 +52,10 @@ const ChatPage = () => {
                 </Conversation>
               ))}
           </ConversationList>
+
+          <button class="btn btn-danger" onClick={Auth.logout}>
+            <i class="fas fa-sign-out-alt mr-1"></i> Logout
+          </button>
         </Sidebar>
 
         <ChatContainer>
@@ -65,7 +69,6 @@ const ChatPage = () => {
             <ConversationHeader.Actions>
               <VoiceCallButton />
               <VideoCallButton />
-              <EllipsisButton orientation="vertical" />
             </ConversationHeader.Actions>
           </ConversationHeader>
           <MessageList
