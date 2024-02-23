@@ -110,6 +110,13 @@ const chatResolvers = {
             select: ["username", "email"],
           });
 
+        console.log(updatedChat.users.length);
+        if (updatedChat.users.length >= 1) {
+          const deletedChat = await Chat.findByIdAndDelete(chatId);
+          console.log("Deleted", deletedChat.chatName);
+          return updatedChat;
+        }
+
         return updatedChat;
       }
 
