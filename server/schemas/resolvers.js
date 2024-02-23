@@ -32,7 +32,15 @@ const resolvers = {
       throw AuthenticationError;
     },
     messages: async (parent, { chatId }) => {
-      const messages = Message.find({ chat: chatId });
+      const messages = Message.find({ chat: chatId })
+        .populate({
+          path: "sender",
+          select: "username",
+        })
+        .populate({
+          path: "chat",
+          select: "chatName",
+        });
       return messages;
     },
   },
