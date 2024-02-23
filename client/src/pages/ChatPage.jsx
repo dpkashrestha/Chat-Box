@@ -59,7 +59,7 @@ const ChatPage = () => {
         </Sidebar>
 
         <ChatContainer>
-          <ConversationHeader>
+          <ConversationHeader className="test-class">
             <ConversationHeader.Back />
             <Avatar name="Zoe" />
             <ConversationHeader.Content
