@@ -62,13 +62,13 @@ const resolvers = {
       const token = signToken(user);
       return { token, user };
     },
-    addChat: async (parent, { chatName, users }, context) => {
-      // find current user by id
-      const me = await User.findById(context.user._id);
+    addChat: async (parent, { chatName, userIds }, context) => {
+      /* // find current user by id
+      const me = await User.findById(context.user._id); */
       // adds current user to array of users
-      users.push(me);
+      userIds.push(context.user._id);
       // creates a chat with the entered name and user array
-      const chat = await Chat.create({ chatName, users });
+      const chat = await Chat.create({ chatName, userIds });
 
       return chat;
     },
