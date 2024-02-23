@@ -35,11 +35,11 @@ const client = new ApolloClient({
   link: authLink.concat(httpLink),
   cache: new InMemoryCache(),
 });
-
+// flex-row justify-center align-center min-100-vh
 function App() {
   return (
     <ApolloProvider client={client}>
-      <div className="flex-column justify-center align-center min-100-vh bg-primary">
+      <div className="bg-light">
         <Outlet />
       </div>
     </ApolloProvider>

@@ -19,9 +19,13 @@ import {
 } from "@chatscope/chat-ui-kit-react";
 
 import { useState } from "react";
+import { useQuery } from "@apollo/client";
+import { QUERY_USERS } from "../utils/queries";
 
 const ChatPage = () => {
   const [messageInputValue, setMessageInputValue] = useState("");
+
+  const { loading, data } = useQuery(QUERY_USERS);
 
   return (
     <div
@@ -35,71 +39,18 @@ const ChatPage = () => {
         <Sidebar position="left" scrollable={false}>
           <Search placeholder="Search..." />
           <ConversationList>
-            <Conversation
-              name="Lilly"
-              lastSenderName="Lilly"
-              info="Yes i can do it for you"
-            >
-              <Avatar name="Lilly" status="available" />
-            </Conversation>
-
-            <Conversation
-              name="Joe"
-              lastSenderName="Joe"
-              info="Yes i can do it for you"
-            >
-              <Avatar name="Joe" status="dnd" />
-            </Conversation>
-
-            <Conversation
-              name="Emily"
-              lastSenderName="Emily"
-              info="Yes i can do it for you"
-              unreadCnt={3}
-            >
-              <Avatar name="Emily" status="available" />
-            </Conversation>
-
-            <Conversation
-              name="Kai"
-              lastSenderName="Kai"
-              info="Yes i can do it for you"
-              unreadDot
-            >
-              <Avatar name="Kai" status="unavailable" />
-            </Conversation>
-
-            <Conversation
-              name="Akane"
-              lastSenderName="Akane"
-              info="Yes i can do it for you"
-            >
-              <Avatar name="Akane" status="eager" />
-            </Conversation>
-
-            <Conversation
-              name="Eliot"
-              lastSenderName="Eliot"
-              info="Yes i can do it for you"
-            >
-              <Avatar name="Eliot" status="away" />
-            </Conversation>
-
-            <Conversation
-              name="Zoe"
-              lastSenderName="Zoe"
-              info="Yes i can do it for you"
-            >
-              <Avatar name="Zoe" status="dnd" />
-            </Conversation>
-
-            <Conversation
-              name="Patrik"
-              lastSenderName="Patrik"
-              info="Yes i can do it for you"
-            >
-              <Avatar name="Patrik" status="invisible" />
-            </Conversation>
+            {!loading &&
+              data.users.map((user) => (
+                <Conversation
+                  key={user._id}
+                  name={user.username}
+                  lastSenderName={user.username}
+                  info="Yes i can do it for you"
+                  unreadCnt={user.unreadCnt}
+                >
+                  <Avatar status="available" />
+                </Conversation>
+              ))}
           </ConversationList>
         </Sidebar>
 
