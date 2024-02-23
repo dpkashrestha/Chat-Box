@@ -14,12 +14,22 @@ const resolvers = {
     },
     users: async (parent, { userSearch }, context) => {
       //find all users
+      console.log(userSearch);
       const users = await User.find(
-        { $text: { $search: userSearch } },
-        { score: { $meta: "textScore" } }
-      ).sort({
-        score: { $meta: "textScore" },
-      });
+        userSearch
+          ? {
+              $or: [
+                { username: { $regex: userSearch, $options: "i" } },
+                { email: { $regex: userSearch, $options: "i" } },
+              ],
+            }
+          : {},
+        {
+          password: false,
+          createdAt: false,
+          updatedAt: false,
+        }
+      ).find({ _id: { $ne: context.user._id } });
 
       return users;
     },
@@ -108,10 +118,9 @@ const resolvers = {
     addMessage: async (parent, { content, chatId }, context) => {
       const chat = await Chat.findById(chatId);
       const sender = await User.findById(context.user._id, {
-        __v: false,
+        password: false,
         createdAt: false,
         updatedAt: false,
-        password: false,
       });
       // adds current user and chat to message
       const newMessage = {
