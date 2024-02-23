@@ -10,14 +10,13 @@ const typeDefs = `
 
   input UserInput {
     _id: ID!
-    username: String!
-    email: String!
   }
 
   type Chat {
     _id: ID!
     chatName: String!
     users: [User]!
+    lastMessage: Message
     createdAt: String!
     updatedAt: String!
   }
