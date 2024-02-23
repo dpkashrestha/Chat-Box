@@ -23,14 +23,34 @@ const resolvers = {
         /* const user = await User.findById(context.user._id); */
 
         // find chats which contain a user with the current user's id
-        const chats = await Chat.find({ "users._id": context.user._id });
+        const chats = await Chat.find({
+          users: { _id: context.user._id },
+        })
+          .populate({
+            path: "lastMessage",
+            select: ["content", "sender"],
+            populate: { path: "sender", select: "username" },
+          })
+          .populate({
+            path: "users",
+            select: ["username", "email"],
+          })
+          .sort({ updatedAt: "desc" });
         return chats;
       }
 
       throw AuthenticationError;
     },
     messages: async (parent, { chatId }) => {
-      const messages = Message.find({ chat: chatId });
+      const messages = Message.find({ chat: chatId })
+        .populate({
+          path: "sender",
+          select: "username",
+        })
+        .populate({
+          path: "chat",
+          select: "chatName",
+        });
       return messages;
     },
   },
@@ -64,25 +84,41 @@ const resolvers = {
     },
     addChat: async (parent, { chatName, users }, context) => {
       // find current user by id
-      const me = await User.findById(context.user._id);
+      const me = await User.findById(context.user._id, {
+        __v: false,
+        createdAt: false,
+        updatedAt: false,
+        password: false,
+      });
       // adds current user to array of users
       users.push(me);
       // creates a chat with the entered name and user array
-      const chat = await Chat.create({ chatName, users });
+      const chat = (await Chat.create({ chatName, users })).populate({
+        path: "users",
+        select: ["username", "email"],
+      });
 
       return chat;
     },
-    addMessage: async (parent, { content, chatId }) => {
+    addMessage: async (parent, { content, chatId }, context) => {
       const chat = await Chat.findById(chatId);
-
+      const sender = await User.findById(context.user._id, {
+        __v: false,
+        createdAt: false,
+        updatedAt: false,
+        password: false,
+      });
       // adds current user and chat to message
       const newMessage = {
-        sender: context.user._id,
+        sender,
         content,
         chat,
       };
 
       const message = await Message.create(newMessage);
+      await Chat.findByIdAndUpdate(chatId, {
+        lastMessage: message,
+      });
 
       return message;
     },
