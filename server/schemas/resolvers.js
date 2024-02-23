@@ -12,9 +12,14 @@ const resolvers = {
 
       throw AuthenticationError;
     },
-    users: async (parent, args) => {
+    users: async (parent, { userSearch }, context) => {
       //find all users
-      const users = await User.find({});
+      const users = await User.find(
+        { $text: { $search: userSearch } },
+        { score: { $meta: "textScore" } }
+      ).sort({
+        score: { $meta: "textScore" },
+      });
 
       return users;
     },
