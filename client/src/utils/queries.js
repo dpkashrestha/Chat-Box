@@ -11,8 +11,8 @@ export const QUERY_USERS = gql`
 `;
 
 export const QUERY_CHATS = gql`
-  query {
-    allChats {
+  query allChats($chatName: String) {
+    allChats(chatName: $chatName) {
       _id
       chatName
       users {

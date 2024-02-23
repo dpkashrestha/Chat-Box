@@ -1,9 +1,30 @@
 const { Chat, User } = require("../../models/index");
+const { AuthenticationError } = require("../../utils/auth");
 
 const chatResolvers = {
   Query: {
-    allChats: async (parent, args, context) => {
+    allChats: async (parent, { chatName }, context) => {
       if (context.user) {
+        if (chatName) {
+          const chats = await Chat.find({
+            $and: [
+              { users: { _id: context.user._id } },
+              { chatName: { $regex: chatName, $options: "i" } },
+            ],
+          })
+            .populate({
+              path: "lastMessage",
+              select: ["content", "sender"],
+              populate: { path: "sender", select: "username" },
+            })
+            .populate({
+              path: "users",
+              select: ["username", "email"],
+            })
+            .sort({ updatedAt: "desc" });
+          return chats;
+        }
+
         // find chats which contain a user with the current user's id
         const chats = await Chat.find({
           users: { _id: context.user._id },
