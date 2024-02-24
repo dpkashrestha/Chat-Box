@@ -1,5 +1,6 @@
-import { useQuery } from "@apollo/client";
+import { useQuery, useMutation } from "@apollo/client";
 import { QUERY_MESSAGES } from "../utils/queries";
+import { ADD_MESSAGE } from "../utils/mutations";
 import {
   ChatContainer,
   MessageList,
@@ -14,18 +15,57 @@ import {
   MessageSeparator,
   Loader,
 } from "@chatscope/chat-ui-kit-react";
-import { useState, useRef } from "react";
+import { useState, useRef, useMemo, useCallback } from "react";
 
 const ChatWindow = ({ chatId }) => {
   const [messageInputValue, setMessageInputValue] = useState("");
+  const [allMessages, setAllMessages] = useState([]);
   const inputRef = useRef();
-
+  const [addMessage, { error }] = useMutation(ADD_MESSAGE);
   const { loading, data } = useQuery(QUERY_MESSAGES, {
     variables: { chatId: chatId },
     onCompleted: (data) => {
       console.log(data);
     },
   });
+
+  const handleSend = async (message) => {
+    const { data } = await addMessage({
+      variables: {
+        content: message,
+        chatId: chatId,
+      },
+    });
+
+    setAllMessages([...allMessages, data.addMessage]);
+    setMessageInputValue("");
+  };
+
+  const renderMessages = useCallback(() => {
+    return (
+      !loading &&
+      allMessages.map((message) => {
+        return (
+          <Message
+            key={message._id}
+            model={{
+              message: message?.content,
+              sentTime: "15 mins ago",
+              sender: message?.sender?.username,
+              direction: "outgoing",
+              position: "single",
+            }}
+          >
+            <Avatar name="Zoe" />
+          </Message>
+        );
+      })
+    );
+  }, [allMessages]);
+
+  useMemo(() => {
+    setAllMessages(data?.messages);
+  }, [data]);
 
   if (loading) {
     return <Loader>Loading</Loader>;
@@ -49,15 +89,14 @@ const ChatWindow = ({ chatId }) => {
         <MessageList
           typingIndicator={<TypingIndicator content="Zoe is typing" />}
         >
-          <MessageSeparator content="Saturday, 30 November 2019" />
-          {data.messages.map((message) => {
+          {/* {allMessages?.map((message) => {
             return (
               <Message
                 key={message._id}
                 model={{
                   message: message?.content,
                   sentTime: "15 mins ago",
-                  sender: "Zoe",
+                  sender: message?.sender?.username,
                   direction: "outgoing",
                   position: "single",
                 }}
@@ -65,7 +104,8 @@ const ChatWindow = ({ chatId }) => {
                 <Avatar name="Zoe" />
               </Message>
             );
-          })}
+          })} */}
+          {renderMessages()}
         </MessageList>
 
         <div
@@ -90,7 +130,7 @@ const ChatWindow = ({ chatId }) => {
           />
           <SendButton
             border
-            /* onClick={() => handleSend(messageInputValue)} */
+            onClick={() => handleSend(messageInputValue)}
             disabled={messageInputValue.length === 0}
             style={{
               marginLeft: 0,
