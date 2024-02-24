@@ -1,3 +1,5 @@
+import { useQuery } from "@apollo/client";
+import { QUERY_MESSAGES } from "../utils/queries";
 import {
   ChatContainer,
   MessageList,
@@ -10,12 +12,24 @@ import {
   VideoCallButton,
   TypingIndicator,
   MessageSeparator,
+  Loader,
 } from "@chatscope/chat-ui-kit-react";
 import { useState, useRef } from "react";
 
 const ChatWindow = ({ chatId }) => {
   const [messageInputValue, setMessageInputValue] = useState("");
   const inputRef = useRef();
+
+  const { loading, data } = useQuery(QUERY_MESSAGES, {
+    variables: { chatId: chatId },
+    onCompleted: (data) => {
+      console.log(data);
+    },
+  });
+
+  if (loading) {
+    return <Loader>Loading</Loader>;
+  }
 
   return (
     <>
@@ -36,17 +50,22 @@ const ChatWindow = ({ chatId }) => {
           typingIndicator={<TypingIndicator content="Zoe is typing" />}
         >
           <MessageSeparator content="Saturday, 30 November 2019" />
-          <Message
-            model={{
-              message: "Hello my friend",
-              sentTime: "15 mins ago",
-              sender: "Zoe",
-              direction: "outgoing",
-              position: "single",
-            }}
-          >
-            <Avatar name="Zoe" />
-          </Message>
+          {data.messages.map((message) => {
+            return (
+              <Message
+                key={message._id}
+                model={{
+                  message: message?.content,
+                  sentTime: "15 mins ago",
+                  sender: "Zoe",
+                  direction: "outgoing",
+                  position: "single",
+                }}
+              >
+                <Avatar name="Zoe" />
+              </Message>
+            );
+          })}
         </MessageList>
 
         <div

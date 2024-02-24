@@ -46,7 +46,7 @@ export const QUERY_ME = gql`
 export const QUERY_MESSAGES = gql`
   query messages($chatId: ID!) {
     messages(chatId: $chatId) {
-      id
+      _id
       content
       sender {
         username
