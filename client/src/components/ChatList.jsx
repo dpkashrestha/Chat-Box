@@ -21,6 +21,9 @@ const ChatList = () => {
   const [search, setSearch] = useState("");
   const { loading, data } = useQuery(QUERY_CHATS, {
     variables: { chatName: search },
+    onCompleted: (data) => {
+      console.log(data);
+    },
   });
 
   return (
@@ -48,7 +51,7 @@ const ChatList = () => {
                 lastSenderName={message ? message.sender.username : null}
                 info={message ? message.content : "No messages yet"}
               >
-                <Avatar status="available" />
+                <Avatar name={chat.chatName} status="available" />
               </Conversation>
             );
           })}

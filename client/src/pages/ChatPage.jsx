@@ -5,6 +5,7 @@ import {
   MessageList,
   Message,
   MessageInput,
+  SendButton,
   Sidebar,
   Search,
   Conversation,
@@ -17,7 +18,7 @@ import {
   MessageSeparator,
 } from "@chatscope/chat-ui-kit-react";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import ChatList from "../components/ChatList";
 import { useQuery } from "@apollo/client";
 import { QUERY_USERS } from "../utils/queries";
@@ -28,6 +29,7 @@ import { faSignOutAlt } from "@fortawesome/free-solid-svg-icons";
 
 const ChatPage = () => {
   const [messageInputValue, setMessageInputValue] = useState("");
+  const inputRef = useRef();
 
   return (
     <div
@@ -200,11 +202,39 @@ const ChatPage = () => {
               <Avatar name="Zoe" />
             </Message>
           </MessageList>
-          <MessageInput
-            placeholder="Type message here"
-            value={messageInputValue}
-            onChange={(val) => setMessageInputValue(val)}
-          />
+
+          <div
+            as={MessageInput}
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              borderTop: "1px dashed #d1dbe4",
+            }}
+          >
+            <MessageInput
+              ref={inputRef}
+              onChange={(msg) => setMessageInputValue(msg)}
+              value={messageInputValue}
+              sendButton={false}
+              attachButton={false}
+              style={{
+                flexGrow: 1,
+                borderTop: 0,
+                flexShrink: "initial",
+              }}
+            />
+            <SendButton
+              border
+              /* onClick={() => handleSend(messageInputValue)} */
+              disabled={messageInputValue.length === 0}
+              style={{
+                marginLeft: 0,
+                paddingLeft: 0,
+                paddingRight: 0,
+                width: 0,
+              }}
+            />
+          </div>
         </ChatContainer>
       </MainContainer>
     </div>
