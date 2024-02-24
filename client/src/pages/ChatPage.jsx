@@ -18,6 +18,7 @@ import {
 } from "@chatscope/chat-ui-kit-react";
 
 import { useState } from "react";
+import ChatList from "../components/ChatList";
 import { useQuery } from "@apollo/client";
 import { QUERY_USERS } from "../utils/queries";
 import Auth from "../utils/auth";
@@ -28,8 +29,6 @@ import { faSignOutAlt } from "@fortawesome/free-solid-svg-icons";
 const ChatPage = () => {
   const [messageInputValue, setMessageInputValue] = useState("");
 
-  const { loading, data } = useQuery(QUERY_USERS);
-
   return (
     <div
       style={{
@@ -39,7 +38,8 @@ const ChatPage = () => {
       }}
     >
       <MainContainer responsive>
-        <Sidebar position="left" scrollable={false}>
+        <ChatList />
+        {/* <Sidebar position="left" scrollable={false}>
           <Search placeholder="Search..." />
           <ConversationList>
             {!loading &&
@@ -60,7 +60,7 @@ const ChatPage = () => {
             <FontAwesomeIcon icon={faSignOutAlt} className="mr-2" />
             Logout
           </button>
-        </Sidebar>
+        </Sidebar> */}
 
         <ChatContainer>
           <ConversationHeader className="test-class">
