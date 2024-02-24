@@ -12,13 +12,15 @@ export const QUERY_USERS = gql`
 
 export const QUERY_CHATS = gql`
   query allChats($chatName: String) {
+    #chatName is optional
     allChats(chatName: $chatName) {
       _id
       chatName
-      users {
-        _id
-        username
-        email
+      lastMessage {
+        content
+        sender {
+          username
+        }
       }
     }
   }
