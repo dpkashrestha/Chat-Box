@@ -16,6 +16,7 @@ const typeDefs = `
     _id: ID!
     chatName: String!
     users: [User]!
+    groupAdmin: User
     lastMessage: Message
     createdAt: String!
     updatedAt: String!
@@ -29,11 +30,12 @@ const typeDefs = `
     createdAt: String!
     updatedAt: String!
   }
-  
+
   type Query {
     me: User
-    users: [User]
-    chats: [Chat]
+    users(userSearch: String): [User]
+    allChats(chatName: String): [Chat]
+    singleChat(chatId: ID!): Chat
     messages(chatId: ID!): [Message]
   }
 
@@ -41,6 +43,7 @@ const typeDefs = `
     login(email: String!, password: String!): Auth
     addUser(username: String!, email: String!, password: String!): Auth
     addChat(chatName: String!, users: [UserInput]!): Chat
+    editChat(chatId: ID!, chatName: String!, users: [UserInput]!): Chat
     addMessage(content: String!, chatId: ID!): Message
   }
 
