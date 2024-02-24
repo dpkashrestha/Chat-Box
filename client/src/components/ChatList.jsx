@@ -18,24 +18,18 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSignOutAlt, faPlus } from "@fortawesome/free-solid-svg-icons";
 
 const ChatList = () => {
+  const [search, setSearch] = useState("");
   const { loading, data } = useQuery(QUERY_CHATS, {
-    onCompleted: (data) => {
-      console.log(data);
-    },
+    variables: { chatName: search },
   });
-  /*  const { loading, data } = useQuery(QUERY_CHATS);
-  console.log(data);
-  setSearchResult(data); */
+
   return (
     <Sidebar position="left" scrollable={false}>
       <Search
-        placeholder="Search Chats"
-        value={""}
-        onChange={(v) =>
-          searchChats({
-            variables: { chatName: v },
-          })
-        }
+        placeholder="Search..."
+        value={search}
+        onChange={(v) => setSearch(v)}
+        onClearClick={() => setSearch("")}
       />
       <Button border icon={<FontAwesomeIcon icon={faPlus} />}>
         New Group
@@ -46,7 +40,6 @@ const ChatList = () => {
       ) : (
         <ConversationList>
           {data.allChats.map((chat) => {
-            console.log(chat.lastMessage);
             const message = chat.lastMessage;
             return (
               <Conversation
