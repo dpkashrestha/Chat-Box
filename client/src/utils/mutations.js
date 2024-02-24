@@ -19,6 +19,31 @@ export const ADD_USER = gql`
       user {
         _id
         username
+        email
+        createdAt
+        updatedAt
+      }
+    }
+  }
+`;
+
+export const ADD_CHAT = gql`
+  mutation addChat($chatName: String!, $users: [UserInput]!) {
+    addChat(chatName: $chatName, users: $users) {
+      _id
+      chatName
+    }
+  }
+`;
+
+export const ADD_MESSAGE = gql`
+  mutation addMessage($content: String!, $chatId: ID!) {
+    addMessage(content: $content, chatId: $chatId) {
+      _id
+      content
+      sender {
+        _id
+        username
       }
     }
   }

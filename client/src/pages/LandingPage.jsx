@@ -4,59 +4,71 @@ import LoginForm from "../components/LoginForm";
 import SignUpForm from "../components/SignupForm";
 
 const LandingPage = () => {
-  const [activeTab, setActiveTab] = useState("login");
+  const [showSignup, setShowSignup] = useState(false);
 
-  const handleTabChange = (tab) => {
-    setActiveTab(tab);
+  const handleShowSignup = () => {
+    setShowSignup(true);
+  };
+
+  const handleShowLogin = () => {
+    setShowSignup(false);
   };
 
   return (
     <>
-      <div className="landing flex-column">
-        <Tab.Container activeKey={activeTab} onSelect={handleTabChange}>
+      <div className="landing">
+        <div className="landing-header">
           <h1 style={{ textAlign: "center" }}>
-            Connect with your favorite people
+            connect with your favorite people
           </h1>
-          <Card>
-            <Card.Header>
-              <Nav variant="tabs">
-                <Nav.Item>
-                  <Nav.Link eventKey="login">Login</Nav.Link>
-                </Nav.Item>
-                <Nav.Item>
-                  <Nav.Link eventKey="signup">Sign Up</Nav.Link>
-                </Nav.Item>
-              </Nav>
-            </Card.Header>
-            <Card.Body>
-              <Tab.Content>
-                <Tab.Pane eventKey="login">
-                  {activeTab === "login" && <LoginForm />}
-                </Tab.Pane>
-                <Tab.Pane eventKey="signup">
-                  {activeTab === "signup" && <SignUpForm />}
-                </Tab.Pane>
-              </Tab.Content>
-            </Card.Body>
-          </Card>
-        </Tab.Container>
-      </div>
-      <footer>
-        <div className="text-muted d-flex flex-column flex-md-row align-items-md-center">
-          <span>UI components provided by:</span>
-          <div className="mt-2 align-self-end mt-md-0 ml-md-2 d-flex align-items-center">
-            <span>Provided by: </span>
-            <a
-              href="https://chatscope.io"
-              rel="noopener noreferrer"
-              target="_blank"
-              className="ml-2"
-            >
-              chatscope
-            </a>
-          </div>
+
+          <img
+            src="chat-logo.png"
+            alt="Logo"
+            style={{ width: "250px", height: "auto" }}
+          />
         </div>
-      </footer>
+
+        {!showSignup ? (
+          <>
+            <LoginForm />
+            <p style={{ textAlign: "center" }}>
+              Don't have an account?{" "}
+              <span
+                style={{ cursor: "pointer", color: "brown" }}
+                onClick={handleShowSignup}
+              >
+                Signup instead
+              </span>
+            </p>
+          </>
+        ) : (
+          <>
+            <SignUpForm />
+            <p style={{ textAlign: "center" }}>
+              Already have an account?{" "}
+              <span
+                style={{ cursor: "pointer", color: "brown" }}
+                onClick={handleShowLogin}
+              >
+                Login instead
+              </span>
+            </p>
+          </>
+        )}
+
+        <div className="landing-footer">
+          <span>UI components provided by:</span>
+          <a
+            href="https://chatscope.io"
+            rel="noopener noreferrer"
+            target="_blank"
+            className="ml-2"
+          >
+            chatscope
+          </a>
+        </div>
+      </div>
     </>
   );
 };
