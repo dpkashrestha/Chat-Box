@@ -9,8 +9,53 @@
 .landing {
   display: flex;
   justify-content: center;
+  flex-direction: column;
   align-items: center;
   min-height: 100vh;
+  background-color: beige;
+}
+
+.landing-header {
+  margin: 1em;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.landing-footer {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  margin-right: 20px;
+}
+
+.landing h1 {
+  font-weight: 800;
+  margin-bottom: 2.5rem;
+  color: rgb(14, 11, 11);
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin: 2em;
+  min-width: 50%;
+}
+
+.form input,
+button {
+  min-width: 300px;
+}
+
+.form button {
+  background-color: black;
+}
+
+.content {
+  background-color: rgba(255, 228, 196, 0.8);
 }
 
 @keyframes logo-spin {
@@ -26,12 +71,6 @@
   a:nth-of-type(2) .logo {
     animation: logo-spin infinite 20s linear;
   }
-}
-
-.card {
-  padding: 2em;
-  border: none;
-  background-color: #f8f9fa;
 }
 
 .read-the-docs {

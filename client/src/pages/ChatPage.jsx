@@ -22,6 +22,9 @@ import { useQuery } from "@apollo/client";
 import { QUERY_USERS } from "../utils/queries";
 import Auth from "../utils/auth";
 
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faSignOutAlt } from "@fortawesome/free-solid-svg-icons";
+
 const ChatPage = () => {
   const [messageInputValue, setMessageInputValue] = useState("");
 
@@ -53,8 +56,9 @@ const ChatPage = () => {
               ))}
           </ConversationList>
 
-          <button class="btn btn-danger" onClick={Auth.logout}>
-            <i class="fas fa-sign-out-alt mr-1"></i> Logout
+          <button className="btn btn-danger" onClick={Auth.logout}>
+            <FontAwesomeIcon icon={faSignOutAlt} className="mr-2" />
+            Logout
           </button>
         </Sidebar>
 

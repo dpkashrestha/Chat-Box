@@ -23,18 +23,13 @@ a:hover {
 }
 
 body {
-  /* margin-left: 20px; */
-  /* place-items: center; */
-  /* min-width: 50vh; */
-  /* min-height: 100vh; */
-  /* display: block; */
-  /* position: absolute; */
   font-family: "Rubik", sans-serif;
 }
 
 h1 {
   font-size: 3.2em;
-  /* line-height: 1.1; */
+  min-width: 100%;
+  margin-bottom: 50%;
   font-family: "Rubik", sans-serif;
 }
 
