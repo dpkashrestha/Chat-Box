@@ -61,7 +61,9 @@ const ChatList = ({ onClickCallback }) => {
             return (
               <Conversation
                 key={chat._id}
-                name={getOtherUsernames(chat.users)}
+                name={
+                  chat.chatName ? chat.chatName : getOtherUsernames(chat.users)
+                }
                 lastSenderName={message ? message.sender.username : null}
                 info={message ? message.content : "No messages yet"}
                 onClick={() => {
