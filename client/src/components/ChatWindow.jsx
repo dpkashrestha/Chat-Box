@@ -13,7 +13,7 @@ import {
 } from "@chatscope/chat-ui-kit-react";
 import { useState, useRef } from "react";
 
-const ChatWindow = () => {
+const ChatWindow = ({ chatId }) => {
   const [messageInputValue, setMessageInputValue] = useState("");
   const inputRef = useRef();
 
@@ -41,7 +41,7 @@ const ChatWindow = () => {
               message: "Hello my friend",
               sentTime: "15 mins ago",
               sender: "Zoe",
-              direction: "incoming",
+              direction: "outgoing",
               position: "single",
             }}
           >

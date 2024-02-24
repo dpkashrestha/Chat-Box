@@ -19,8 +19,9 @@ import Auth from "../utils/auth";
 
 const currentUser = Auth.getCurrentUser();
 
-const ChatList = () => {
+const ChatList = ({ onClickCallback }) => {
   const [search, setSearch] = useState("");
+  const [selectedChatId, setSelectedChatId] = useState(null);
   const { loading, data } = useQuery(QUERY_CHATS, {
     variables: { chatName: search },
     onCompleted: (data) => {
@@ -63,6 +64,11 @@ const ChatList = () => {
                 name={getOtherUsernames(chat.users)}
                 lastSenderName={message ? message.sender.username : null}
                 info={message ? message.content : "No messages yet"}
+                onClick={() => {
+                  setSelectedChatId(chat._id);
+                  onClickCallback(chat._id);
+                }}
+                active={selectedChatId === chat._id}
               >
                 <Avatar name={chat.chatName} status="available" />
               </Conversation>

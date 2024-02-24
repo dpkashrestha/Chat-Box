@@ -1,11 +1,16 @@
 import "@chatscope/chat-ui-kit-styles/dist/default/styles.min.css";
 import { MainContainer } from "@chatscope/chat-ui-kit-react";
 
-import { useState, useRef } from "react";
 import ChatList from "../components/ChatList";
 import ChatWindow from "../components/ChatWindow";
+import { useState } from "react";
 
 const ChatPage = () => {
+  const [activeChatId, setActiveChatId] = useState(null);
+  const setActiveConversation = (chatId) => {
+    setActiveChatId(chatId);
+  };
+
   return (
     <div
       style={{
@@ -15,8 +20,8 @@ const ChatPage = () => {
       }}
     >
       <MainContainer responsive>
-        <ChatList />
-        <ChatWindow />
+        <ChatList onClickCallback={setActiveConversation} />
+        {activeChatId && <ChatWindow chatId={activeChatId} />}
       </MainContainer>
     </div>
   );
