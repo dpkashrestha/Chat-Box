@@ -21,5 +21,14 @@
     "updatedAt": "2024-02-23T06:55:50.091Z",
     "__v": 0,
     "lastMessage": "65d841766bfd458cd6d2ed31"
+  },
+  {
+    "chatName": "group",
+    "users": ["65d80f6defcb47888bc2a43a", "65d80f6defcb47888bc2a432"],
+    "groupAdmin": "65d80f6defcb47888bc2a43b",
+    "createdAt": "2024-02-23T03:22:21.142Z",
+    "updatedAt": "2024-02-23T06:55:50.091Z",
+    "__v": 0,
+    "lastMessage": "65d841766bfd458cd6d2ed31"
   }
 ]

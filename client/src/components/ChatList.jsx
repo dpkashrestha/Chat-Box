@@ -3,19 +3,21 @@ import {
   Sidebar,
   Search,
   Conversation,
+  ConversationHeader,
   ConversationList,
   Button,
   Loader,
   Avatar,
 } from "@chatscope/chat-ui-kit-react";
-
-import { useState } from "react";
-import { useQuery, useLazyQuery } from "@apollo/client";
-import { QUERY_USERS, QUERY_CHATS } from "../utils/queries";
-import Auth from "../utils/auth";
-
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSignOutAlt, faPlus } from "@fortawesome/free-solid-svg-icons";
+
+import { useState } from "react";
+import { useQuery } from "@apollo/client";
+import { QUERY_CHATS } from "../utils/queries";
+import Auth from "../utils/auth";
+
+const currentUser = Auth.getCurrentUser();
 
 const ChatList = () => {
   const [search, setSearch] = useState("");
@@ -26,8 +28,19 @@ const ChatList = () => {
     },
   });
 
+  const getOtherUsernames = (users) => {
+    return users
+      .filter((user) => user._id !== currentUser._id) // Filter out the current user
+      .map((user) => user.username) // Map the usernames
+      .join(", "); // Join the usernames with comma
+  };
+
   return (
     <Sidebar position="left" scrollable={false}>
+      <ConversationHeader>
+        {/* <Avatar name={currentUser.username} /> */}
+        <ConversationHeader.Content userName={currentUser.username} />
+      </ConversationHeader>
       <Search
         placeholder="Search..."
         value={search}
@@ -47,7 +60,7 @@ const ChatList = () => {
             return (
               <Conversation
                 key={chat._id}
-                name={chat.chatName}
+                name={getOtherUsernames(chat.users)}
                 lastSenderName={message ? message.sender.username : null}
                 info={message ? message.content : "No messages yet"}
               >
