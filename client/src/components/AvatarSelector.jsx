@@ -35,11 +35,6 @@ const AvatarSelector = () => {
     } else {
       const user = await JSON.parse(localStorage.getItem("user"));
 
-      // graphql
-      //   const { data } = await axios.post(`${setAvatarRoute}/${user._id}`, {
-      //     image: avatars[selectedAvatar],
-      //   });
-
       try {
         const { data } = await addUserAvatar({
           variables: {
@@ -48,8 +43,6 @@ const AvatarSelector = () => {
           },
         });
 
-        // user.isAvatarImageSet = true;
-        // user.avatarImage = data.image;
         console.log("data:", data);
         localStorage.setItem("user", JSON.stringify(data.addUserAvatar));
         window.location.assign("/chat");

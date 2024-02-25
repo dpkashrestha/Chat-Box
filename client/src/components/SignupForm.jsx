@@ -4,9 +4,8 @@ import { ADD_USER } from "../utils/mutations";
 import { useMutation } from "@apollo/client";
 
 import Auth from "../utils/auth";
-import { useNavigate } from "react-router-dom";
+
 const SignupForm = () => {
-  const navigate = useNavigate();
   // set initial form state
   const [userFormData, setUserFormData] = useState({
     username: "",
