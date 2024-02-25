@@ -52,13 +52,10 @@ const chatResolvers = {
     singleChat: async (parent, { chatId }, context) => {
       const { groupAdmin } = await Chat.findById(chatId);
 
-      const chat = await Chat.findById(
-        chatId
-        //don't include groupAdmin in users
-      )
+      const chat = await Chat.findById(chatId)
         .populate({
           path: "users",
-          match: { _id: { $ne: groupAdmin } },
+          match: { _id: { $ne: groupAdmin } }, //don't include groupAdmin in users
           select: ["username", "email", "avatar"],
         })
         .populate({

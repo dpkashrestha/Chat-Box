@@ -10,7 +10,7 @@ import {
   Avatar,
   AvatarGroup,
 } from "@chatscope/chat-ui-kit-react";
-import CreateModal from "./CreateModal";
+import CreateModal from "./CreateChat";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSignOutAlt, faPlus } from "@fortawesome/free-solid-svg-icons";
@@ -56,7 +56,7 @@ const ChatList = ({ onClickCallback }) => {
         onChange={(v) => setSearch(v)}
         onClearClick={() => setSearch("")}
       />
-      <CreateModal>
+      <CreateModal newGroup={true}>
         <Button
           border
           style={{ width: "100%", height: "100%", margin: "0em" }}
@@ -71,13 +71,12 @@ const ChatList = ({ onClickCallback }) => {
       ) : (
         <ConversationList>
           {data.allChats.map((chat) => {
+            const otherUsers = getOtherUsers(chat.users);
             const lastMessage = chat.lastMessage;
             return (
               <Conversation
                 key={chat._id}
-                name={
-                  chat.chatName ? chat.chatName : getOtherUsernames(chat.users)
-                }
+                name={chat.chatName}
                 lastSenderName={
                   lastMessage ? lastMessage.sender.username : null
                 }
@@ -88,10 +87,30 @@ const ChatList = ({ onClickCallback }) => {
                 }}
                 active={selectedChatId === chat._id}
               >
-                <Avatar
+                {otherUsers.length > 1 ? (
+                  <AvatarGroup size="sm">
+                    {otherUsers.slice(0, 4).map((user) => {
+                      return (
+                        <Avatar
+                          key={user._id}
+                          name={user.username}
+                          src={`data:image/svg+xml;base64,${user.avatar}`}
+                        />
+                      );
+                    })}
+                  </AvatarGroup>
+                ) : (
+                  <Avatar
+                    key={otherUsers[0]._id}
+                    name={otherUsers[0].username}
+                    src={`data:image/svg+xml;base64,${otherUsers[0].avatar}`}
+                  />
+                )}
+
+                {/* <Avatar
                   name={lastMessage.sender.username}
                   src={`data:image/svg+xml;base64,${lastMessage.sender.avatar}`}
-                />
+                /> */}
               </Conversation>
             );
           })}
