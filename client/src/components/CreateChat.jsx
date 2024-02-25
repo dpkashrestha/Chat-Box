@@ -17,7 +17,7 @@ import { QUERY_USERS } from "../utils/queries";
 const CreateModal = ({ newGroup, chatId, children }) => {
   const [show, setShow] = useState(false);
   const [search, setSearch] = useState("");
-  const [groupChatName, setGroupChatName] = useState();
+  const [groupChatName, setGroupChatName] = useState("");
   const [selectedUsers, setSelectedUsers] = useState([]);
   const [searchResult, setSearchResult] = useState([]);
 
@@ -42,8 +42,23 @@ const CreateModal = ({ newGroup, chatId, children }) => {
     console.log("result:", searchResult);
   }, [search]);
 
-  const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
+  /* useEffect(() => {
+    if (show) {
+    }
+  }, [show]); */
+
+  const handleClose = () => {
+    setShow(false);
+    setSearch("");
+    setGroupChatName("");
+  };
+  const handleShow = () => {
+    setShow(true);
+    if (newGroup) {
+      //when the modal is shown run this command
+      console.log("test newGroup");
+    }
+  };
 
   const inputRef = useRef();
 
