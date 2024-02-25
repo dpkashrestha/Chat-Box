@@ -148,4 +148,7 @@
   .button-icon {
     margin-right: 0 !important;
   }
+  #newGroup {
+    margin-top: 0.4em !important;
+  }
 }

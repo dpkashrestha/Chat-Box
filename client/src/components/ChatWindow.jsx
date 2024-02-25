@@ -39,7 +39,7 @@ const ChatWindow = ({ chatId }) => {
     },
   });
 
-  //TODO: add get one chat
+  //TODO: add get singleChat
   // const { loading: chatLoading, data: chatData } = useQuery();
 
   const handleEmojiPickerHideShow = () => {

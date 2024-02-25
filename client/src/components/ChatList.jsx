@@ -10,6 +10,8 @@ import {
   Avatar,
   AvatarGroup,
 } from "@chatscope/chat-ui-kit-react";
+import CreateModal from "./CreateModal";
+
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSignOutAlt, faPlus } from "@fortawesome/free-solid-svg-icons";
 
@@ -54,12 +56,15 @@ const ChatList = ({ onClickCallback }) => {
         onChange={(v) => setSearch(v)}
         onClearClick={() => setSearch("")}
       />
-      <Button
-        border
-        icon={<FontAwesomeIcon icon={faPlus} className="button-icon" />}
-      >
-        <span className="button-text">New Group</span>
-      </Button>
+      <CreateModal>
+        <Button
+          border
+          style={{ width: "100%", height: "100%", margin: "0em" }}
+          icon={<FontAwesomeIcon icon={faPlus} className="button-icon" />}
+        >
+          <span className="button-text">New Group</span>
+        </Button>
+      </CreateModal>
 
       {loading ? (
         <Loader>Loading</Loader>
