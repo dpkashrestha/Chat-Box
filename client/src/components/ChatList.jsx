@@ -23,6 +23,7 @@ import Auth from "../utils/auth";
 const ChatList = ({ onClickCallback }) => {
   const currentUser = Auth.getCurrentUser();
   const [search, setSearch] = useState("");
+  const [newGroup, setNewGroup] = useState(true);
   const [selectedChatId, setSelectedChatId] = useState(null);
   const { loading, data } = useQuery(QUERY_CHATS, {
     variables: { chatName: search },
@@ -56,10 +57,11 @@ const ChatList = ({ onClickCallback }) => {
         onChange={(v) => setSearch(v)}
         onClearClick={() => setSearch("")}
       />
-      <CreateModal newGroup={true}>
+      <CreateModal newGroup={newGroup}>
         <Button
           border
           style={{ width: "100%", height: "100%", margin: "0em" }}
+          onClick={() => setNewGroup(true)}
           icon={<FontAwesomeIcon icon={faPlus} className="button-icon" />}
         >
           <span className="button-text">New Group</span>

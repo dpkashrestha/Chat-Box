@@ -13,6 +13,7 @@ import { Modal, Form } from "react-bootstrap";
 import { useState, useRef, useEffect } from "react";
 import { useLazyQuery, useQuery } from "@apollo/client";
 import { QUERY_USERS } from "../utils/queries";
+import { ADD_CHAT } from "../utils/mutations";
 
 const CreateModal = ({ newGroup, chatId, children }) => {
   const [show, setShow] = useState(false);
@@ -41,23 +42,24 @@ const CreateModal = ({ newGroup, chatId, children }) => {
     searchUsers({ variables: { userSearch: search } });
     console.log("result:", searchResult);
   }, [search]);
-
-  /* useEffect(() => {
+  useEffect(() => {
+    // setEditGroup(!newGroup);
     if (show) {
+      if (newGroup) {
+        console.log("newGroup", newGroup);
+      } else {
+        console.log("editGroup", !newGroup);
+      }
     }
-  }, [show]); */
+  }, [show]);
 
   const handleClose = () => {
     setShow(false);
     setSearch("");
     setGroupChatName("");
   };
-  const handleShow = () => {
+  const handleShow = async () => {
     setShow(true);
-    if (newGroup) {
-      //when the modal is shown run this command
-      console.log("test newGroup");
-    }
   };
 
   const inputRef = useRef();
