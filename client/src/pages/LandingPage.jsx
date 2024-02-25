@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { Tab, Nav, Card } from "react-bootstrap";
 import LoginForm from "../components/LoginForm";
 import SignUpForm from "../components/SignupForm";
+import { LandingHeader } from "../components/LandingHeader";
+import { LandingFooter } from "../components/LandingFooter";
 
 const LandingPage = () => {
   const [showSignup, setShowSignup] = useState(false);
@@ -30,6 +32,7 @@ const LandingPage = () => {
             connect with your favorite people
           </h3>
         </div>
+        <LandingHeader />
 
         {!showSignup ? (
           <>
@@ -59,17 +62,7 @@ const LandingPage = () => {
           </>
         )}
 
-        <div className="landing-footer">
-          <span>UI components provided by:</span>
-          <a
-            href="https://chatscope.io"
-            rel="noopener noreferrer"
-            target="_blank"
-            className="ml-2"
-          >
-            chatscope
-          </a>
-        </div>
+        <LandingFooter />
       </div>
     </>
   );

@@ -14,7 +14,7 @@ const chatResolvers = {
           })
             .populate({
               path: "lastMessage",
-              select: ["content", "sender"],
+              select: ["content", "sender", "chat"],
               populate: { path: "sender", select: "username" },
             })
             .populate({
@@ -31,7 +31,7 @@ const chatResolvers = {
         })
           .populate({
             path: "lastMessage",
-            select: ["content", "sender"],
+            select: ["content", "sender", "chat"],
             populate: { path: "sender", select: "username" },
           })
           .populate({
