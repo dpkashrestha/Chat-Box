@@ -1,5 +1,13 @@
 import "@chatscope/chat-ui-kit-styles/dist/default/styles.min.css";
-import { Search, Button, MessageInput } from "@chatscope/chat-ui-kit-react";
+import {
+  Search,
+  Button,
+  MessageInput,
+  Loader,
+  ConversationList,
+  Conversation,
+  Avatar,
+} from "@chatscope/chat-ui-kit-react";
 import { Modal, Form } from "react-bootstrap";
 
 import { useState, useRef, useEffect } from "react";
@@ -14,8 +22,9 @@ const CreateModal = ({ newGroup, chatId, children }) => {
   const [searchResult, setSearchResult] = useState([]);
 
   const [searchUsers, { loading, data }] = useLazyQuery(QUERY_USERS, {
-    onCompleted: (data) => {
-      console.log(data);
+    onCompleted: (d) => {
+      setSearchResult(data.users);
+      console.log(d);
     },
     onError: (err) => {
       console.error(err);
@@ -24,11 +33,13 @@ const CreateModal = ({ newGroup, chatId, children }) => {
 
   useEffect(() => {
     if (!search) {
-      console.log("not searching", search);
+      setSearchResult([]);
+      console.log("Clearing Results", searchResult);
       return;
     }
     console.log("searching:", search);
     searchUsers({ variables: { userSearch: search } });
+    console.log("result:", searchResult);
   }, [search]);
 
   const handleClose = () => setShow(false);
@@ -52,7 +63,16 @@ const CreateModal = ({ newGroup, chatId, children }) => {
             {newGroup ? "Create a chat" : `Edit this chat`}
           </Modal.Title>
         </Modal.Header>
-        <Form>
+        <Form
+          onSubmit={(e) => {
+            if (newGroup) {
+              e.preventDefault();
+              console.log(`Created: ${groupChatName}`);
+            } else if (!newGroup) {
+              console.log(`Edited: ${groupChatName}`);
+            }
+          }}
+        >
           <Modal.Body>
             <div
               as={MessageInput}
@@ -86,16 +106,45 @@ const CreateModal = ({ newGroup, chatId, children }) => {
                 flexShrink: "initial",
               }}
             />
+
+            {data && (
+              <>
+                {loading ? (
+                  <div
+                    style={{
+                      justifyContent: "center",
+                      display: "flex",
+                      marginTop: "0.5em",
+                    }}
+                  >
+                    <Loader style={{ justifyContent: "center" }}></Loader>
+                  </div>
+                ) : (
+                  <ConversationList>
+                    {searchResult.map((user) => {
+                      return (
+                        <Conversation
+                          key={user._id}
+                          name={user.username}
+                          info={user.email}
+                          onClick={() => {}}
+                          active={false}
+                        >
+                          <Avatar
+                            name={user.username}
+                            src={`data:image/svg+xml;base64,${user.avatar}`}
+                          />
+                        </Conversation>
+                      );
+                    })}
+                  </ConversationList>
+                )}
+              </>
+            )}
           </Modal.Body>
           <Modal.Footer>
             {newGroup ? (
-              <Button
-                border
-                type="submit"
-                onClick={() => {
-                  console.log(newGroup);
-                }}
-              >
+              <Button border type="submit" onClick={() => {}}>
                 Create Group
               </Button>
             ) : (

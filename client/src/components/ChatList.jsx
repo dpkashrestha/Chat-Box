@@ -67,7 +67,7 @@ const ChatList = ({ onClickCallback }) => {
       </CreateModal>
 
       {loading ? (
-        <Loader>Loading</Loader>
+        <Loader style={{ justifyContent: "center" }}>Loading</Loader>
       ) : (
         <ConversationList>
           {data.allChats.map((chat) => {
