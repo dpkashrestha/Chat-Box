@@ -1,6 +1,9 @@
 import { useQuery, useMutation } from "@apollo/client";
 import { QUERY_MESSAGES } from "../utils/queries";
 import { ADD_MESSAGE } from "../utils/mutations";
+import Picker from "emoji-picker-react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faFaceSmile } from "@fortawesome/free-solid-svg-icons";
 import {
   ChatContainer,
   MessageList,
@@ -20,6 +23,9 @@ import { useState, useRef, useMemo, useCallback } from "react";
 const ChatWindow = ({ chatId }) => {
   const [messageInputValue, setMessageInputValue] = useState("");
   const [allMessages, setAllMessages] = useState([]);
+
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+
   const inputRef = useRef();
   const [addMessage, { error }] = useMutation(ADD_MESSAGE);
   const { loading, data } = useQuery(QUERY_MESSAGES, {
@@ -28,6 +34,17 @@ const ChatWindow = ({ chatId }) => {
       console.log(data);
     },
   });
+
+  const handleEmojiPickerHideShow = () => {
+    setShowEmojiPicker(!showEmojiPicker);
+  };
+
+  const handleEmojiClick = (emoji, event) => {
+    let msg = messageInputValue;
+    console.log("emohi:", emoji);
+    msg += emoji.emoji;
+    setMessageInputValue(msg);
+  };
 
   const handleSend = async (message) => {
     const { data } = await addMessage({
@@ -89,22 +106,6 @@ const ChatWindow = ({ chatId }) => {
         <MessageList
           typingIndicator={<TypingIndicator content="Zoe is typing" />}
         >
-          {/* {allMessages?.map((message) => {
-            return (
-              <Message
-                key={message._id}
-                model={{
-                  message: message?.content,
-                  sentTime: "15 mins ago",
-                  sender: message?.sender?.username,
-                  direction: "outgoing",
-                  position: "single",
-                }}
-              >
-                <Avatar name="Zoe" />
-              </Message>
-            );
-          })} */}
           {renderMessages()}
         </MessageList>
 
@@ -116,6 +117,15 @@ const ChatWindow = ({ chatId }) => {
             borderTop: "1px dashed #d1dbe4",
           }}
         >
+          <div className="emoji">
+            <FontAwesomeIcon
+              icon={faFaceSmile}
+              onClick={handleEmojiPickerHideShow}
+              style={{ color: "#E2AC00", fontSize: "30px" }}
+            />
+            {showEmojiPicker && <Picker onEmojiClick={handleEmojiClick} />}
+          </div>
+
           <MessageInput
             ref={inputRef}
             onChange={(msg) => setMessageInputValue(msg)}
