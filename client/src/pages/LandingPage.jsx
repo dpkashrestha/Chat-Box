@@ -18,15 +18,17 @@ const LandingPage = () => {
     <>
       <div className="landing">
         <div className="landing-header">
-          <h1 style={{ textAlign: "center" }}>
-            connect with your favorite people
+          <h1 style={{ textAlign: "center"}}>
+            welcome to chat box
           </h1>
-
           <img
             src="chat-logo.png"
             alt="Logo"
-            style={{ width: "250px", height: "auto" }}
+            style={{ width: "100px", height: "auto" }}
           />
+          <h3 style={{ textAlign: "center" }}>
+            connect with your favorite people
+          </h3>
         </div>
 
         {!showSignup ? (

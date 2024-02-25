@@ -12,7 +12,7 @@
   flex-direction: column;
   align-items: center;
   min-height: 100vh;
-  background-color: beige;
+  background-color: rgb(255, 255, 255);
 }
 
 .landing-header {
@@ -32,8 +32,10 @@
 
 .landing h1 {
   font-weight: 800;
+  font-size: 40pt;
   margin-bottom: 2.5rem;
-  color: rgb(14, 11, 11);
+  color:#6f0fec;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 .form {
@@ -75,4 +77,12 @@ button {
 
 .read-the-docs {
   color: #888;
+}
+
+.button {
+  color:blue
+}
+
+.landing h3 {
+  padding-top: 20px;
 }
