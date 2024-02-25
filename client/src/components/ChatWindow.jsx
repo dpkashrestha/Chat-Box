@@ -127,11 +127,7 @@ const ChatWindow = ({ chatId }) => {
             <VideoCallButton />
           </ConversationHeader.Actions>
         </ConversationHeader>
-        <MessageList
-          typingIndicator={<TypingIndicator content="Zoe is typing" />}
-        >
-          {renderMessages()}
-        </MessageList>
+        <MessageList>{renderMessages()}</MessageList>
 
         <div
           as={MessageInput}
