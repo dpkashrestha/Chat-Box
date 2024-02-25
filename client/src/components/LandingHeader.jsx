@@ -11,13 +11,13 @@ export function LandingHeader() {
             margin: "0",
           }}
         >
-          <span style={{ fontWeight: "bold", color: "#002681" }}>C</span>
-          <span style={{ fontWeight: "bold", color: "#9F0766" }}>H</span>
-          <span style={{ fontWeight: "bold", color: "#D0711D" }}>A</span>
-          <span style={{ fontWeight: "bold", color: "#E6B200" }}>T</span>
-          <span style={{ fontWeight: "bold", color: "#AB031D" }}>B</span>
-          <span style={{ fontWeight: "bold", color: "#497834" }}>O</span>
-          <span style={{ fontWeight: "bold", color: "#527EBD" }}>X</span>
+          <span style={{ fontWeight: "bold" }}>C</span>
+          <span style={{ fontWeight: "bold" }}>H</span>
+          <span style={{ fontWeight: "bold" }}>A</span>
+          <span style={{ fontWeight: "bold" }}>T</span>
+          <span style={{ fontWeight: "bold" }}>B</span>
+          <span style={{ fontWeight: "bold" }}>O</span>
+          <span style={{ fontWeight: "bold" }}>X</span>
         </h1>
 
         <h2 style={{ textAlign: "center" }}>
@@ -27,7 +27,7 @@ export function LandingHeader() {
         <img
           src="chat-logo.png"
           alt="Logo"
-          style={{ width: "250px", height: "auto" }}
+          style={{ width: "16em", height: "auto" }}
         />
       </div>
     </>

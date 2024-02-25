@@ -33,10 +33,10 @@
 
 .landing h1 {
   font-weight: 800;
-  font-size: 40pt;
-  margin-bottom: 2.5rem;
-  color:#6f0fec;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-size: 6em;
+  /* margin-bottom: 2.5rem;
+  color: #6f0fec; */
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
 
 .form {
@@ -44,7 +44,7 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  margin: 2em;
+  margin: 1em;
   min-width: 50%;
 }
 
@@ -81,9 +81,9 @@ button {
 }
 
 .button {
-  color:blue
+  color: blue;
 }
 
-.landing h3 {
-  padding-top: 20px;
+.landing img {
+  margin: 1em;
 }
