@@ -19,7 +19,7 @@ const chatResolvers = {
             })
             .populate({
               path: "users",
-              select: ["username", "email"],
+              select: ["username", "email", "avatar"],
             })
             .sort({ updatedAt: "desc" });
           return chats;
@@ -36,7 +36,7 @@ const chatResolvers = {
           })
           .populate({
             path: "users",
-            select: ["username", "email"],
+            select: ["username", "email", "avatar"],
           })
           .sort({ updatedAt: "desc" });
         return chats;
@@ -53,11 +53,11 @@ const chatResolvers = {
         .populate({
           path: "users",
           match: { _id: { $ne: groupAdmin } },
-          select: ["username", "email"],
+          select: ["username", "email", "avatar"],
         })
         .populate({
           path: "groupAdmin",
-          select: ["username", "email"],
+          select: ["username", "email", "avatar"],
         });
       return chat;
     },
@@ -78,7 +78,7 @@ const chatResolvers = {
         await Chat.create({ chatName, users, groupAdmin: me })
       ).populate({
         path: "users",
-        select: ["username", "email"],
+        select: ["username", "email", "avatar"],
       });
 
       return chat;
@@ -103,11 +103,11 @@ const chatResolvers = {
         )
           .populate({
             path: "users",
-            select: ["username", "email"],
+            select: ["username", "email", "avatar"],
           })
           .populate({
             path: "groupAdmin",
-            select: ["username", "email"],
+            select: ["username", "email", "avatar"],
           });
 
         console.log(updatedChat.users.length);

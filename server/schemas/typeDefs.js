@@ -4,6 +4,7 @@ const typeDefs = `
     username: String!
     email: String!
     password: String
+    avatar: String
     createdAt: String
     updatedAt: String
   }
@@ -42,6 +43,7 @@ const typeDefs = `
   type Mutation {
     login(email: String!, password: String!): Auth
     addUser(username: String!, email: String!, password: String!): Auth
+    addUserAvatar(userId: ID!, avatar: String!): User
     addChat(chatName: String!, users: [UserInput]!): Chat
     editChat(chatId: ID!, chatName: String!, users: [UserInput]!): Chat
     addMessage(content: String!, chatId: ID!): Message
