@@ -78,7 +78,7 @@ const AvatarSelector = () => {
       {isLoading ? (
         <Loader />
       ) : (
-        <div className="container">
+        <div className="avatar-container">
           <div className="title-container">
             <h1>Pick an Avatar as your profile picture</h1>
           </div>

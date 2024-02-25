@@ -8,6 +8,7 @@ import {
   Button,
   Loader,
   Avatar,
+  AvatarGroup,
 } from "@chatscope/chat-ui-kit-react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSignOutAlt, faPlus } from "@fortawesome/free-solid-svg-icons";
@@ -28,11 +29,14 @@ const ChatList = ({ onClickCallback }) => {
     },
   });
 
+  const getOtherUsers = (users) => {
+    return users.filter((user) => user._id !== currentUser._id);
+  };
+
   const getOtherUsernames = (users) => {
-    return users
-      .filter((user) => user._id !== currentUser._id) // Filter out the current user
-      .map((user) => user.username) // Map the usernames
-      .join(", "); // Join the usernames with comma
+    return getOtherUsers(users)
+      .map((user) => user.username)
+      .join(", ");
   };
 
   return (
@@ -74,7 +78,17 @@ const ChatList = ({ onClickCallback }) => {
                 }}
                 active={selectedChatId === chat._id}
               >
-                <Avatar name={chat.chatName} status="available" />
+                <AvatarGroup size="md">
+                  {getOtherUsers(chat.users).map((user) => {
+                    return (
+                      <Avatar
+                        name={user.username}
+                        status="available"
+                        src={`data:image/svg+xml;base64,${user.avatar}`}
+                      />
+                    );
+                  })}
+                </AvatarGroup>
               </Conversation>
             );
           })}

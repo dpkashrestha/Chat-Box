@@ -73,7 +73,10 @@ const ChatWindow = ({ chatId }) => {
               position: "single",
             }}
           >
-            <Avatar name="Zoe" />
+            <Avatar
+              name={message?.sender?.username}
+              src={`data:image/svg+xml;base64,${message?.sender?.avatar}`}
+            />
           </Message>
         );
       })

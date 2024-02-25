@@ -1,8 +1,4 @@
 #root {
-  /* max-width: 1080px; */
-  /* margin: 200px;
-  padding: 2rem; */
-  /* text-align: center; */
   background-color: #050404;
 }
 
@@ -12,7 +8,6 @@
   flex-direction: column;
   align-items: center;
   min-height: 100vh;
-  /* background-color: beige; */
   background-color: #c6e3fa;
 }
 
@@ -88,13 +83,13 @@ button {
   margin: 1em;
 }
 
-.container {
+.avatar-container {
   display: flex;
   justify-content: center;
   align-items: center;
   flex-direction: column;
-  gap: 3rem;
-  background-color: #131324;
+  /* gap: 3rem; */
+  background-color: #c6e3fa;
   height: 100vh;
   width: 100vw;
 }
@@ -104,7 +99,7 @@ button {
 }
 
 .title-container h1 {
-  color: white;
+  color: black;
 }
 .avatars {
   display: flex;
@@ -125,10 +120,10 @@ button {
 }
 
 .selected {
-  border: 0.4rem solid #4e0eff;
+  border: 0.4rem solid #2f2255;
 }
 .submit-btn {
-  background-color: #4e0eff;
+  background-color: rgb(54, 54, 110);
   color: white;
   padding: 1rem 2rem;
   border: none;
@@ -140,5 +135,5 @@ button {
 }
 
 .submit-btn:hover {
-  background-color: #4e0eff;
+  background-color: #50447d;
 }

@@ -6,7 +6,7 @@ const messageResolvers = {
       const messages = Message.find({ chat: chatId })
         .populate({
           path: "sender",
-          select: "username",
+          select: ["username", "avatar"],
         })
         .populate({
           path: "chat",
