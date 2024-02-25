@@ -16,11 +16,18 @@ export const QUERY_CHATS = gql`
     allChats(chatName: $chatName) {
       _id
       chatName
+      users {
+        _id
+        username
+      }
       lastMessage {
+        _id
         content
         sender {
+          _id
           username
         }
+        createdAt
       }
     }
   }
@@ -37,24 +44,14 @@ export const QUERY_ME = gql`
 `;
 
 export const QUERY_MESSAGES = gql`
-  query {
+  query messages($chatId: ID!) {
     messages(chatId: $chatId) {
       _id
       content
       sender {
-        _id
         username
-        email
       }
-      chat {
-        _id
-        chatName
-        users {
-          _id
-          username
-          email
-        }
-      }
+      createdAt
     }
   }
 `;

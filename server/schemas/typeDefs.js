@@ -3,9 +3,9 @@ const typeDefs = `
     _id: ID!
     username: String!
     email: String!
-    password: String!
-    createdAt: String!
-    updatedAt: String!
+    password: String
+    createdAt: String
+    updatedAt: String
   }
 
   input UserInput {
@@ -14,21 +14,21 @@ const typeDefs = `
 
   type Chat {
     _id: ID!
-    chatName: String!
+    chatName: String
     users: [User]!
     groupAdmin: User
     lastMessage: Message
-    createdAt: String!
-    updatedAt: String!
+    createdAt: String
+    updatedAt: String
   }
 
   type Message {
     _id: ID!
     content: String!
     sender: User!
-    chat: Chat!
-    createdAt: String!
-    updatedAt: String!
+    chat: Chat
+    createdAt: String
+    updatedAt: String
   }
 
   type Query {

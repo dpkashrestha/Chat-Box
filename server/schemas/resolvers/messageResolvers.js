@@ -1,4 +1,4 @@
-const { Message, Chat } = require("../../models/index");
+const { Message, Chat, User } = require("../../models/index");
 
 const messageResolvers = {
   Query: {
