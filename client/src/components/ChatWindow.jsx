@@ -1,5 +1,5 @@
 import { useQuery, useMutation } from "@apollo/client";
-import { QUERY_MESSAGES } from "../utils/queries";
+import { QUERY_MESSAGES, QUERY_ME } from "../utils/queries";
 import { ADD_MESSAGE } from "../utils/mutations";
 import Picker from "emoji-picker-react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -9,6 +9,7 @@ import {
   MessageList,
   Message,
   MessageInput,
+  Button,
   SendButton,
   Avatar,
   ConversationHeader,
@@ -27,7 +28,9 @@ const ChatWindow = ({ chatId }) => {
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
 
   const inputRef = useRef();
-  const [addMessage, { error }] = useMutation(ADD_MESSAGE);
+  const [addMessage, { error }] = useMutation(ADD_MESSAGE, {
+    refetchQueries: [QUERY_MESSAGES, "messages"],
+  });
   const { loading, data } = useQuery(QUERY_MESSAGES, {
     variables: { chatId: chatId },
     onCompleted: (data) => {
@@ -35,13 +38,19 @@ const ChatWindow = ({ chatId }) => {
     },
   });
 
+  //TODO: add get one chat
+  // const { loading: chatLoading, data: chatData } = useQuery();
+
+  const { loading: userLoading, data: userData } = useQuery(QUERY_ME);
+  const me = userData?.me || {};
+
   const handleEmojiPickerHideShow = () => {
     setShowEmojiPicker(!showEmojiPicker);
   };
 
   const handleEmojiClick = (emoji, event) => {
     let msg = messageInputValue;
-    console.log("emohi:", emoji);
+    console.log("emoji:", emoji);
     msg += emoji.emoji;
     setMessageInputValue(msg);
   };
@@ -54,7 +63,6 @@ const ChatWindow = ({ chatId }) => {
       },
     });
 
-    setAllMessages([...allMessages, data.addMessage]);
     setMessageInputValue("");
   };
 
@@ -62,18 +70,34 @@ const ChatWindow = ({ chatId }) => {
     return (
       !loading &&
       allMessages.map((message) => {
+        const createdAt = new Date(parseInt(message?.createdAt));
+        const sentAt = createdAt.toLocaleDateString("en-us", {
+          year: "numeric",
+          month: "short",
+          day: "numeric",
+        });
         return (
           <Message
             key={message._id}
             model={{
               message: message?.content,
-              sentTime: "15 mins ago",
+              sentTime: sentAt,
               sender: message?.sender?.username,
-              direction: "outgoing",
+              direction:
+                message?.sender?._id === me?._id ? "outgoing" : "incoming",
               position: "single",
             }}
           >
-            <Avatar name="Zoe" />
+            {message?.sender?._id !== me?._id && (
+              <Avatar
+                name={message?.sender?.username}
+                src="https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg"
+              />
+            )}
+            <Message.Footer
+              sender={message?.sender?.username}
+              sentTime={sentAt}
+            />
           </Message>
         );
       })
@@ -117,12 +141,23 @@ const ChatWindow = ({ chatId }) => {
             borderTop: "1px dashed #d1dbe4",
           }}
         >
-          <div className="emoji">
-            <FontAwesomeIcon
+          <div className="emoji" style={{}}>
+            {/* <FontAwesomeIcon
               icon={faFaceSmile}
               onClick={handleEmojiPickerHideShow}
               style={{ color: "#E2AC00", fontSize: "30px" }}
-            />
+            /> */}
+            <div
+              onClick={handleEmojiPickerHideShow}
+              style={{
+                fontSize: "1.7em",
+                marginTop: "0.05em",
+                marginLeft: "0.5em",
+                marginRight: "-0.1em",
+              }}
+            >
+              😃
+            </div>
             {showEmojiPicker && <Picker onEmojiClick={handleEmojiClick} />}
           </div>
 
@@ -132,10 +167,12 @@ const ChatWindow = ({ chatId }) => {
             value={messageInputValue}
             sendButton={false}
             attachButton={false}
+            className="test"
             style={{
               flexGrow: 1,
               borderTop: 0,
               flexShrink: "initial",
+              marginRight: "0em",
             }}
           />
           <SendButton
@@ -143,10 +180,7 @@ const ChatWindow = ({ chatId }) => {
             onClick={() => handleSend(messageInputValue)}
             disabled={messageInputValue.length === 0}
             style={{
-              marginLeft: 0,
-              paddingLeft: 0,
-              paddingRight: 0,
-              width: 0,
+              width: "10vw",
             }}
           />
         </div>

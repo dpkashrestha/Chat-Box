@@ -49,6 +49,7 @@ export const QUERY_MESSAGES = gql`
       _id
       content
       sender {
+        _id
         username
       }
       createdAt
