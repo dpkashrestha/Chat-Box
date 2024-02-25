@@ -145,4 +145,7 @@
   .button-text {
     display: none;
   }
+  .button-icon {
+    margin-right: 0 !important;
+  }
 }

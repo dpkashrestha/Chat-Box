@@ -19,8 +19,10 @@ import {
   Loader,
 } from "@chatscope/chat-ui-kit-react";
 import { useState, useRef, useMemo, useCallback } from "react";
+import Auth from "../utils/auth";
 
 const ChatWindow = ({ chatId }) => {
+  const currentUser = Auth.getCurrentUser();
   const [messageInputValue, setMessageInputValue] = useState("");
   const [allMessages, setAllMessages] = useState([]);
 
@@ -39,9 +41,6 @@ const ChatWindow = ({ chatId }) => {
 
   //TODO: add get one chat
   // const { loading: chatLoading, data: chatData } = useQuery();
-
-  const { loading: userLoading, data: userData } = useQuery(QUERY_ME);
-  const me = userData?.me || {};
 
   const handleEmojiPickerHideShow = () => {
     setShowEmojiPicker(!showEmojiPicker);
@@ -83,11 +82,13 @@ const ChatWindow = ({ chatId }) => {
               sentTime: sentAt,
               sender: message?.sender?.username,
               direction:
-                message?.sender?._id === me?._id ? "outgoing" : "incoming",
+                message?.sender?._id === currentUser?._id
+                  ? "outgoing"
+                  : "incoming",
               position: "single",
             }}
           >
-            {message?.sender?._id !== me?._id && (
+            {message?.sender?._id !== currentUser?._id && (
               <Avatar
                 name={message?.sender?.username}
                 src={`data:image/svg+xml;base64,${message?.sender?.avatar}`}
@@ -179,6 +180,7 @@ const ChatWindow = ({ chatId }) => {
             disabled={messageInputValue.length === 0}
             style={{
               width: "10vw",
+              minWidth: "65px",
             }}
           />
         </div>

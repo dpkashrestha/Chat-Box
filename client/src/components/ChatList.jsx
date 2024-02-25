@@ -54,8 +54,11 @@ const ChatList = ({ onClickCallback }) => {
         onChange={(v) => setSearch(v)}
         onClearClick={() => setSearch("")}
       />
-      <Button border icon={<FontAwesomeIcon icon={faPlus} />}>
-        <div className="buttonText">New Group</div>
+      <Button
+        border
+        icon={<FontAwesomeIcon icon={faPlus} className="button-icon" />}
+      >
+        <span className="button-text">New Group</span>
       </Button>
 
       {loading ? (
@@ -63,32 +66,27 @@ const ChatList = ({ onClickCallback }) => {
       ) : (
         <ConversationList>
           {data.allChats.map((chat) => {
-            const message = chat.lastMessage;
+            const lastMessage = chat.lastMessage;
             return (
               <Conversation
                 key={chat._id}
                 name={
                   chat.chatName ? chat.chatName : getOtherUsernames(chat.users)
                 }
-                lastSenderName={message ? message.sender.username : null}
-                info={message ? message.content : "No messages yet"}
+                lastSenderName={
+                  lastMessage ? lastMessage.sender.username : null
+                }
+                info={lastMessage ? lastMessage.content : "No messages yet"}
                 onClick={() => {
                   setSelectedChatId(chat._id);
                   onClickCallback(chat._id);
                 }}
                 active={selectedChatId === chat._id}
               >
-                <AvatarGroup size="md">
-                  {getOtherUsers(chat.users).map((user) => {
-                    return (
-                      <Avatar
-                        name={user.username}
-                        status="available"
-                        src={`data:image/svg+xml;base64,${user.avatar}`}
-                      />
-                    );
-                  })}
-                </AvatarGroup>
+                <Avatar
+                  name={lastMessage.sender.username}
+                  src={`data:image/svg+xml;base64,${lastMessage.sender.avatar}`}
+                />
               </Conversation>
             );
           })}
@@ -100,9 +98,9 @@ const ChatList = ({ onClickCallback }) => {
         className="btn btn-danger"
         style={{ backgroundColor: "#DC3545", color: "white" }}
         onClick={Auth.logout}
-        icon={<FontAwesomeIcon icon={faSignOutAlt} />}
+        icon={<FontAwesomeIcon icon={faSignOutAlt} className="button-icon" />}
       >
-        <div className="buttonText">Logout</div>
+        <span className="button-text">Logout</span>
       </Button>
     </Sidebar>
   );
