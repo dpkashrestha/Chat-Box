@@ -15,7 +15,6 @@ import {
   VoiceCallButton,
   VideoCallButton,
   TypingIndicator,
-  MessageSeparator,
   Loader,
 } from "@chatscope/chat-ui-kit-react";
 import { useState, useRef, useMemo, useCallback } from "react";
