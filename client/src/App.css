@@ -80,6 +80,14 @@ button {
   color: #888;
 }
 
+.button {
+  color: blue;
+}
+
+.landing img {
+  margin: 1em;
+}
+
 .container {
   display: flex;
   justify-content: center;
