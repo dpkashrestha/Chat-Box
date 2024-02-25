@@ -32,6 +32,13 @@ class AuthService {
     return localStorage.getItem("id_token");
   }
 
+  signUp(idToken, user) {
+    // Saves user token to localStorage
+    localStorage.setItem("id_token", idToken);
+    localStorage.setItem("user", JSON.stringify(user));
+    window.location.assign("/setAvatar");
+  }
+
   login(idToken, user) {
     // Saves user token to localStorage
     localStorage.setItem("id_token", idToken);

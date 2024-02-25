@@ -50,6 +50,22 @@ const userResolvers = {
 
       return { token, user };
     },
+    addUserAvatar: async (parent, { userId, avatar }) => {
+      try {
+        const user = await User.findById(userId);
+
+        if (!user) {
+          throw AuthenticationError;
+        }
+        user.avatar = avatar;
+        const savedUser = await user.save();
+
+        return savedUser;
+      } catch (error) {
+        console.error("Error updating user:", error);
+        throw error;
+      }
+    },
     login: async (parent, { email, password }) => {
       const user = await User.findOne({ email });
 

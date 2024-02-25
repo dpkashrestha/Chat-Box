@@ -7,6 +7,8 @@ export const LOGIN_USER = gql`
       user {
         _id
         username
+        email
+        avatar
       }
     }
   }
@@ -23,6 +25,17 @@ export const ADD_USER = gql`
         createdAt
         updatedAt
       }
+    }
+  }
+`;
+
+export const ADD_USER_AVATAR = gql`
+  mutation addUserAvatar($userId: ID!, $avatar: String!) {
+    addUserAvatar(userId: $userId, avatar: $avatar) {
+      _id
+      username
+      email
+      avatar
     }
   }
 `;

@@ -17,9 +17,8 @@ import { useQuery } from "@apollo/client";
 import { QUERY_CHATS } from "../utils/queries";
 import Auth from "../utils/auth";
 
-const currentUser = Auth.getCurrentUser();
-
 const ChatList = ({ onClickCallback }) => {
+  const currentUser = Auth.getCurrentUser();
   const [search, setSearch] = useState("");
   const [selectedChatId, setSelectedChatId] = useState(null);
   const { loading, data } = useQuery(QUERY_CHATS, {
@@ -39,7 +38,10 @@ const ChatList = ({ onClickCallback }) => {
   return (
     <Sidebar position="left" scrollable={false}>
       <ConversationHeader>
-        {/* <Avatar name={currentUser.username} /> */}
+        <Avatar
+          name={currentUser.username}
+          src={`data:image/svg+xml;base64,${currentUser.avatar}`}
+        />
         <ConversationHeader.Content userName={currentUser.username} />
       </ConversationHeader>
       <Search
