@@ -8,6 +8,7 @@ import {
   Button,
   Loader,
   Avatar,
+  AvatarGroup,
 } from "@chatscope/chat-ui-kit-react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSignOutAlt, faPlus } from "@fortawesome/free-solid-svg-icons";
@@ -17,9 +18,8 @@ import { useQuery } from "@apollo/client";
 import { QUERY_CHATS } from "../utils/queries";
 import Auth from "../utils/auth";
 
-const currentUser = Auth.getCurrentUser();
-
 const ChatList = ({ onClickCallback }) => {
+  const currentUser = Auth.getCurrentUser();
   const [search, setSearch] = useState("");
   const [selectedChatId, setSelectedChatId] = useState(null);
   const { loading, data } = useQuery(QUERY_CHATS, {
@@ -29,17 +29,23 @@ const ChatList = ({ onClickCallback }) => {
     },
   });
 
+  const getOtherUsers = (users) => {
+    return users.filter((user) => user._id !== currentUser._id);
+  };
+
   const getOtherUsernames = (users) => {
-    return users
-      .filter((user) => user._id !== currentUser._id) // Filter out the current user
-      .map((user) => user.username) // Map the usernames
-      .join(", "); // Join the usernames with comma
+    return getOtherUsers(users)
+      .map((user) => user.username)
+      .join(", ");
   };
 
   return (
     <Sidebar position="left" scrollable={false}>
       <ConversationHeader>
-        {/* <Avatar name={currentUser.username} /> */}
+        <Avatar
+          name={currentUser.username}
+          src={`data:image/svg+xml;base64,${currentUser.avatar}`}
+        />
         <ConversationHeader.Content userName={currentUser.username} />
       </ConversationHeader>
       <Search
@@ -49,7 +55,7 @@ const ChatList = ({ onClickCallback }) => {
         onClearClick={() => setSearch("")}
       />
       <Button border icon={<FontAwesomeIcon icon={faPlus} />}>
-        New Group
+        <div className="buttonText">New Group</div>
       </Button>
 
       {loading ? (
@@ -72,7 +78,17 @@ const ChatList = ({ onClickCallback }) => {
                 }}
                 active={selectedChatId === chat._id}
               >
-                <Avatar name={chat.chatName} status="available" />
+                <AvatarGroup size="md">
+                  {getOtherUsers(chat.users).map((user) => {
+                    return (
+                      <Avatar
+                        name={user.username}
+                        status="available"
+                        src={`data:image/svg+xml;base64,${user.avatar}`}
+                      />
+                    );
+                  })}
+                </AvatarGroup>
               </Conversation>
             );
           })}
@@ -86,7 +102,7 @@ const ChatList = ({ onClickCallback }) => {
         onClick={Auth.logout}
         icon={<FontAwesomeIcon icon={faSignOutAlt} />}
       >
-        Logout
+        <div className="buttonText">Logout</div>
       </Button>
     </Sidebar>
   );

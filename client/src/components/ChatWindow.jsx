@@ -16,7 +16,6 @@ import {
   VoiceCallButton,
   VideoCallButton,
   TypingIndicator,
-  MessageSeparator,
   Loader,
 } from "@chatscope/chat-ui-kit-react";
 import { useState, useRef, useMemo, useCallback } from "react";
@@ -91,7 +90,7 @@ const ChatWindow = ({ chatId }) => {
             {message?.sender?._id !== me?._id && (
               <Avatar
                 name={message?.sender?.username}
-                src="https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg"
+                src={`data:image/svg+xml;base64,${message?.sender?.avatar}`}
               />
             )}
             <Message.Footer
@@ -167,7 +166,6 @@ const ChatWindow = ({ chatId }) => {
             value={messageInputValue}
             sendButton={false}
             attachButton={false}
-            className="test"
             style={{
               flexGrow: 1,
               borderTop: 0,

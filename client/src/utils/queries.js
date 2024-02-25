@@ -1,11 +1,23 @@
 import { gql } from "@apollo/client";
 
+export const QUERY_ME = gql`
+  query {
+    me {
+      _id
+      username
+      email
+      avatar
+    }
+  }
+`;
+
 export const QUERY_USERS = gql`
   query {
     users {
       _id
       username
       email
+      avatar
     }
   }
 `;
@@ -19,6 +31,7 @@ export const QUERY_CHATS = gql`
       users {
         _id
         username
+        avatar
       }
       lastMessage {
         _id
@@ -26,19 +39,10 @@ export const QUERY_CHATS = gql`
         sender {
           _id
           username
+          avatar
         }
         createdAt
       }
-    }
-  }
-`;
-
-export const QUERY_ME = gql`
-  query {
-    me {
-      _id
-      username
-      email
     }
   }
 `;
@@ -51,6 +55,7 @@ export const QUERY_MESSAGES = gql`
       sender {
         _id
         username
+        avatar
       }
       createdAt
     }

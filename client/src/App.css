@@ -1,8 +1,4 @@
 #root {
-  /* max-width: 1080px; */
-  /* margin: 200px;
-  padding: 2rem; */
-  /* text-align: center; */
   background-color: #050404;
 }
 
@@ -12,7 +8,6 @@
   flex-direction: column;
   align-items: center;
   min-height: 100vh;
-  /* background-color: beige; */
   background-color: #c6e3fa;
 }
 
@@ -34,8 +29,6 @@
 .landing h1 {
   font-weight: 800;
   font-size: 6em;
-  /* margin-bottom: 2.5rem;
-  color: #6f0fec; */
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
 
@@ -86,6 +79,60 @@
 
 .landing img {
   margin: 1em;
+}
+
+.avatar-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  background-color: #c6e3fa;
+  height: 100vh;
+  width: 100vw;
+}
+
+.loader {
+  max-inline-size: 100%;
+}
+
+.title-container h1 {
+  color: black;
+}
+.avatars {
+  display: flex;
+  gap: 2rem;
+}
+.avatar {
+  border: 0.4rem solid transparent;
+  padding: 0.4rem;
+  border-radius: 5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: 0.5s ease-in-out;
+}
+.avatar img {
+  height: 6rem;
+  transition: 0.5s ease-in-out;
+}
+
+.selected {
+  border: 0.4rem solid #2f2255;
+}
+.submit-btn {
+  background-color: rgb(54, 54, 110);
+  color: white;
+  padding: 1rem 2rem;
+  border: none;
+  font-weight: bold;
+  cursor: pointer;
+  border-radius: 0.4rem;
+  font-size: 1rem;
+  text-transform: uppercase;
+}
+
+.submit-btn:hover {
+  background-color: #50447d;
 }
 
 .cs-chat-container
