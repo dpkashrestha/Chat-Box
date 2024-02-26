@@ -85,7 +85,7 @@ const ChatList = ({ onClickCallback }) => {
                 info={lastMessage ? lastMessage.content : "No messages yet"}
                 onClick={() => {
                   setSelectedChatId(chat._id);
-                  onClickCallback(chat._id);
+                  onClickCallback(chat);
                 }}
                 active={selectedChatId === chat._id}
               >
@@ -122,7 +122,7 @@ const ChatList = ({ onClickCallback }) => {
       <Button
         border
         className="btn btn-danger"
-        style={{ backgroundColor: "#DC3545", color: "white" }}
+        style={{ backgroundColor: "#016DB3", color: "white" }}
         onClick={Auth.logout}
         icon={<FontAwesomeIcon icon={faSignOutAlt} className="button-icon" />}
       >

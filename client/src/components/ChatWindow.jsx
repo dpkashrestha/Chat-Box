@@ -2,14 +2,11 @@ import { useQuery, useMutation } from "@apollo/client";
 import { QUERY_MESSAGES, QUERY_ME } from "../utils/queries";
 import { ADD_MESSAGE } from "../utils/mutations";
 import Picker from "emoji-picker-react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faFaceSmile } from "@fortawesome/free-solid-svg-icons";
 import {
   ChatContainer,
   MessageList,
   Message,
   MessageInput,
-  Button,
   SendButton,
   Avatar,
   ConversationHeader,
@@ -21,7 +18,7 @@ import {
 import { useState, useRef, useMemo, useCallback } from "react";
 import Auth from "../utils/auth";
 
-const ChatWindow = ({ chatId }) => {
+const ChatWindow = ({ activeChat }) => {
   const currentUser = Auth.getCurrentUser();
   const [messageInputValue, setMessageInputValue] = useState("");
   const [allMessages, setAllMessages] = useState([]);
@@ -33,11 +30,19 @@ const ChatWindow = ({ chatId }) => {
     refetchQueries: [QUERY_MESSAGES, "messages"],
   });
   const { loading, data } = useQuery(QUERY_MESSAGES, {
-    variables: { chatId: chatId },
+    variables: { chatId: activeChat._id },
     onCompleted: (data) => {
       console.log(data);
     },
   });
+
+  // const[otherUsers, setOtherUsers] = useState(users.filter((user) => user._id !== currentUser._id))
+
+  const getOtherUsers = (users) => {
+    return users.filter((user) => user._id !== currentUser._id);
+  };
+
+  const otherUsers = getOtherUsers(activeChat.users);
 
   //TODO: add get singleChat
   // const { loading: chatLoading, data: chatData } = useQuery();
@@ -57,7 +62,7 @@ const ChatWindow = ({ chatId }) => {
     const { data } = await addMessage({
       variables: {
         content: message,
-        chatId: chatId,
+        chatId: activeChat._id,
       },
     });
 
@@ -88,12 +93,12 @@ const ChatWindow = ({ chatId }) => {
               position: "single",
             }}
           >
-            {message?.sender?._id !== currentUser?._id && (
-              <Avatar
-                name={message?.sender?.username}
-                src={`data:image/svg+xml;base64,${message?.sender?.avatar}`}
-              />
-            )}
+            {/* {message?.sender?._id !== currentUser?._id && ( */}
+            <Avatar
+              name={message?.sender?.username}
+              src={`data:image/svg+xml;base64,${message?.sender?.avatar}`}
+            />
+            {/* )} */}
             <Message.Footer
               sender={message?.sender?.username}
               sentTime={sentAt}
@@ -117,9 +122,27 @@ const ChatWindow = ({ chatId }) => {
       <ChatContainer>
         <ConversationHeader className="test-class">
           <ConversationHeader.Back />
-          <Avatar name="Zoe" />
+          {otherUsers.length > 1 ? (
+            <AvatarGroup size="sm">
+              {otherUsers.slice(0, 4).map((user) => {
+                return (
+                  <Avatar
+                    key={user._id}
+                    name={user.username}
+                    src={`data:image/svg+xml;base64,${user.avatar}`}
+                  />
+                );
+              })}
+            </AvatarGroup>
+          ) : (
+            <Avatar
+              key={otherUsers[0]._id}
+              name={otherUsers[0].username}
+              src={`data:image/svg+xml;base64,${otherUsers[0].avatar}`}
+            />
+          )}
           <ConversationHeader.Content
-            userName="Zoe"
+            userName={activeChat.chatName}
             info="Active 10 mins ago"
           />
           <ConversationHeader.Actions>
@@ -138,11 +161,6 @@ const ChatWindow = ({ chatId }) => {
           }}
         >
           <div className="emoji" style={{}}>
-            {/* <FontAwesomeIcon
-              icon={faFaceSmile}
-              onClick={handleEmojiPickerHideShow}
-              style={{ color: "#E2AC00", fontSize: "30px" }}
-            /> */}
             <div
               onClick={handleEmojiPickerHideShow}
               style={{

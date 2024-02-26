@@ -6,9 +6,9 @@ import ChatWindow from "../components/ChatWindow";
 import { useState } from "react";
 
 const ChatPage = () => {
-  const [activeChatId, setActiveChatId] = useState(null);
-  const setActiveConversation = (chatId) => {
-    setActiveChatId(chatId);
+  const [activeChat, setActiveChat] = useState(null);
+  const setActiveConversation = (chat) => {
+    setActiveChat(chat);
   };
 
   return (
@@ -21,7 +21,7 @@ const ChatPage = () => {
     >
       <MainContainer responsive>
         <ChatList onClickCallback={setActiveConversation} />
-        {activeChatId && <ChatWindow chatId={activeChatId} />}
+        {activeChat && <ChatWindow activeChat={activeChat} />}
       </MainContainer>
     </div>
   );
