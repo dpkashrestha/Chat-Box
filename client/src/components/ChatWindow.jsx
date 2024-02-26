@@ -36,8 +36,6 @@ const ChatWindow = ({ activeChat }) => {
     },
   });
 
-  // const[otherUsers, setOtherUsers] = useState(users.filter((user) => user._id !== currentUser._id))
-
   const getOtherUsers = (users) => {
     return users.filter((user) => user._id !== currentUser._id);
   };

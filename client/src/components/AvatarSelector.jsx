@@ -5,6 +5,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { ADD_USER_AVATAR } from "../utils/mutations";
 import { useMutation } from "@apollo/client";
+import Auth from "../utils/auth";
 
 import Loader from "./Loader";
 
@@ -25,9 +26,9 @@ const AvatarSelector = () => {
     theme: "light",
   };
 
-  //   useEffect(async () => {
-  //     if (!localStorage.getItem("user")) navigate("/login");
-  //   }, []);
+  if (!Auth.loggedIn()) {
+    window.location.assign("/");
+  }
 
   const setProfilePicture = async () => {
     if (selectedAvatar === undefined) {
@@ -53,17 +54,25 @@ const AvatarSelector = () => {
     }
   };
 
-  useEffect(async () => {
-    const data = [];
-    for (let i = 0; i < 4; i++) {
-      const image = await axios.get(
-        `${AVATAR_API_URL}/${Math.round(Math.random() * 1000)}`
-      );
-      const buffer = new Buffer(image.data);
-      data.push(buffer.toString("base64"));
-    }
-    setAvatars(data);
-    setIsLoading(false);
+  useEffect(() => {
+    const callAvatarApi = async () => {
+      const fetchedAvatars = [];
+      for (let i = 0; i < 4; i++) {
+        try {
+          const image = await axios.get(
+            `${AVATAR_API_URL}/${Math.round(Math.random() * 1000)}`
+          );
+          const buffer = new Buffer(image.data);
+          fetchedAvatars.push(buffer.toString("base64"));
+        } catch (error) {
+          console.error("Error fetching avatar:", error);
+        }
+      }
+      setAvatars(fetchedAvatars);
+      setIsLoading(false);
+    };
+
+    callAvatarApi();
   }, []);
 
   return (
@@ -79,6 +88,7 @@ const AvatarSelector = () => {
             {avatars.map((avatar, index) => {
               return (
                 <div
+                  key={index}
                   className={`avatar ${
                     selectedAvatar === index ? "selected" : ""
                   }`}
