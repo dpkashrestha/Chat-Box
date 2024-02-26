@@ -56,6 +56,22 @@ const ChatList = ({ onClickCallback }) => {
           src={`data:image/svg+xml;base64,${currentUser.avatar}`}
         />
         <ConversationHeader.Content userName={currentUser.username} />
+        <ConversationHeader.Actions>
+          <Button
+            border
+            className="btn btn-danger"
+            style={{
+              backgroundColor: "#016DB3",
+              color: "white",
+              minWidth: "40px",
+              minHeight: "40px",
+            }}
+            onClick={Auth.logout}
+            icon={
+              <FontAwesomeIcon icon={faSignOutAlt} className="button-icon" />
+            }
+          ></Button>
+        </ConversationHeader.Actions>
       </ConversationHeader>
       <Search
         placeholder="Search..."
@@ -78,7 +94,7 @@ const ChatList = ({ onClickCallback }) => {
         <Loader style={{ justifyContent: "center" }}>Loading</Loader>
       ) : (
         <>
-          <Accordion defaultActiveKey="0">
+          <Accordion defaultActiveKey={["0"]} alwaysOpen>
             <Accordion.Item eventKey="0">
               <Accordion.Header>Chats</Accordion.Header>
               <Accordion.Body>
@@ -156,16 +172,6 @@ const ChatList = ({ onClickCallback }) => {
           </Accordion>
         </>
       )}
-
-      <Button
-        border
-        className="btn btn-danger"
-        style={{ backgroundColor: "#016DB3", color: "white" }}
-        onClick={Auth.logout}
-        icon={<FontAwesomeIcon icon={faSignOutAlt} className="button-icon" />}
-      >
-        <span className="button-text">Logout</span>
-      </Button>
     </Sidebar>
   );
 };
