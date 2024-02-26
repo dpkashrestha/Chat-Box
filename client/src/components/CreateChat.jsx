@@ -257,24 +257,22 @@ const CreateModal = ({ newGroup, chatId, children }) => {
                           name={user.username}
                           info={user.email}
                           onClick={() => {
-                            const _id = user._id;
-                            const username = user.username;
+                            const newUser = {
+                              _id: user._id,
+                              username: user.username,
+                            };
                             console.log(
-                              _id,
-                              username,
-                              "included",
+                              newUser,
                               selectedUsers
+                                .map((u) => u._id)
+                                .includes(newUser._id)
                             );
                             if (
-                              !selectedUsers.includes({
-                                _id,
-                                username,
-                              })
+                              !selectedUsers
+                                .map((u) => u._id)
+                                .includes(newUser._id)
                             ) {
-                              setSelectedUsers([
-                                ...selectedUsers,
-                                { _id, username },
-                              ]);
+                              setSelectedUsers([...selectedUsers, newUser]);
                             }
                           }}
                           active={false}
