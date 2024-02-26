@@ -25,19 +25,22 @@ const CreateModal = ({ newGroup, chatId, children }) => {
   const [validated, setValidated] = useState(false);
   const [noName, setNoName] = useState(false);
 
-  const [searchUsers, { loading, data }] = useLazyQuery(QUERY_USERS, {
-    onCompleted: (d) => {
-      setSearchResult(data.users);
-      console.log(d);
-    },
-    onError: (err) => {
-      console.error(err);
-    },
-  });
+  const [searchUsers, { loading: userLoading, data: userData }] = useLazyQuery(
+    QUERY_USERS,
+    {
+      onCompleted: (d) => {
+        setSearchResult(d.users);
+        console.log(d);
+      },
+      onError: (err) => {
+        console.error(err);
+      },
+    }
+  );
 
   const [createChat, { loading: chatLoading }] = useMutation(ADD_CHAT, {
-    onCompleted: (data) => {
-      console.log(data);
+    onCompleted: (d) => {
+      console.log(d);
     },
   });
 
@@ -236,9 +239,9 @@ const CreateModal = ({ newGroup, chatId, children }) => {
                 />
               </InputGroup>
             </Form.Group>
-            {data && (
+            {userData && (
               <>
-                {loading ? (
+                {userLoading ? (
                   <div
                     style={{
                       justifyContent: "center",
@@ -257,24 +260,22 @@ const CreateModal = ({ newGroup, chatId, children }) => {
                           name={user.username}
                           info={user.email}
                           onClick={() => {
-                            const _id = user._id;
-                            const username = user.username;
+                            const newUser = {
+                              _id: user._id,
+                              username: user.username,
+                            };
                             console.log(
-                              _id,
-                              username,
-                              "included",
+                              newUser,
                               selectedUsers
+                                .map((u) => u._id)
+                                .includes(newUser._id)
                             );
                             if (
-                              !selectedUsers.includes({
-                                _id,
-                                username,
-                              })
+                              !selectedUsers
+                                .map((u) => u._id)
+                                .includes(newUser._id)
                             ) {
-                              setSelectedUsers([
-                                ...selectedUsers,
-                                { _id, username },
-                              ]);
+                              setSelectedUsers([...selectedUsers, newUser]);
                             }
                           }}
                           active={false}
