@@ -3,6 +3,7 @@ import LoginForm from "../components/LoginForm";
 import SignUpForm from "../components/SignupForm";
 import { LandingHeader } from "../components/LandingHeader";
 import { LandingFooter } from "../components/LandingFooter";
+import Auth from "../utils/auth";
 
 const LandingPage = () => {
   const [showSignup, setShowSignup] = useState(false);
@@ -14,6 +15,10 @@ const LandingPage = () => {
   const handleShowLogin = () => {
     setShowSignup(false);
   };
+
+  if (Auth.loggedIn()) {
+    window.location.assign("/chat");
+  }
 
   return (
     <>
