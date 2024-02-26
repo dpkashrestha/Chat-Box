@@ -13,6 +13,14 @@ export function LandingFooter(props) {
         >
           chatscope
         </a>
+
+      <a 
+      href="https://buy.stripe.com/test_7sIaIqaxafRx4r66oo"
+      rel="noopener noreferrer"
+      target="_blank"
+      className="ml-2"
+      >Support the developers</a>
+       
       </div>
     </>
   );
