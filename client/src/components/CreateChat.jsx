@@ -8,10 +8,10 @@ import {
   Conversation,
   Avatar,
 } from "@chatscope/chat-ui-kit-react";
-import { Modal, Form } from "react-bootstrap";
+import { Modal, Form, InputGroup, Col } from "react-bootstrap";
 
 import { useState, useRef, useEffect } from "react";
-import { useLazyQuery, useQuery } from "@apollo/client";
+import { useLazyQuery, useQuery, useMutation } from "@apollo/client";
 import { QUERY_USERS } from "../utils/queries";
 import { ADD_CHAT } from "../utils/mutations";
 
@@ -21,6 +21,8 @@ const CreateModal = ({ newGroup, chatId, children }) => {
   const [groupChatName, setGroupChatName] = useState("");
   const [selectedUsers, setSelectedUsers] = useState([]);
   const [searchResult, setSearchResult] = useState([]);
+  const [validated, setValidated] = useState(false);
+  const [noName, setNoName] = useState(false);
 
   const [searchUsers, { loading, data }] = useLazyQuery(QUERY_USERS, {
     onCompleted: (d) => {
@@ -29,6 +31,12 @@ const CreateModal = ({ newGroup, chatId, children }) => {
     },
     onError: (err) => {
       console.error(err);
+    },
+  });
+
+  const [createChat, { loading: chatLoading }] = useMutation(ADD_CHAT, {
+    onCompleted: (data) => {
+      console.log(data);
     },
   });
 
@@ -81,49 +89,109 @@ const CreateModal = ({ newGroup, chatId, children }) => {
           </Modal.Title>
         </Modal.Header>
         <Form
+          noValidate
+          validated={validated}
           onSubmit={(e) => {
-            if (newGroup) {
+            e.preventDefault();
+            const form = e.currentTarget;
+            if (form.checkValidity() === false) {
               e.preventDefault();
-              console.log(`Created: ${groupChatName}`);
-            } else if (!newGroup) {
-              console.log(`Edited: ${groupChatName}`);
+              e.stopPropagation();
+              console.log("not validated");
+              setValidated(true);
+              setNoName(true);
+            } else {
+              if (newGroup) {
+                /* createChat({
+                variables: { chatId: groupChatName, users: selectedUsers },
+              }); */
+                console.log(`Created: ${groupChatName}`);
+              } else if (!newGroup) {
+                console.log(`Edited: ${groupChatName}`);
+              }
+
+              setValidated(false);
             }
           }}
         >
           <Modal.Body>
-            <div
-              as={MessageInput}
-              style={{
-                display: "flex",
-                flexDirection: "row",
-                margin: "0.2em 0em",
-              }}
-            >
-              <MessageInput
-                ref={inputRef}
-                placeholder="Chat Name"
-                onChange={(v) => setGroupChatName(v)}
-                value={groupChatName}
-                sendButton={false}
-                attachButton={false}
-                style={{
-                  flexGrow: 1,
-                  flexShrink: "initial",
-                }}
-              />
-            </div>
-
-            <Search
-              placeholder="Search users"
-              value={search}
-              onChange={(v) => setSearch(v)}
-              onClearClick={() => setSearch("")}
-              style={{
-                flexGrow: 1,
-                flexShrink: "initial",
-              }}
-            />
-
+            <Form.Group md="4" controlId="validationCustomUsername">
+              <InputGroup hasValidation>
+                <div
+                  className="cs-message-input__content-editor-wrapper"
+                  style={{
+                    height: "39.48px",
+                    margin: "0.2em 0em",
+                  }}
+                >
+                  <div
+                    className="scrollbar-container cs-message-input__content-editor-container ps"
+                    style={{
+                      height: "20.3px",
+                    }}
+                  >
+                    <Form.Control
+                      required={true}
+                      ref={inputRef}
+                      type="text"
+                      placeholder="Chat Name"
+                      onChange={(e) => {
+                        if (e.target) {
+                          var name = e.target.value;
+                        } else {
+                          var name = e;
+                        }
+                        setNoName(false);
+                        setGroupChatName(name);
+                      }}
+                      className="cs-message-input__content-editor"
+                      value={groupChatName}
+                      /* as={MessageInput}
+                      sendButton={false}
+                      attachButton={false} */
+                      style={{
+                        height: "20.3px",
+                        boxShadow: "0 0",
+                        backgroundColor: "transparent",
+                        /* flexGrow: 1,
+                        flexShrink: "initial",
+                        display: "flex",
+                        flexDirection: "row",
+                        margin: "0.2em 0em", */
+                      }}
+                    />
+                  </div>
+                </div>
+                {noName && (
+                  <Form.Control.Feedback
+                    type="invalid"
+                    style={{
+                      display: "block",
+                      margin: "-0.2em 0.8em .5em",
+                    }}
+                  >
+                    Please choose a group name.
+                  </Form.Control.Feedback>
+                )}
+              </InputGroup>
+            </Form.Group>
+            <div>Selected Users Goes Here</div>
+            <Form.Group md="4" controlId="validationCustomUsername">
+              <InputGroup hasValidation>
+                <Form.Control
+                  required={true}
+                  as={Search}
+                  placeholder="Search users"
+                  value={search}
+                  onChange={(v) => setSearch(v)}
+                  onClearClick={() => setSearch("")}
+                  style={{
+                    flexGrow: 1,
+                    flexShrink: "initial",
+                  }}
+                />
+              </InputGroup>
+            </Form.Group>
             {data && (
               <>
                 {loading ? (
