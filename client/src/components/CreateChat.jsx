@@ -8,7 +8,8 @@ import {
   Conversation,
   Avatar,
 } from "@chatscope/chat-ui-kit-react";
-import { Modal, Form, InputGroup, Col } from "react-bootstrap";
+// import Button from "react-bootstrap/Button";
+import { Modal, Form, InputGroup, Badge, Button as Btn } from "react-bootstrap";
 
 import { useState, useRef, useEffect } from "react";
 import { useLazyQuery, useQuery, useMutation } from "@apollo/client";
@@ -24,19 +25,22 @@ const CreateModal = ({ newGroup, chatId, children }) => {
   const [validated, setValidated] = useState(false);
   const [noName, setNoName] = useState(false);
 
-  const [searchUsers, { loading, data }] = useLazyQuery(QUERY_USERS, {
-    onCompleted: (d) => {
-      setSearchResult(data.users);
-      console.log(d);
-    },
-    onError: (err) => {
-      console.error(err);
-    },
-  });
+  const [searchUsers, { loading: userLoading, data: userData }] = useLazyQuery(
+    QUERY_USERS,
+    {
+      onCompleted: (d) => {
+        setSearchResult(d.users);
+        console.log(d);
+      },
+      onError: (err) => {
+        console.error(err);
+      },
+    }
+  );
 
   const [createChat, { loading: chatLoading }] = useMutation(ADD_CHAT, {
-    onCompleted: (data) => {
-      console.log(data);
+    onCompleted: (d) => {
+      console.log(d);
     },
   });
 
@@ -65,6 +69,7 @@ const CreateModal = ({ newGroup, chatId, children }) => {
     setShow(false);
     setSearch("");
     setGroupChatName("");
+    setSelectedUsers([]);
   };
   const handleShow = async () => {
     setShow(true);
@@ -175,7 +180,50 @@ const CreateModal = ({ newGroup, chatId, children }) => {
                 )}
               </InputGroup>
             </Form.Group>
-            <div>Selected Users Goes Here</div>
+            {selectedUsers && (
+              <div style={{ margin: "0.3em" }}>
+                {selectedUsers.map((user) => {
+                  const _id = user._id;
+                  return (
+                    <Btn
+                      key={_id}
+                      className="cs-button cs-button--border"
+                      onClick={() => {
+                        const newUsers = selectedUsers.filter((u) => {
+                          console.log("id", u._id, _id);
+                          return u._id !== _id;
+                        });
+                        console.log(newUsers);
+                        setSelectedUsers(newUsers);
+                      }}
+                      style={{
+                        opacity: "1",
+                        backgroundColor: "transparent",
+                        color: "#6ea9d7",
+                        borderColor: "#6ea9d7",
+                        margin: "0.1em",
+                        justifyContent: "start",
+                        display: "inline-flex",
+                      }}
+                    >
+                      {user.username}
+                      <Badge
+                        pill
+                        bg="danger"
+                        className="selectedUsers"
+                        style={{
+                          fontSize: "0.5em",
+                          marginLeft: "0.4em",
+                          marginBlockStart: "0.8em",
+                        }}
+                      >
+                        X
+                      </Badge>
+                    </Btn>
+                  );
+                })}
+              </div>
+            )}
             <Form.Group md="4" controlId="validationCustomUsername">
               <InputGroup hasValidation>
                 <Form.Control
@@ -192,9 +240,9 @@ const CreateModal = ({ newGroup, chatId, children }) => {
                 />
               </InputGroup>
             </Form.Group>
-            {data && (
+            {userData && (
               <>
-                {loading ? (
+                {userLoading ? (
                   <div
                     style={{
                       justifyContent: "center",
@@ -212,7 +260,25 @@ const CreateModal = ({ newGroup, chatId, children }) => {
                           key={user._id}
                           name={user.username}
                           info={user.email}
-                          onClick={() => {}}
+                          onClick={() => {
+                            const newUser = {
+                              _id: user._id,
+                              username: user.username,
+                            };
+                            console.log(
+                              newUser,
+                              selectedUsers
+                                .map((u) => u._id)
+                                .includes(newUser._id)
+                            );
+                            if (
+                              !selectedUsers
+                                .map((u) => u._id)
+                                .includes(newUser._id)
+                            ) {
+                              setSelectedUsers([...selectedUsers, newUser]);
+                            }
+                          }}
                           active={false}
                         >
                           <Avatar
