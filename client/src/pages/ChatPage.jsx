@@ -4,12 +4,17 @@ import { MainContainer } from "@chatscope/chat-ui-kit-react";
 import ChatList from "../components/ChatList";
 import ChatWindow from "../components/ChatWindow";
 import { useState } from "react";
+import Auth from "../utils/auth";
 
 const ChatPage = () => {
-  const [activeChatId, setActiveChatId] = useState(null);
-  const setActiveConversation = (chatId) => {
-    setActiveChatId(chatId);
+  const [activeChat, setActiveChat] = useState(null);
+  const setActiveConversation = (chat) => {
+    setActiveChat(chat);
   };
+
+  if (!Auth.loggedIn()) {
+    window.location.assign("/");
+  }
 
   return (
     <div
@@ -21,7 +26,7 @@ const ChatPage = () => {
     >
       <MainContainer responsive>
         <ChatList onClickCallback={setActiveConversation} />
-        {activeChatId && <ChatWindow chatId={activeChatId} />}
+        {activeChat && <ChatWindow activeChat={activeChat} />}
       </MainContainer>
     </div>
   );
