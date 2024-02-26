@@ -10,6 +10,8 @@ import {
   Avatar,
   AvatarGroup,
 } from "@chatscope/chat-ui-kit-react";
+import CreateModal from "./CreateChat";
+
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSignOutAlt, faPlus } from "@fortawesome/free-solid-svg-icons";
 
@@ -21,6 +23,7 @@ import Auth from "../utils/auth";
 const ChatList = ({ onClickCallback }) => {
   const currentUser = Auth.getCurrentUser();
   const [search, setSearch] = useState("");
+  const [newGroup, setNewGroup] = useState(true);
   const [selectedChatId, setSelectedChatId] = useState(null);
   const { loading, data } = useQuery(QUERY_CHATS, {
     variables: { chatName: search },
@@ -54,41 +57,62 @@ const ChatList = ({ onClickCallback }) => {
         onChange={(v) => setSearch(v)}
         onClearClick={() => setSearch("")}
       />
-      <Button border icon={<FontAwesomeIcon icon={faPlus} />}>
-        New Group
-      </Button>
+      <CreateModal newGroup={newGroup}>
+        <Button
+          border
+          style={{ width: "100%", height: "100%", margin: "0em" }}
+          onClick={() => setNewGroup(true)}
+          icon={<FontAwesomeIcon icon={faPlus} className="button-icon" />}
+        >
+          <span className="button-text">New Group</span>
+        </Button>
+      </CreateModal>
 
       {loading ? (
-        <Loader>Loading</Loader>
+        <Loader style={{ justifyContent: "center" }}>Loading</Loader>
       ) : (
         <ConversationList>
           {data.allChats.map((chat) => {
-            const message = chat.lastMessage;
+            const otherUsers = getOtherUsers(chat.users);
+            const lastMessage = chat.lastMessage;
             return (
               <Conversation
                 key={chat._id}
-                name={
-                  chat.chatName ? chat.chatName : getOtherUsernames(chat.users)
+                name={chat.chatName}
+                lastSenderName={
+                  lastMessage ? lastMessage.sender.username : null
                 }
-                lastSenderName={message ? message.sender.username : null}
-                info={message ? message.content : "No messages yet"}
+                info={lastMessage ? lastMessage.content : "No messages yet"}
                 onClick={() => {
                   setSelectedChatId(chat._id);
                   onClickCallback(chat._id);
                 }}
                 active={selectedChatId === chat._id}
               >
-                <AvatarGroup size="md">
-                  {getOtherUsers(chat.users).map((user) => {
-                    return (
-                      <Avatar
-                        name={user.username}
-                        status="available"
-                        src={`data:image/svg+xml;base64,${user.avatar}`}
-                      />
-                    );
-                  })}
-                </AvatarGroup>
+                {otherUsers.length > 1 ? (
+                  <AvatarGroup size="sm">
+                    {otherUsers.slice(0, 4).map((user) => {
+                      return (
+                        <Avatar
+                          key={user._id}
+                          name={user.username}
+                          src={`data:image/svg+xml;base64,${user.avatar}`}
+                        />
+                      );
+                    })}
+                  </AvatarGroup>
+                ) : (
+                  <Avatar
+                    key={otherUsers[0]._id}
+                    name={otherUsers[0].username}
+                    src={`data:image/svg+xml;base64,${otherUsers[0].avatar}`}
+                  />
+                )}
+
+                {/* <Avatar
+                  name={lastMessage.sender.username}
+                  src={`data:image/svg+xml;base64,${lastMessage.sender.avatar}`}
+                /> */}
               </Conversation>
             );
           })}
@@ -100,9 +124,9 @@ const ChatList = ({ onClickCallback }) => {
         className="btn btn-danger"
         style={{ backgroundColor: "#DC3545", color: "white" }}
         onClick={Auth.logout}
-        icon={<FontAwesomeIcon icon={faSignOutAlt} />}
+        icon={<FontAwesomeIcon icon={faSignOutAlt} className="button-icon" />}
       >
-        Logout
+        <span className="button-text">Logout</span>
       </Button>
     </Sidebar>
   );

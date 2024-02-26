@@ -12,8 +12,8 @@ export const QUERY_ME = gql`
 `;
 
 export const QUERY_USERS = gql`
-  query {
-    users {
+  query Users($userSearch: String) {
+    users(userSearch: $userSearch) {
       _id
       username
       email
@@ -53,6 +53,7 @@ export const QUERY_MESSAGES = gql`
       _id
       content
       sender {
+        _id
         username
         avatar
       }

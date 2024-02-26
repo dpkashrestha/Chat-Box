@@ -34,6 +34,11 @@ const client = new ApolloClient({
   // Set up our client to execute the `authLink` middleware prior to making the request to our GraphQL API
   link: authLink.concat(httpLink),
   cache: new InMemoryCache(),
+  /*  defaultOptions: {
+    watchQuery: {
+      pollInterval: 30000,
+    },
+  }, */
 });
 // flex-row justify-center align-center min-100-vh
 function App() {

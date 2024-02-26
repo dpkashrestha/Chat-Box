@@ -42,7 +42,7 @@
 }
 
 .form input,
-button {
+.form button {
   min-width: 300px;
 }
 
@@ -133,4 +133,22 @@ button {
 
 .submit-btn:hover {
   background-color: #50447d;
+}
+
+.cs-chat-container
+  .cs-message-input
+  .cs-message-input__content-editor-wrapper:last-child {
+  margin-right: 0em !important;
+}
+
+@media (max-width: 768px) {
+  .button-text {
+    display: none;
+  }
+  .button-icon {
+    margin-right: 0 !important;
+  }
+  #newGroup {
+    margin-top: 0.4em !important;
+  }
 }
