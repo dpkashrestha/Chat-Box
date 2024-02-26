@@ -2,6 +2,10 @@ import { useQuery, useMutation } from "@apollo/client";
 import { QUERY_MESSAGES, QUERY_ME } from "../utils/queries";
 import { ADD_MESSAGE } from "../utils/mutations";
 import Picker from "emoji-picker-react";
+import CreateModal from "./CreateChat";
+
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faFaceSmile } from "@fortawesome/free-solid-svg-icons";
 import {
   ChatContainer,
   MessageList,
@@ -10,6 +14,8 @@ import {
   SendButton,
   Avatar,
   ConversationHeader,
+  Button,
+  AvatarGroup,
   VoiceCallButton,
   VideoCallButton,
   TypingIndicator,
@@ -22,6 +28,7 @@ const ChatWindow = ({ activeChat }) => {
   const currentUser = Auth.getCurrentUser();
   const [messageInputValue, setMessageInputValue] = useState("");
   const [allMessages, setAllMessages] = useState([]);
+  const [newGroup, setNewGroup] = useState(true);
 
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
 
@@ -144,8 +151,15 @@ const ChatWindow = ({ activeChat }) => {
             info="Active 10 mins ago"
           />
           <ConversationHeader.Actions>
-            <VoiceCallButton />
-            <VideoCallButton />
+            <CreateModal newGroup={newGroup}>
+              <Button
+                border
+                style={{ width: "100%", height: "100%", margin: "1em" }}
+                onClick={() => setNewGroup(false)}
+              >
+                <span className="button-text">Edit Group</span>
+              </Button>
+            </CreateModal>
           </ConversationHeader.Actions>
         </ConversationHeader>
         <MessageList>{renderMessages()}</MessageList>
