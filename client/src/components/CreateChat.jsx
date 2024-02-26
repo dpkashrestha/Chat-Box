@@ -69,6 +69,7 @@ const CreateModal = ({ newGroup, chatId, children }) => {
     setShow(false);
     setSearch("");
     setGroupChatName("");
+    setSelectedUsers([]);
   };
   const handleShow = async () => {
     setShow(true);
