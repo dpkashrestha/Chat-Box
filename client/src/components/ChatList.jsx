@@ -77,52 +77,6 @@ const ChatList = ({ onClickCallback }) => {
       {loadingChatData || loadingUserData ? (
         <Loader style={{ justifyContent: "center" }}>Loading</Loader>
       ) : (
-        <ConversationList>
-          {data.allChats.map((chat) => {
-            const otherUsers = getOtherUsers(chat.users);
-            const lastMessage = chat.lastMessage;
-            return (
-              <Conversation
-                key={chat._id}
-                name={chat.chatName}
-                lastSenderName={
-                  lastMessage ? lastMessage.sender.username : null
-                }
-                info={lastMessage ? lastMessage.content : "No messages yet"}
-                onClick={() => {
-                  setSelectedChatId(chat._id);
-                  onClickCallback(chat);
-                }}
-                active={selectedChatId === chat._id}
-              >
-                {otherUsers.length > 1 ? (
-                  <AvatarGroup size="sm" max={4}>
-                    {otherUsers.map((user) => {
-                      return (
-                        <Avatar
-                          key={user._id}
-                          name={user.username}
-                          src={`data:image/svg+xml;base64,${user.avatar}`}
-                        />
-                      );
-                    })}
-                  </AvatarGroup>
-                ) : (
-                  <Avatar
-                    key={otherUsers[0]._id}
-                    name={otherUsers[0].username}
-                    src={`data:image/svg+xml;base64,${otherUsers[0].avatar}`}
-                  />
-                )}
-
-                {/* <Avatar
-                  name={lastMessage.sender.username}
-                  src={`data:image/svg+xml;base64,${lastMessage.sender.avatar}`}
-                /> */}
-              </Conversation>
-            );
-          })}
-        </ConversationList>
         <>
           <Accordion defaultActiveKey="0">
             <Accordion.Item eventKey="0">
@@ -149,8 +103,8 @@ const ChatList = ({ onClickCallback }) => {
                         active={selectedChatId === chat._id}
                       >
                         {otherUsers.length > 1 ? (
-                          <AvatarGroup size="sm">
-                            {otherUsers.slice(0, 4).map((user) => {
+                          <AvatarGroup size="sm" max={4}>
+                            {otherUsers.map((user) => {
                               return (
                                 <Avatar
                                   key={user._id}
