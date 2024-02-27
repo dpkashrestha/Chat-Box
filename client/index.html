@@ -7,11 +7,18 @@
       rel="stylesheet"
       href="./node_modules/@chatscope/chat-ui-kit-styles/dist/default/styles.min.css"
     />
+    <link rel="manifest" href="./manifest.json" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Chat Box</title>
+    <base href="./" />
   </head>
   <body>
+    <button type="button" id="installBtn" role="button">
+      Click Me to Install!
+    </button>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
+    <script src="./service-worker.js"></script>
+    <script src="./assets/js/install.js"></script>
   </body>
 </html>
