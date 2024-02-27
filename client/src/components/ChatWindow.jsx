@@ -57,6 +57,10 @@ const ChatWindow = ({ activeChat, onClickCallback, chatContainerStyle }) => {
   const [editChat, { loading: editLoading }] = useMutation(EDIT_CHAT, {
     onCompleted: (d) => {
       const chat = d.editChat;
+      if (chat.users.length <= 1) {
+        console.log("Deleted:", chat);
+        window.location.reload();
+      }
       singleChat();
       console.log("Edited:", chat);
     },
@@ -183,8 +187,14 @@ const ChatWindow = ({ activeChat, onClickCallback, chatContainerStyle }) => {
           <ConversationHeader.Actions>
             <CreateGroup
               newGroup={newGroup}
-              onConfirm={(variables) => {
-                editChat({ ...variables() });
+              onEdit={(func) => {
+                const vars = func();
+                if (vars.chatName === "") {
+                  setThisChat(null);
+                  editChat({ ...vars, users: [] });
+                } else {
+                  editChat({ ...vars });
+                }
               }}
               activeChat={thisChat}
             >

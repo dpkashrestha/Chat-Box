@@ -11,13 +11,13 @@ import {
 // import Button from "react-bootstrap/Button";
 import { Modal, Form, InputGroup, Badge, Button as Btn } from "react-bootstrap";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, createRef } from "react";
 import { useLazyQuery, useQuery, useMutation } from "@apollo/client";
 import { QUERY_USERS } from "../utils/queries";
 import { ADD_CHAT, EDIT_CHAT } from "../utils/mutations";
 import Auth from "../utils/auth";
 
-const CreateGroup = ({ onConfirm, newGroup, activeChat, children }) => {
+const CreateGroup = ({ onCreate, onEdit, newGroup, activeChat, children }) => {
   const currentUser = Auth.getCurrentUser();
   const [show, setShow] = useState(false);
   const [search, setSearch] = useState("");
@@ -26,13 +26,14 @@ const CreateGroup = ({ onConfirm, newGroup, activeChat, children }) => {
   const [searchResult, setSearchResult] = useState([]);
   const [validated, setValidated] = useState(false);
   const [noName, setNoName] = useState(false);
+  const [noUsers, setNoUsers] = useState(false);
 
   const [searchUsers, { loading: userLoading, data: userData }] = useLazyQuery(
     QUERY_USERS,
     {
       onCompleted: (d) => {
         setSearchResult(d.users);
-        console.log(d);
+        console.log("searchUsers", d);
       },
       onError: (err) => {
         console.error(err);
@@ -56,13 +57,13 @@ const CreateGroup = ({ onConfirm, newGroup, activeChat, children }) => {
   }); */
 
   useEffect(() => {
-    if (!search) {
+    /* if (!search) {
       setSearchResult([]);
       return;
-    }
-    console.log("searching:", search);
+    } */
+    console.log("search:", search);
     searchUsers({ variables: { userSearch: search } });
-    console.log("result:", searchResult);
+    console.log("searchResult:", searchResult);
   }, [search]);
   useEffect(() => {
     if (show) {
@@ -77,6 +78,7 @@ const CreateGroup = ({ onConfirm, newGroup, activeChat, children }) => {
       }
     } else {
       setNoName(false);
+      setNoUsers(false);
       setSearch("");
       setGroupChatName("");
       setSelectedUsers([]);
@@ -92,21 +94,32 @@ const CreateGroup = ({ onConfirm, newGroup, activeChat, children }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     const form = e.currentTarget;
-    if (form.checkValidity() === false) {
+    setValidated(form.checkValidity());
+    if (!groupChatName) {
       e.stopPropagation();
       console.log("No Name");
-      setValidated(false);
       setNoName(true);
-    } else if (!selectedUsers.length) {
+    }
+    if (!selectedUsers.length) {
       e.stopPropagation();
       console.log("No Users");
-      setValidated(false);
-    } else {
+      setNoUsers(true);
+    }
+    console.log(
+      "validated",
+      form.checkValidity(),
+      "!noUsers",
+      Boolean(selectedUsers.length),
+      "!noName",
+      Boolean(groupChatName)
+    );
+    if (form.checkValidity() && selectedUsers.length && groupChatName) {
       if (newGroup) {
         const userIds = selectedUsers.map((u) => {
           return { _id: u._id };
         });
-        onConfirm(() => {
+        onCreate(() => {
+          console.log("Creating:", groupChatName);
           return { variables: { chatName: groupChatName, users: userIds } };
         });
         handleClose();
@@ -114,7 +127,7 @@ const CreateGroup = ({ onConfirm, newGroup, activeChat, children }) => {
         const userIds = selectedUsers.map((u) => {
           return { _id: u._id };
         });
-        onConfirm(() => {
+        onEdit(() => {
           return {
             variables: {
               chatId: activeChat._id,
@@ -129,8 +142,23 @@ const CreateGroup = ({ onConfirm, newGroup, activeChat, children }) => {
       setValidated(true);
     }
   };
+  const handleDelete = () => {
+    onEdit(() => {
+      // console.log("Deleting:", activeChat.chatName);
+      return {
+        variables: {
+          chatId: activeChat._id,
+          chatName: activeChat.chatName,
+          users: [],
+        },
+      };
+    });
+    handleClose();
+  };
 
   const inputRef = useRef();
+  const searchRef = createRef();
+  // console.log("searchRef", searchRef);
 
   return (
     <>
@@ -213,6 +241,7 @@ const CreateGroup = ({ onConfirm, newGroup, activeChat, children }) => {
             {selectedUsers.length ? (
               <div style={{ margin: "0.3em" }}>
                 {selectedUsers.map((user) => {
+                  console.log("selectedUsers", selectedUsers);
                   const _id = user._id;
                   return (
                     <Btn
@@ -254,7 +283,7 @@ const CreateGroup = ({ onConfirm, newGroup, activeChat, children }) => {
               </div>
             ) : (
               <>
-                {validated && (
+                {noUsers && (
                   <Form.Control.Feedback
                     type="invalid"
                     style={{
@@ -271,6 +300,7 @@ const CreateGroup = ({ onConfirm, newGroup, activeChat, children }) => {
               <InputGroup hasValidation>
                 <Form.Control
                   required={true}
+                  ref={searchRef}
                   as={Search}
                   placeholder="Search users"
                   value={search}
@@ -283,7 +313,7 @@ const CreateGroup = ({ onConfirm, newGroup, activeChat, children }) => {
                 />
               </InputGroup>
             </Form.Group>
-            {userData && (
+            {(search || searchRef.current) && (
               <>
                 {userLoading ? (
                   <div
@@ -344,15 +374,19 @@ const CreateGroup = ({ onConfirm, newGroup, activeChat, children }) => {
           </Modal.Body>
           <Modal.Footer>
             {newGroup ? (
-              <Button border type="submit" onClick={() => {}}>
+              <Button border type="submit" className="btn btn-primary">
                 Create Group
               </Button>
             ) : (
               <>
-                <Button border onClick={handleClose}>
+                <Button
+                  className="btn btn-danger"
+                  border
+                  onClick={handleDelete}
+                >
                   Delete Group
                 </Button>
-                <Button border type="submit">
+                <Button border type="submit" className="btn btn-primary">
                   Save Changes
                 </Button>
               </>

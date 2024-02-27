@@ -123,7 +123,8 @@ const ChatList = ({
       <CreateGroup
         newGroup={newGroup}
         style={{ marginTop: "0.5em" }}
-        onConfirm={(variables) => {
+        onCreate={(variables) => {
+          console.log("test");
           addChat({ ...variables() });
         }}
       >

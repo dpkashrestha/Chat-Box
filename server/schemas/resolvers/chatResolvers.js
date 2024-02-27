@@ -112,8 +112,6 @@ const chatResolvers = {
             path: "groupAdmin",
             select: ["username", "email", "avatar"],
           });
-
-        console.log(updatedChat.users.length);
         if (updatedChat.users.length <= 1) {
           const deletedChat = await Chat.findByIdAndDelete(chatId);
           console.log("Deleted", deletedChat.chatName);
