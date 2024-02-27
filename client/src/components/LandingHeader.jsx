@@ -11,13 +11,7 @@ export function LandingHeader() {
             margin: "0",
           }}
         >
-          <span style={{ fontWeight: "bold" }}>C</span>
-          <span style={{ fontWeight: "bold" }}>H</span>
-          <span style={{ fontWeight: "bold" }}>A</span>
-          <span style={{ fontWeight: "bold" }}>T</span>
-          <span style={{ fontWeight: "bold" }}>B</span>
-          <span style={{ fontWeight: "bold" }}>O</span>
-          <span style={{ fontWeight: "bold" }}>X</span>
+          <span style={{ fontWeight: "bold" }}>CHATBOX</span>
         </h1>
 
         <h2 style={{ textAlign: "center" }}>
