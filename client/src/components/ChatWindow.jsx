@@ -109,12 +109,11 @@ const ChatWindow = ({ activeChat, onClickCallback, chatContainerStyle }) => {
               position: "single",
             }}
           >
-            {message?.sender?._id !== currentUser?._id && (
-              <Avatar
-                name={message?.sender?.username}
-                src={`data:image/svg+xml;base64,${message?.sender?.avatar}`}
-              />
-            )}
+            <Avatar
+              name={message?.sender?.username}
+              src={`data:image/svg+xml;base64,${message?.sender?.avatar}`}
+            />
+
             <Message.Footer
               sender={message?.sender?.username}
               sentTime={sentAt}
