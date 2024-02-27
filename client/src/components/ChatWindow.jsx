@@ -16,6 +16,9 @@ import {
   AvatarGroup,
   Loader,
 } from "@chatscope/chat-ui-kit-react";
+
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faGear } from "@fortawesome/free-solid-svg-icons";
 import { useState, useRef, useMemo, useEffect, useCallback } from "react";
 import Auth from "../utils/auth";
 
@@ -158,13 +161,21 @@ const ChatWindow = ({ activeChat, onClickCallback, chatContainerStyle }) => {
           )}
           <ConversationHeader.Content userName={activeChat.chatName} />
           <ConversationHeader.Actions>
-            <CreateGroup newGroup={newGroup} chatId={activeChat._id}>
+            <CreateGroup newGroup={newGroup} activeChat={activeChat}>
               <Button
                 border
                 style={{ width: "100%", height: "100%", padding: "0 0.1em" }}
                 onClick={() => setNewGroup(false)}
+                labelPosition="left"
+                icon={
+                  <FontAwesomeIcon
+                    icon={faGear}
+                    className="button-icon"
+                    style={{ margin: "0" }}
+                  />
+                }
               >
-                <span>Edit Group</span>
+                <span>Edit Group </span>
               </Button>
             </CreateGroup>
           </ConversationHeader.Actions>

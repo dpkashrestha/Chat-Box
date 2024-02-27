@@ -44,7 +44,12 @@ const ChatList = ({
     },
   });
   const [addChat, { error }] = useMutation(ADD_CHAT, {
-    refetchQueries: [QUERY_CHATS, "chatData"],
+    refetchQueries: [QUERY_CHATS, "allChats"],
+    onCompleted: (d) => {
+      const chat = d.addChat;
+      handleConversationOnClick(chat);
+      console.log("Created:", chat);
+    },
   });
 
   const getOtherUsers = (users) => {
@@ -74,7 +79,7 @@ const ChatList = ({
         variables: {
           chatName: chat.chatName,
           users: chat.users,
-          // TODO add Individual chat variable
+          // TODO: add non group chat variable?
         },
       });
       console.log(data.addChat);
@@ -113,7 +118,13 @@ const ChatList = ({
           )}
         </ConversationHeader.Actions>
       </ConversationHeader>
-      <CreateGroup newGroup={newGroup} style={{ marginTop: "0.5em" }}>
+      <CreateGroup
+        newGroup={newGroup}
+        style={{ marginTop: "0.5em" }}
+        onConfirm={(variables) => {
+          addChat({ ...variables() });
+        }}
+      >
         <Button
           border
           style={{ width: "100%", height: "100%", margin: "0em" }}

@@ -14,9 +14,11 @@ import { Modal, Form, InputGroup, Badge, Button as Btn } from "react-bootstrap";
 import { useState, useRef, useEffect } from "react";
 import { useLazyQuery, useQuery, useMutation } from "@apollo/client";
 import { QUERY_USERS } from "../utils/queries";
-import { ADD_CHAT } from "../utils/mutations";
+import { ADD_CHAT, EDIT_CHAT } from "../utils/mutations";
+import Auth from "../utils/auth";
 
-const CreateGroup = ({ onClickCallback, newGroup, chatId, children }) => {
+const CreateGroup = ({ onConfirm, newGroup, activeChat, children }) => {
+  const currentUser = Auth.getCurrentUser();
   const [show, setShow] = useState(false);
   const [search, setSearch] = useState("");
   const [groupChatName, setGroupChatName] = useState("");
@@ -37,12 +39,18 @@ const CreateGroup = ({ onClickCallback, newGroup, chatId, children }) => {
       },
     }
   );
-
   const [createChat, { loading: chatLoading }] = useMutation(ADD_CHAT, {
     onCompleted: (d) => {
       const newChat = { ...d.addChat };
       delete newChat["__typename"];
-      onClickCallback(newChat);
+      console.log("createChat Data:", d);
+      console.log("New Chat:", newChat);
+    },
+  });
+  const [editChat, { loading: editLoading }] = useMutation(EDIT_CHAT, {
+    onCompleted: (d) => {
+      const newChat = { ...d.addChat };
+      delete newChat["__typename"];
       console.log("createChat Data:", d);
       console.log("New Chat:", newChat);
     },
@@ -60,16 +68,22 @@ const CreateGroup = ({ onClickCallback, newGroup, chatId, children }) => {
   useEffect(() => {
     // setEditGroup(!newGroup);
     if (show) {
-      if (newGroup) {
-        console.log("newGroup", newGroup);
-      } else {
+      if (!newGroup) {
+        console.log("Editing:", activeChat);
+        setSelectedUsers([
+          ...activeChat.users.filter((user) => user._id !== currentUser._id),
+        ]);
+        setGroupChatName(activeChat.chatName);
         console.log("editGroup", !newGroup);
+      } else {
+        console.log("newGroup", newGroup);
       }
     }
   }, [show]);
 
   const handleClose = () => {
     setShow(false);
+    setNoName(false);
     setSearch("");
     setGroupChatName("");
     setSelectedUsers([]);
@@ -91,20 +105,26 @@ const CreateGroup = ({ onClickCallback, newGroup, chatId, children }) => {
       setValidated(true);
     } else {
       if (newGroup) {
-        console.log(!selectedUsers.length);
         const userIds = selectedUsers.map((u) => {
           return { _id: u._id };
         });
-        createChat({
-          variables: { chatName: groupChatName, users: userIds },
+        onConfirm(() => {
+          return { variables: { chatName: groupChatName, users: userIds } };
         });
-        console.log(`Created: ${groupChatName}`);
-        setShow(false);
-        setSearch("");
-        setGroupChatName("");
-        setSelectedUsers([]);
+        handleClose();
       } else if (!newGroup) {
+        const userIds = selectedUsers.map((u) => {
+          return { _id: u._id };
+        });
+        editChat({
+          variables: {
+            chatId: activeChat._id,
+            chatName: groupChatName,
+            users: userIds,
+          },
+        });
         console.log(`Edited: ${groupChatName}`);
+        handleClose();
       }
 
       setValidated(false);
