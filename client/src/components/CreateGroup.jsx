@@ -318,8 +318,7 @@ const CreateGroup = ({ onCreate, onEdit, newGroup, activeChat, children }) => {
                     onChange={(v) => setSearch(v)}
                     onFocus={() => setSearchFocus(true)}
                     onClearClick={() => {
-                      setSearchFocus(false);
-                      setSearch("");
+                      /* setSearchFocus(false) */ setSearch("");
                     }}
                     style={{
                       flexGrow: 1,
