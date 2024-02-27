@@ -21,6 +21,7 @@ const CreateGroup = ({ onCreate, onEdit, newGroup, activeChat, children }) => {
   const currentUser = Auth.getCurrentUser();
   const [show, setShow] = useState(false);
   const [search, setSearch] = useState("");
+  const [searchFocus, setSearchFocus] = useState(true);
   const [groupChatName, setGroupChatName] = useState("");
   const [selectedUsers, setSelectedUsers] = useState([]);
   const [searchResult, setSearchResult] = useState([]);
@@ -89,6 +90,7 @@ const CreateGroup = ({ onCreate, onEdit, newGroup, activeChat, children }) => {
       setSearch("");
       setGroupChatName("");
       setSelectedUsers([]);
+      setSearchFocus(true);
     }
   }, [show]);
 
@@ -164,7 +166,7 @@ const CreateGroup = ({ onCreate, onEdit, newGroup, activeChat, children }) => {
   };
 
   const inputRef = useRef();
-  const searchRef = createRef();
+  const searchRef = useRef();
   // console.log("searchRef", searchRef);
 
   return (
@@ -178,7 +180,7 @@ const CreateGroup = ({ onCreate, onEdit, newGroup, activeChat, children }) => {
       </span>
 
       {isAdmin || newGroup ? (
-        <Modal show={show} onHide={handleClose} centered>
+        <Modal show={show} onHide={handleClose} centered animation={true}>
           <Modal.Header closeButton>
             <Modal.Title style={{ marginLeft: "auto" }}>
               {newGroup ? "Create a chat" : `Edit this chat`}
@@ -202,6 +204,7 @@ const CreateGroup = ({ onCreate, onEdit, newGroup, activeChat, children }) => {
                       }}
                     >
                       <Form.Control
+                        autoFocus
                         required={true}
                         ref={inputRef}
                         type="text"
@@ -313,7 +316,11 @@ const CreateGroup = ({ onCreate, onEdit, newGroup, activeChat, children }) => {
                     placeholder="Search users"
                     value={search}
                     onChange={(v) => setSearch(v)}
-                    onClearClick={() => setSearch("")}
+                    onFocus={() => setSearchFocus(true)}
+                    onClearClick={() => {
+                      setSearchFocus(false);
+                      setSearch("");
+                    }}
                     style={{
                       flexGrow: 1,
                       flexShrink: "initial",
@@ -321,7 +328,7 @@ const CreateGroup = ({ onCreate, onEdit, newGroup, activeChat, children }) => {
                   />
                 </InputGroup>
               </Form.Group>
-              {(search || searchRef.current) && (
+              {(search || searchFocus) && (
                 <>
                   {userLoading ? (
                     <div
@@ -364,6 +371,7 @@ const CreateGroup = ({ onCreate, onEdit, newGroup, activeChat, children }) => {
                                     .includes(newUser._id)
                                 ) {
                                   setSelectedUsers([...selectedUsers, newUser]);
+                                  setSearch("");
                                 }
                               }}
                               active={false}
@@ -403,7 +411,7 @@ const CreateGroup = ({ onCreate, onEdit, newGroup, activeChat, children }) => {
           </Form>
         </Modal>
       ) : (
-        <Modal show={show} onHide={handleClose} centered>
+        <Modal show={show} onHide={handleClose} centered animation={true}>
           <Modal.Header closeButton>
             <Modal.Title style={{ marginLeft: "auto" }}>
               Not Authorized
