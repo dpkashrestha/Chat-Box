@@ -81,6 +81,7 @@ const ChatList = ({
 
       chat = data.addChat;
     }
+    console.log("Selected:", chat);
     setSelectedChatId(chat._id);
     onClickCallback(chat);
   };
@@ -94,7 +95,7 @@ const ChatList = ({
         />
         <ConversationHeader.Content userName={currentUser.username} />
         <ConversationHeader.Actions>
-          {windowDimensions !== 768 && (
+          {!(768 >= windowDimensions && windowDimensions >= 579) && (
             <Button
               border
               className="btn btn-danger"
@@ -181,7 +182,7 @@ const ChatList = ({
           </ConversationList>
         </>
       )}
-      {windowDimensions === 768 && (
+      {768 >= windowDimensions && windowDimensions >= 579 && (
         <Button
           border
           className="btn btn-danger"

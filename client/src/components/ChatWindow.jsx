@@ -23,7 +23,7 @@ const ChatWindow = ({ activeChat, onClickCallback, chatContainerStyle }) => {
   const currentUser = Auth.getCurrentUser();
   const [messageInputValue, setMessageInputValue] = useState("");
   const [allMessages, setAllMessages] = useState([]);
-  const [newGroup, setNewGroup] = useState(true);
+  const [newGroup, setNewGroup] = useState(false);
 
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
 
@@ -138,12 +138,8 @@ const ChatWindow = ({ activeChat, onClickCallback, chatContainerStyle }) => {
         <ConversationHeader className="test-class">
           <ConversationHeader.Back onClick={onClickCallback} />
           {otherUsers.length > 1 ? (
-            <AvatarGroup
-              size="sm"
-              className="headerAvatar"
-              style={{ marginTop: "0.5em" }}
-            >
-              {otherUsers.slice(0, 4).map((user) => {
+            <AvatarGroup size="md" max={4}>
+              {otherUsers.map((user) => {
                 return (
                   <Avatar
                     key={user._id}
@@ -156,9 +152,7 @@ const ChatWindow = ({ activeChat, onClickCallback, chatContainerStyle }) => {
           ) : (
             <Avatar
               key={otherUsers[0]._id}
-              className="headerAvatar"
               name={otherUsers[0].username}
-              style={{ marginTop: "0.5em" }}
               src={`data:image/svg+xml;base64,${otherUsers[0].avatar}`}
             />
           )}
@@ -167,7 +161,7 @@ const ChatWindow = ({ activeChat, onClickCallback, chatContainerStyle }) => {
             <CreateGroup newGroup={newGroup} chatId={activeChat._id}>
               <Button
                 border
-                style={{ width: "100%", height: "100%", margin: "1em" }}
+                style={{ width: "100%", height: "100%", padding: "0 0.1em" }}
                 onClick={() => setNewGroup(false)}
               >
                 <span>Edit Group</span>

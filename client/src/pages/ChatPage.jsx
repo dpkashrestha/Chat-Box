@@ -39,7 +39,7 @@ const ChatPage = () => {
     [sidebarVisible, setSidebarVisible]
   );
   useEffect(() => {
-    if (sidebarVisible && windowDimensions < 768) {
+    if (sidebarVisible && 768 >= windowDimensions && windowDimensions <= 578) {
       setSidebarStyle({
         display: "flex",
         flexBasis: "auto",

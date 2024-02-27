@@ -183,7 +183,7 @@ const CreateGroup = ({ onClickCallback, newGroup, chatId, children }) => {
                     type="invalid"
                     style={{
                       display: "block",
-                      margin: "-0.2em 0.8em .5em",
+                      margin: "-0.1em 0.8em .3em",
                     }}
                   >
                     Please choose a group name.
@@ -241,7 +241,7 @@ const CreateGroup = ({ onClickCallback, newGroup, chatId, children }) => {
                     type="invalid"
                     style={{
                       display: "block",
-                      margin: "-0.2em 0.8em .5em",
+                      margin: "-0.2em 0.8em .3em",
                     }}
                   >
                     Please select at least one user.
@@ -279,40 +279,46 @@ const CreateGroup = ({ onClickCallback, newGroup, chatId, children }) => {
                   </div>
                 ) : (
                   <ConversationList>
-                    {searchResult.map((user) => {
-                      return (
-                        <Conversation
-                          key={user._id}
-                          name={user.username}
-                          info={user.email}
-                          onClick={() => {
-                            const newUser = {
-                              _id: user._id,
-                              username: user.username,
-                            };
-                            console.log(
-                              newUser,
-                              selectedUsers
-                                .map((u) => u._id)
-                                .includes(newUser._id)
-                            );
-                            if (
-                              !selectedUsers
-                                .map((u) => u._id)
-                                .includes(newUser._id)
-                            ) {
-                              setSelectedUsers([...selectedUsers, newUser]);
-                            }
-                          }}
-                          active={false}
-                        >
-                          <Avatar
+                    {searchResult
+                      .filter((usr) => {
+                        return !selectedUsers
+                          .map((u) => u._id)
+                          .includes(usr._id);
+                      })
+                      .map((user) => {
+                        return (
+                          <Conversation
+                            key={user._id}
                             name={user.username}
-                            src={`data:image/svg+xml;base64,${user.avatar}`}
-                          />
-                        </Conversation>
-                      );
-                    })}
+                            info={user.email}
+                            onClick={() => {
+                              const newUser = {
+                                _id: user._id,
+                                username: user.username,
+                              };
+                              console.log(
+                                newUser,
+                                selectedUsers
+                                  .map((u) => u._id)
+                                  .includes(newUser._id)
+                              );
+                              if (
+                                !selectedUsers
+                                  .map((u) => u._id)
+                                  .includes(newUser._id)
+                              ) {
+                                setSelectedUsers([...selectedUsers, newUser]);
+                              }
+                            }}
+                            active={false}
+                          >
+                            <Avatar
+                              name={user.username}
+                              src={`data:image/svg+xml;base64,${user.avatar}`}
+                            />
+                          </Conversation>
+                        );
+                      })}
                   </ConversationList>
                 )}
               </>
