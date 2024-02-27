@@ -16,7 +16,7 @@ import { Accordion } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSignOutAlt, faPlus } from "@fortawesome/free-solid-svg-icons";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery, useMutation } from "@apollo/client";
 import { QUERY_CHATS, QUERY_USERS } from "../utils/queries";
 import { ADD_CHAT } from "../utils/mutations";
@@ -57,6 +57,16 @@ const ChatList = ({
       .join(", ");
   };
 
+  const [windowDimensions, setWindowDimensions] = useState(window.innerWidth);
+  useEffect(() => {
+    function handleResize() {
+      setWindowDimensions(window.innerWidth);
+    }
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   const handleConversationOnClick = async (chat) => {
     console.log("handle conversation click");
     if (!chat._id) {
@@ -84,20 +94,22 @@ const ChatList = ({
         />
         <ConversationHeader.Content userName={currentUser.username} />
         <ConversationHeader.Actions>
-          <Button
-            border
-            className="btn btn-danger"
-            style={{
-              backgroundColor: "#016DB3",
-              color: "white",
-              minWidth: "40px",
-              minHeight: "40px",
-            }}
-            onClick={Auth.logout}
-            icon={
-              <FontAwesomeIcon icon={faSignOutAlt} className="button-icon" />
-            }
-          ></Button>
+          {windowDimensions !== 768 && (
+            <Button
+              border
+              className="btn btn-danger"
+              style={{
+                backgroundColor: "#3173a5",
+                color: "white",
+                minWidth: "40px",
+                minHeight: "40px",
+              }}
+              onClick={Auth.logout}
+              icon={
+                <FontAwesomeIcon icon={faSignOutAlt} className="button-icon" />
+              }
+            ></Button>
+          )}
         </ConversationHeader.Actions>
       </ConversationHeader>
       <CreateGroup newGroup={newGroup} style={{ marginTop: "0.5em" }}>
@@ -168,6 +180,20 @@ const ChatList = ({
             })}
           </ConversationList>
         </>
+      )}
+      {windowDimensions === 768 && (
+        <Button
+          border
+          className="btn btn-danger"
+          style={{
+            backgroundColor: "#3173a5",
+            color: "white",
+            minWidth: "40px",
+            minHeight: "40px",
+          }}
+          onClick={Auth.logout}
+          icon={<FontAwesomeIcon icon={faSignOutAlt} className="button-icon" />}
+        ></Button>
       )}
     </Sidebar>
   );
