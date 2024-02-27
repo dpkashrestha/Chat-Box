@@ -83,6 +83,22 @@ const ChatList = ({
           src={`data:image/svg+xml;base64,${currentUser.avatar}`}
         />
         <ConversationHeader.Content userName={currentUser.username} />
+        <ConversationHeader.Actions>
+          <Button
+            border
+            className="btn btn-danger"
+            style={{
+              backgroundColor: "#016DB3",
+              color: "white",
+              minWidth: "40px",
+              minHeight: "40px",
+            }}
+            onClick={Auth.logout}
+            icon={
+              <FontAwesomeIcon icon={faSignOutAlt} className="button-icon" />
+            }
+          ></Button>
+        </ConversationHeader.Actions>
       </ConversationHeader>
       <CreateGroup newGroup={newGroup} style={{ marginTop: "0.5em" }}>
         <Button
@@ -151,22 +167,6 @@ const ChatList = ({
               );
             })}
           </ConversationList>
-          <Button
-            border
-            className="btn btn-danger"
-            style={{
-              backgroundColor: "#dc3545",
-              color: "white",
-              minWidth: "40px",
-              minHeight: "40px",
-            }}
-            onClick={Auth.logout}
-            icon={
-              <FontAwesomeIcon icon={faSignOutAlt} className="button-icon" />
-            }
-          >
-            <span className="button-text">Logout</span>
-          </Button>
         </>
       )}
     </Sidebar>
