@@ -153,6 +153,9 @@
     margin-right: 0 !important;
   }
   #newGroup {
-    margin-top: 0.4em !important;
+    margin-bottom: 0.4em !important;
+  }
+  .headerAvatar {
+    margin-top: 0.8em !important;
   }
 }
