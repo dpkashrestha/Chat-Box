@@ -16,7 +16,7 @@ import { useLazyQuery, useQuery, useMutation } from "@apollo/client";
 import { QUERY_USERS } from "../utils/queries";
 import { ADD_CHAT } from "../utils/mutations";
 
-const CreateChat = ({ newGroup, chatId, children }) => {
+const CreateGroup = ({ newGroup, chatId, children }) => {
   const [show, setShow] = useState(false);
   const [search, setSearch] = useState("");
   const [groupChatName, setGroupChatName] = useState("");
@@ -77,16 +77,16 @@ const CreateChat = ({ newGroup, chatId, children }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     const form = e.currentTarget;
-    if (form.checkValidity() === false) {
+    if (form.checkValidity() === false || !selectedUsers) {
       e.stopPropagation();
       console.log("not validated");
       setValidated(true);
       setNoName(true);
     } else {
       if (newGroup) {
-        /* createChat({
-                variables: { chatId: groupChatName, users: selectedUsers },
-              }); */
+        createChat({
+          variables: { chatName: groupChatName, users: selectedUsers },
+        });
         console.log(`Created: ${groupChatName}`);
       } else if (!newGroup) {
         console.log(`Edited: ${groupChatName}`);
@@ -331,4 +331,4 @@ const CreateChat = ({ newGroup, chatId, children }) => {
   );
 };
 
-export default CreateChat;
+export default CreateGroup;

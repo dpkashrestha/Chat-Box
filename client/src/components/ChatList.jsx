@@ -10,7 +10,7 @@ import {
   Avatar,
   AvatarGroup,
 } from "@chatscope/chat-ui-kit-react";
-import CreateChat from "./CreateChat";
+import CreateGroup from "./CreateGroup";
 import { Accordion } from "react-bootstrap";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -64,6 +64,7 @@ const ChatList = ({
         variables: {
           chatName: chat.chatName,
           users: chat.users,
+          // TODO add Individual chat variable
         },
       });
       console.log(data.addChat);
@@ -83,7 +84,7 @@ const ChatList = ({
         />
         <ConversationHeader.Content userName={currentUser.username} />
       </ConversationHeader>
-      <CreateChat newGroup={newGroup} style={{ marginTop: "0.5em" }}>
+      <CreateGroup newGroup={newGroup} style={{ marginTop: "0.5em" }}>
         <Button
           border
           style={{ width: "100%", height: "100%", margin: "0em" }}
@@ -92,7 +93,7 @@ const ChatList = ({
         >
           <span className="button-text">New Group</span>
         </Button>
-      </CreateChat>
+      </CreateGroup>
       <Search
         placeholder="Search..."
         value={search}

@@ -2,7 +2,7 @@ import { useQuery, useMutation } from "@apollo/client";
 import { QUERY_MESSAGES, QUERY_ME } from "../utils/queries";
 import { ADD_MESSAGE } from "../utils/mutations";
 import Picker from "emoji-picker-react";
-import CreateChat from "./CreateChat";
+import CreateGroup from "./CreateGroup";
 
 import {
   ChatContainer,
@@ -165,7 +165,7 @@ const ChatWindow = ({ activeChat, onClickCallback, chatContainerStyle }) => {
           )}
           <ConversationHeader.Content userName={activeChat.chatName} />
           <ConversationHeader.Actions>
-            <CreateChat newGroup={newGroup} chatId={activeChat._id}>
+            <CreateGroup newGroup={newGroup} chatId={activeChat._id}>
               <Button
                 border
                 style={{ width: "100%", height: "100%", margin: "1em" }}
@@ -173,7 +173,7 @@ const ChatWindow = ({ activeChat, onClickCallback, chatContainerStyle }) => {
               >
                 <span>Edit Group</span>
               </Button>
-            </CreateChat>
+            </CreateGroup>
           </ConversationHeader.Actions>
         </ConversationHeader>
         <MessageList>{renderMessages()}</MessageList>
