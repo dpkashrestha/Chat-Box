@@ -16,7 +16,7 @@ import { useLazyQuery, useQuery, useMutation } from "@apollo/client";
 import { QUERY_USERS } from "../utils/queries";
 import { ADD_CHAT } from "../utils/mutations";
 
-const CreateModal = ({ newGroup, chatId, children }) => {
+const CreateChat = ({ newGroup, chatId, children }) => {
   const [show, setShow] = useState(false);
   const [search, setSearch] = useState("");
   const [groupChatName, setGroupChatName] = useState("");
@@ -321,4 +321,4 @@ const CreateModal = ({ newGroup, chatId, children }) => {
   );
 };
 
-export default CreateModal;
+export default CreateChat;
