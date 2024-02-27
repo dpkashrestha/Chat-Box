@@ -10,8 +10,8 @@ import {
   Avatar,
   AvatarGroup,
 } from "@chatscope/chat-ui-kit-react";
-import CreateModal from "./CreateChat";
-import Accordion from "react-bootstrap/Accordion";
+import CreateChat from "./CreateChat";
+import { Accordion } from "react-bootstrap";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSignOutAlt, faPlus } from "@fortawesome/free-solid-svg-icons";
@@ -77,30 +77,9 @@ const ChatList = ({ onClickCallback }) => {
           src={`data:image/svg+xml;base64,${currentUser.avatar}`}
         />
         <ConversationHeader.Content userName={currentUser.username} />
-        <ConversationHeader.Actions>
-          <Button
-            border
-            className="btn btn-danger"
-            style={{
-              backgroundColor: "#016DB3",
-              color: "white",
-              minWidth: "40px",
-              minHeight: "40px",
-            }}
-            onClick={Auth.logout}
-            icon={
-              <FontAwesomeIcon icon={faSignOutAlt} className="button-icon" />
-            }
-          ></Button>
-        </ConversationHeader.Actions>
+        <ConversationHeader.Actions></ConversationHeader.Actions>
       </ConversationHeader>
-      <Search
-        placeholder="Search..."
-        value={search}
-        onChange={(v) => setSearch(v)}
-        onClearClick={() => setSearch("")}
-      />
-      <CreateModal newGroup={newGroup}>
+      <CreateChat newGroup={newGroup}>
         <Button
           border
           style={{ width: "100%", height: "100%", margin: "0em" }}
@@ -109,88 +88,72 @@ const ChatList = ({ onClickCallback }) => {
         >
           <span className="button-text">New Group</span>
         </Button>
-      </CreateModal>
+      </CreateChat>
+      <Search
+        placeholder="Search..."
+        value={search}
+        onChange={(v) => setSearch(v)}
+        onClearClick={() => setSearch("")}
+      />
 
-      {loadingChatData || loadingUserData ? (
+      {loadingChatData ? (
         <Loader style={{ justifyContent: "center" }}>Loading</Loader>
       ) : (
         <>
-          <Accordion defaultActiveKey={["0"]} alwaysOpen>
-            <Accordion.Item eventKey="0">
-              <Accordion.Header>Chats</Accordion.Header>
-              <Accordion.Body>
-                <ConversationList>
-                  {chatData.allChats.map((chat) => {
-                    const otherUsers = getOtherUsers(chat.users);
-                    const lastMessage = chat.lastMessage;
-                    return (
-                      <Conversation
-                        key={chat._id}
-                        name={chat.chatName}
-                        lastSenderName={
-                          lastMessage ? lastMessage.sender.username : null
-                        }
-                        info={
-                          lastMessage ? lastMessage.content : "No messages yet"
-                        }
-                        onClick={() => handleConversationOnClick(chat)}
-                        active={selectedChatId === chat._id}
-                      >
-                        {otherUsers.length > 1 ? (
-                          <AvatarGroup size="sm" max={4}>
-                            {otherUsers.map((user) => {
-                              return (
-                                <Avatar
-                                  key={user._id}
-                                  name={user.username}
-                                  src={`data:image/svg+xml;base64,${user.avatar}`}
-                                />
-                              );
-                            })}
-                          </AvatarGroup>
-                        ) : (
+          <ConversationList>
+            {chatData.allChats.map((chat) => {
+              const otherUsers = getOtherUsers(chat.users);
+              const lastMessage = chat.lastMessage;
+              return (
+                <Conversation
+                  key={chat._id}
+                  name={chat.chatName}
+                  lastSenderName={
+                    lastMessage ? lastMessage.sender.username : null
+                  }
+                  info={lastMessage ? lastMessage.content : "No messages yet"}
+                  onClick={() => handleConversationOnClick(chat)}
+                  active={selectedChatId === chat._id}
+                >
+                  {otherUsers.length > 1 ? (
+                    <AvatarGroup size="sm" max={4}>
+                      {otherUsers.map((user) => {
+                        return (
                           <Avatar
-                            key={otherUsers[0]._id}
-                            name={otherUsers[0].username}
-                            src={`data:image/svg+xml;base64,${otherUsers[0].avatar}`}
+                            key={user._id}
+                            name={user.username}
+                            src={`data:image/svg+xml;base64,${user.avatar}`}
                           />
-                        )}
-                      </Conversation>
-                    );
-                  })}
-                </ConversationList>
-              </Accordion.Body>
-            </Accordion.Item>
-            <Accordion.Item eventKey="1">
-              <Accordion.Header>Users</Accordion.Header>
-              <Accordion.Body>
-                <ConversationList>
-                  {userData.users.map((user) => {
-                    return (
-                      <Conversation
-                        key={user._id}
-                        name={user.username}
-                        onClick={() => {
-                          const chat = {
-                            chatName: user.username,
-                            users: [{ _id: user._id }],
-                          };
-                          handleConversationOnClick(chat);
-                        }}
-                        // active={selectedChatId === chat._id}
-                      >
-                        <Avatar
-                          key={user._id}
-                          name={user.username}
-                          src={`data:image/svg+xml;base64,${user.avatar}`}
-                        />
-                      </Conversation>
-                    );
-                  })}
-                </ConversationList>
-              </Accordion.Body>
-            </Accordion.Item>
-          </Accordion>
+                        );
+                      })}
+                    </AvatarGroup>
+                  ) : (
+                    <Avatar
+                      key={otherUsers[0]._id}
+                      name={otherUsers[0].username}
+                      src={`data:image/svg+xml;base64,${otherUsers[0].avatar}`}
+                    />
+                  )}
+                </Conversation>
+              );
+            })}
+          </ConversationList>
+          <Button
+            border
+            className="btn btn-danger"
+            style={{
+              backgroundColor: "#dc3545",
+              color: "white",
+              minWidth: "40px",
+              minHeight: "40px",
+            }}
+            onClick={Auth.logout}
+            icon={
+              <FontAwesomeIcon icon={faSignOutAlt} className="button-icon" />
+            }
+          >
+            <span className="button-text">Logout</span>
+          </Button>
         </>
       )}
     </Sidebar>
