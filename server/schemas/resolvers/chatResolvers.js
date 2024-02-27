@@ -55,7 +55,7 @@ const chatResolvers = {
       const chat = await Chat.findById(chatId)
         .populate({
           path: "users",
-          match: { _id: { $ne: groupAdmin } }, //don't include groupAdmin in users
+          /* match: { _id: { $ne: groupAdmin } }, */ //don't include groupAdmin in users
           select: ["username", "email", "avatar"],
         })
         .populate({
