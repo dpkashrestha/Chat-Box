@@ -157,6 +157,15 @@
 .btn-primary:hover {
   background-color: #3173a5 !important;
 }
+.newGroup {
+  margin: 0.3em 0.1em -0.1em !important;
+}
+.editGroup {
+  padding: 0 0.3em !important;
+  margin: 0 !important;
+  width: auto !important;
+  height: 32.375px !important;
+}
 
 @media (min-width: 577px) and (max-width: 768px) {
   .button-text {
@@ -165,8 +174,8 @@
   .button-icon {
     margin-right: 0 !important;
   }
-  #newGroup {
-    margin-bottom: 0.4em !important;
+  .newGroup {
+    margin: 0.3em 0.1em !important;
   }
 }
 @media (max-width: 576px) {

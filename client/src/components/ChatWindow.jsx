@@ -204,7 +204,7 @@ const ChatWindow = ({ activeChat, onClickCallback, chatContainerStyle }) => {
             >
               <Button
                 border
-                style={{ width: "100%", height: "100%", padding: "0 0.1em" }}
+                style={{ padding: "3.2px 0.3em", margin: "0", height: "100%" }}
                 onClick={() => setNewGroup(false)}
                 labelPosition="left"
                 icon={

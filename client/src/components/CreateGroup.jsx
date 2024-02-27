@@ -172,8 +172,8 @@ const CreateGroup = ({ onCreate, onEdit, newGroup, activeChat, children }) => {
   return (
     <>
       <span
-        style={{ margin: "0.4em 0.2em 0em" }}
-        id="newGroup"
+        style={{}}
+        className={newGroup ? "newGroup" : "editGroup"}
         onClick={handleShow}
       >
         {children}
