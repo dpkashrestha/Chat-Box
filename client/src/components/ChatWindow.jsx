@@ -4,8 +4,6 @@ import { ADD_MESSAGE } from "../utils/mutations";
 import Picker from "emoji-picker-react";
 import CreateModal from "./CreateChat";
 
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faFaceSmile } from "@fortawesome/free-solid-svg-icons";
 import {
   ChatContainer,
   MessageList,
@@ -16,12 +14,9 @@ import {
   ConversationHeader,
   Button,
   AvatarGroup,
-  VoiceCallButton,
-  VideoCallButton,
-  TypingIndicator,
   Loader,
 } from "@chatscope/chat-ui-kit-react";
-import { useState, useRef, useMemo, useCallback } from "react";
+import { useState, useRef, useMemo, useEffect, useCallback } from "react";
 import Auth from "../utils/auth";
 
 const ChatWindow = ({ activeChat }) => {
@@ -33,6 +28,8 @@ const ChatWindow = ({ activeChat }) => {
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
 
   const inputRef = useRef();
+  const emojiPickerRef = useRef(null);
+
   const [addMessage, { error }] = useMutation(ADD_MESSAGE, {
     refetchQueries: [QUERY_MESSAGES, "messages"],
   });
@@ -55,6 +52,23 @@ const ChatWindow = ({ activeChat }) => {
   const handleEmojiPickerHideShow = () => {
     setShowEmojiPicker(!showEmojiPicker);
   };
+
+  const handleClickOutside = (event) => {
+    if (
+      emojiPickerRef.current &&
+      !emojiPickerRef.current.contains(event.target) &&
+      !event.target.classList.contains("emoji-icon")
+    ) {
+      setShowEmojiPicker(false);
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener("click", handleClickOutside);
+    return () => {
+      document.removeEventListener("click", handleClickOutside);
+    };
+  }, []);
 
   const handleEmojiClick = (emoji, event) => {
     let msg = messageInputValue;
@@ -181,32 +195,29 @@ const ChatWindow = ({ activeChat }) => {
                 marginLeft: "0.5em",
                 marginRight: "-0.1em",
               }}
+              className="emoji-icon"
             >
               😃
             </div>
-            {showEmojiPicker && <Picker onEmojiClick={handleEmojiClick} />}
+            {showEmojiPicker && (
+              <div ref={emojiPickerRef}>
+                <Picker onEmojiClick={handleEmojiClick} />
+              </div>
+            )}
           </div>
 
           <MessageInput
             ref={inputRef}
             onChange={(msg) => setMessageInputValue(msg)}
             value={messageInputValue}
-            sendButton={false}
+            sendButton={true}
+            onSend={() => handleSend(messageInputValue)}
             attachButton={false}
             style={{
               flexGrow: 1,
               borderTop: 0,
               flexShrink: "initial",
               marginRight: "0em",
-            }}
-          />
-          <SendButton
-            border
-            onClick={() => handleSend(messageInputValue)}
-            disabled={messageInputValue.length === 0}
-            style={{
-              width: "10vw",
-              minWidth: "65px",
             }}
           />
         </div>

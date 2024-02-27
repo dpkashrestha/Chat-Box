@@ -45,6 +45,11 @@ export const ADD_CHAT = gql`
     addChat(chatName: $chatName, users: $users) {
       _id
       chatName
+      users {
+        _id
+        username
+        avatar
+      }
     }
   }
 `;
