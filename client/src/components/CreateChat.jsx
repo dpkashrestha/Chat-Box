@@ -74,6 +74,27 @@ const CreateChat = ({ newGroup, chatId, children }) => {
   const handleShow = async () => {
     setShow(true);
   };
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const form = e.currentTarget;
+    if (form.checkValidity() === false) {
+      e.stopPropagation();
+      console.log("not validated");
+      setValidated(true);
+      setNoName(true);
+    } else {
+      if (newGroup) {
+        /* createChat({
+                variables: { chatId: groupChatName, users: selectedUsers },
+              }); */
+        console.log(`Created: ${groupChatName}`);
+      } else if (!newGroup) {
+        console.log(`Edited: ${groupChatName}`);
+      }
+
+      setValidated(false);
+    }
+  };
 
   const inputRef = useRef();
 
@@ -93,32 +114,7 @@ const CreateChat = ({ newGroup, chatId, children }) => {
             {newGroup ? "Create a chat" : `Edit this chat`}
           </Modal.Title>
         </Modal.Header>
-        <Form
-          noValidate
-          validated={validated}
-          onSubmit={(e) => {
-            e.preventDefault();
-            const form = e.currentTarget;
-            if (form.checkValidity() === false) {
-              e.preventDefault();
-              e.stopPropagation();
-              console.log("not validated");
-              setValidated(true);
-              setNoName(true);
-            } else {
-              if (newGroup) {
-                /* createChat({
-                variables: { chatId: groupChatName, users: selectedUsers },
-              }); */
-                console.log(`Created: ${groupChatName}`);
-              } else if (!newGroup) {
-                console.log(`Edited: ${groupChatName}`);
-              }
-
-              setValidated(false);
-            }
-          }}
-        >
+        <Form noValidate validated={validated} onSubmit={handleSubmit}>
           <Modal.Body>
             <Form.Group md="4" controlId="validationCustomUsername">
               <InputGroup hasValidation>
@@ -180,7 +176,7 @@ const CreateChat = ({ newGroup, chatId, children }) => {
                 )}
               </InputGroup>
             </Form.Group>
-            {selectedUsers && (
+            {selectedUsers ? (
               <div style={{ margin: "0.3em" }}>
                 {selectedUsers.map((user) => {
                   const _id = user._id;
@@ -223,6 +219,20 @@ const CreateChat = ({ newGroup, chatId, children }) => {
                   );
                 })}
               </div>
+            ) : (
+              <>
+                {!validated && (
+                  <Form.Control.Feedback
+                    type="invalid"
+                    style={{
+                      display: "block",
+                      margin: "-0.2em 0.8em .5em",
+                    }}
+                  >
+                    Please select at least one user.
+                  </Form.Control.Feedback>
+                )}
+              </>
             )}
             <Form.Group md="4" controlId="validationCustomUsername">
               <InputGroup hasValidation>

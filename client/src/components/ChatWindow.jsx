@@ -142,7 +142,11 @@ const ChatWindow = ({ activeChat }) => {
         <ConversationHeader className="test-class">
           <ConversationHeader.Back />
           {otherUsers.length > 1 ? (
-            <AvatarGroup size="sm">
+            <AvatarGroup
+              size="sm"
+              className="headerAvatar"
+              style={{ marginTop: "0.5em" }}
+            >
               {otherUsers.slice(0, 4).map((user) => {
                 return (
                   <Avatar
@@ -156,14 +160,13 @@ const ChatWindow = ({ activeChat }) => {
           ) : (
             <Avatar
               key={otherUsers[0]._id}
+              className="headerAvatar"
               name={otherUsers[0].username}
+              style={{ marginTop: "0.5em" }}
               src={`data:image/svg+xml;base64,${otherUsers[0].avatar}`}
             />
           )}
-          <ConversationHeader.Content
-            userName={activeChat.chatName}
-            info="Active 10 mins ago"
-          />
+          <ConversationHeader.Content userName={activeChat.chatName} />
           <ConversationHeader.Actions>
             <CreateChat newGroup={newGroup} chatId={activeChat._id}>
               <Button
@@ -171,7 +174,7 @@ const ChatWindow = ({ activeChat }) => {
                 style={{ width: "100%", height: "100%", margin: "1em" }}
                 onClick={() => setNewGroup(false)}
               >
-                <span className="button-text">Edit Group</span>
+                <span>Edit Group</span>
               </Button>
             </CreateChat>
           </ConversationHeader.Actions>
@@ -205,21 +208,39 @@ const ChatWindow = ({ activeChat }) => {
               </div>
             )}
           </div>
-
-          <MessageInput
-            ref={inputRef}
-            onChange={(msg) => setMessageInputValue(msg)}
-            value={messageInputValue}
-            sendButton={true}
-            onSend={() => handleSend(messageInputValue)}
-            attachButton={false}
+          <div
+            as={MessageInput}
             style={{
-              flexGrow: 1,
-              borderTop: 0,
-              flexShrink: "initial",
-              marginRight: "0em",
+              display: "flex",
+              flexDirection: "row",
+              borderTop: "1px dashed #d1dbe4",
+              width: "100%",
             }}
-          />
+          >
+            <MessageInput
+              ref={inputRef}
+              onChange={(msg) => setMessageInputValue(msg)}
+              value={messageInputValue}
+              sendButton={false}
+              onSend={() => handleSend(messageInputValue)}
+              attachButton={false}
+              style={{
+                flexGrow: 1,
+                borderTop: 0,
+                flexShrink: "initial",
+                marginRight: "0em",
+              }}
+            />
+            <SendButton
+              border
+              onClick={() => handleSend(messageInputValue)}
+              disabled={messageInputValue.length === 0}
+              style={{
+                width: "65px",
+                minWidth: "65px",
+              }}
+            />
+          </div>
         </div>
       </ChatContainer>
     </>
