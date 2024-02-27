@@ -175,7 +175,7 @@ const ChatWindow = ({ activeChat, onClickCallback, chatContainerStyle }) => {
                   />
                 }
               >
-                <span>Edit Group </span>
+                <span className="edit-text">Edit Group </span>
               </Button>
             </CreateGroup>
           </ConversationHeader.Actions>

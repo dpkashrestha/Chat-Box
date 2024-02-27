@@ -17,7 +17,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSignOutAlt, faPlus } from "@fortawesome/free-solid-svg-icons";
 
 import { useState, useEffect } from "react";
-import { useQuery, useMutation } from "@apollo/client";
+import { useQuery, useMutation, useLazyQuery } from "@apollo/client";
 import { QUERY_CHATS, QUERY_USERS } from "../utils/queries";
 import { ADD_CHAT } from "../utils/mutations";
 import Auth from "../utils/auth";
@@ -27,6 +27,7 @@ const ChatList = ({
   conversationAvatarStyle,
   conversationContentStyle,
   sidebarStyle,
+  activeChat,
 }) => {
   const currentUser = Auth.getCurrentUser();
   const [search, setSearch] = useState("");
@@ -38,11 +39,12 @@ const ChatList = ({
       console.log(data);
     },
   });
-  const { loading: loadingUserData, data: userData } = useQuery(QUERY_USERS, {
-    onCompleted: (data) => {
-      console.log(data);
-    },
-  });
+  const [searchUsers, { loading: loadingUserData, data: userData }] =
+    useLazyQuery(QUERY_USERS, {
+      onCompleted: (data) => {
+        console.log(data);
+      },
+    });
   const [addChat, { error }] = useMutation(ADD_CHAT, {
     refetchQueries: [QUERY_CHATS, "allChats"],
     onCompleted: (d) => {
@@ -153,7 +155,7 @@ const ChatList = ({
                 <Conversation
                   key={chat._id}
                   onClick={() => handleConversationOnClick(chat)}
-                  active={selectedChatId === chat._id}
+                  active={activeChat && activeChat._id === chat._id}
                 >
                   {otherUsers.length > 1 ? (
                     <AvatarGroup

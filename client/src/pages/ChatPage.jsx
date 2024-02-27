@@ -27,6 +27,7 @@ const ChatPage = () => {
     marginRight: "1em",
   });
   const handleBackClick = () => {
+    setActiveChat(null);
     setSidebarVisible(!sidebarVisible);
   };
   const setActiveConversation = useCallback(
@@ -97,6 +98,7 @@ const ChatPage = () => {
         <ChatList
           onClickCallback={setActiveConversation}
           sidebarStyle={sidebarStyle}
+          activeChat={activeChat}
           conversationAvatarStyle={conversationAvatarStyle}
           conversationContentStyle={conversationContentStyle}
         />

@@ -149,7 +149,7 @@
   opacity: 0.7;
 }
 
-@media (min-width: 578px) and (max-width: 768px) {
+@media (min-width: 577px) and (max-width: 768px) {
   .button-text {
     display: none !important;
   }
@@ -160,9 +160,8 @@
     margin-bottom: 0.4em !important;
   }
 }
-
-/* @media (width: 578px) {
-  .button-text {
-    display: inline-block !important;
+@media (max-width: 576px) {
+  .edit-text {
+    display: none !important;
   }
-} */
+}
