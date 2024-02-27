@@ -27,6 +27,7 @@ const CreateGroup = ({ onCreate, onEdit, newGroup, activeChat, children }) => {
   const [validated, setValidated] = useState(false);
   const [noName, setNoName] = useState(false);
   const [noUsers, setNoUsers] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   const [searchUsers, { loading: userLoading, data: userData }] = useLazyQuery(
     QUERY_USERS,
@@ -68,13 +69,19 @@ const CreateGroup = ({ onCreate, onEdit, newGroup, activeChat, children }) => {
   useEffect(() => {
     if (show) {
       if (!newGroup) {
-        console.log("Editing:", activeChat);
-        const admin = activeChat.groupAdmin;
-        setSelectedUsers([
-          ...activeChat.users.filter((user) => user._id !== admin._id),
-        ]);
-        setGroupChatName(activeChat.chatName);
-        setValidated(true);
+        if (activeChat.groupAdmin._id === currentUser._id) {
+          setIsAdmin(true);
+          console.log("Editing:", activeChat);
+          const admin = activeChat.groupAdmin;
+          setSelectedUsers([
+            ...activeChat.users.filter((user) => user._id !== admin._id),
+          ]);
+          setGroupChatName(activeChat.chatName);
+          setValidated(true);
+        } else {
+          setIsAdmin(false);
+          console.log("Not Admin");
+        }
       }
     } else {
       setNoName(false);
@@ -170,230 +177,248 @@ const CreateGroup = ({ onCreate, onEdit, newGroup, activeChat, children }) => {
         {children}
       </span>
 
-      <Modal show={show} onHide={handleClose} centered>
-        <Modal.Header closeButton>
-          <Modal.Title style={{ marginLeft: "auto" }}>
-            {newGroup ? "Create a chat" : `Edit this chat`}
-          </Modal.Title>
-        </Modal.Header>
-        <Form noValidate validated={validated} onSubmit={handleSubmit}>
-          <Modal.Body>
-            <Form.Group md="4" controlId="validationCustomUsername">
-              <InputGroup hasValidation>
-                <div
-                  className="cs-message-input__content-editor-wrapper"
-                  style={{
-                    height: "39.48px",
-                    margin: "0.2em 0em",
-                  }}
-                >
+      {isAdmin || newGroup ? (
+        <Modal show={show} onHide={handleClose} centered>
+          <Modal.Header closeButton>
+            <Modal.Title style={{ marginLeft: "auto" }}>
+              {newGroup ? "Create a chat" : `Edit this chat`}
+            </Modal.Title>
+          </Modal.Header>
+          <Form noValidate validated={validated} onSubmit={handleSubmit}>
+            <Modal.Body>
+              <Form.Group md="4" controlId="validationCustomUsername">
+                <InputGroup hasValidation>
                   <div
-                    className="scrollbar-container cs-message-input__content-editor-container ps"
+                    className="cs-message-input__content-editor-wrapper"
                     style={{
-                      height: "20.3px",
+                      height: "39.48px",
+                      margin: "0.2em 0em",
                     }}
                   >
-                    <Form.Control
-                      required={true}
-                      ref={inputRef}
-                      type="text"
-                      placeholder="Chat Name"
-                      onChange={(e) => {
-                        if (e.target) {
-                          var name = e.target.value;
-                        } else {
-                          var name = e;
-                        }
-                        setNoName(false);
-                        setGroupChatName(name);
-                      }}
-                      className="cs-message-input__content-editor"
-                      value={groupChatName}
-                      /* as={MessageInput}
-                      sendButton={false}
-                      attachButton={false} */
+                    <div
+                      className="scrollbar-container cs-message-input__content-editor-container ps"
                       style={{
                         height: "20.3px",
-                        boxShadow: "0 0",
-                        backgroundColor: "transparent",
-                        /* flexGrow: 1,
+                      }}
+                    >
+                      <Form.Control
+                        required={true}
+                        ref={inputRef}
+                        type="text"
+                        placeholder="Chat Name"
+                        onChange={(e) => {
+                          if (e.target) {
+                            var name = e.target.value;
+                          } else {
+                            var name = e;
+                          }
+                          setNoName(false);
+                          setGroupChatName(name);
+                        }}
+                        className="cs-message-input__content-editor"
+                        value={groupChatName}
+                        /* as={MessageInput}
+                      sendButton={false}
+                      attachButton={false} */
+                        style={{
+                          height: "20.3px",
+                          boxShadow: "0 0",
+                          backgroundColor: "transparent",
+                          /* flexGrow: 1,
                         flexShrink: "initial",
                         display: "flex",
                         flexDirection: "row",
                         margin: "0.2em 0em", */
-                      }}
-                    />
+                        }}
+                      />
+                    </div>
                   </div>
-                </div>
-                {noName && (
-                  <Form.Control.Feedback
-                    type="invalid"
-                    style={{
-                      display: "block",
-                      margin: "-0.1em 0.8em .3em",
-                    }}
-                  >
-                    Please choose a group name.
-                  </Form.Control.Feedback>
-                )}
-              </InputGroup>
-            </Form.Group>
-            {selectedUsers.length ? (
-              <div style={{ margin: "0.3em" }}>
-                {selectedUsers.map((user) => {
-                  console.log("selectedUsers", selectedUsers);
-                  const _id = user._id;
-                  return (
-                    <Btn
-                      key={_id}
-                      className="cs-button cs-button--border"
-                      onClick={() => {
-                        const newUsers = selectedUsers.filter((u) => {
-                          return u._id !== _id;
-                        });
-                        console.log("newUsers", newUsers);
-                        setSelectedUsers(newUsers);
-                      }}
+                  {noName && (
+                    <Form.Control.Feedback
+                      type="invalid"
                       style={{
-                        opacity: "1",
-                        backgroundColor: "transparent",
-                        color: "#6ea9d7",
-                        borderColor: "#6ea9d7",
-                        margin: "0.1em",
-                        justifyContent: "start",
-                        display: "inline-flex",
+                        display: "block",
+                        margin: "-0.1em 0.8em .3em",
                       }}
                     >
-                      {user.username}
-                      <Badge
-                        pill
-                        bg="danger"
-                        className="selectedUsers"
+                      Please choose a group name.
+                    </Form.Control.Feedback>
+                  )}
+                </InputGroup>
+              </Form.Group>
+              {selectedUsers.length ? (
+                <div style={{ margin: "0.3em" }}>
+                  {selectedUsers.map((user) => {
+                    console.log("selectedUsers", selectedUsers);
+                    const _id = user._id;
+                    return (
+                      <Btn
+                        key={_id}
+                        className="cs-button cs-button--border"
+                        onClick={() => {
+                          const newUsers = selectedUsers.filter((u) => {
+                            return u._id !== _id;
+                          });
+                          console.log("newUsers", newUsers);
+                          setSelectedUsers(newUsers);
+                        }}
                         style={{
-                          fontSize: "0.5em",
-                          marginLeft: "0.4em",
-                          marginBlockStart: "0.8em",
+                          opacity: "1",
+                          backgroundColor: "transparent",
+                          color: "#6ea9d7",
+                          borderColor: "#6ea9d7",
+                          margin: "0.1em",
+                          justifyContent: "start",
+                          display: "inline-flex",
                         }}
                       >
-                        X
-                      </Badge>
-                    </Btn>
-                  );
-                })}
-              </div>
-            ) : (
-              <>
-                {noUsers && (
-                  <Form.Control.Feedback
-                    type="invalid"
+                        {user.username}
+                        <Badge
+                          pill
+                          bg="danger"
+                          className="selectedUsers"
+                          style={{
+                            fontSize: "0.5em",
+                            marginLeft: "0.4em",
+                            marginBlockStart: "0.8em",
+                          }}
+                        >
+                          X
+                        </Badge>
+                      </Btn>
+                    );
+                  })}
+                </div>
+              ) : (
+                <>
+                  {noUsers && (
+                    <Form.Control.Feedback
+                      type="invalid"
+                      style={{
+                        display: "block",
+                        margin: "-0.2em 0.8em .3em",
+                      }}
+                    >
+                      Please select at least one user.
+                    </Form.Control.Feedback>
+                  )}
+                </>
+              )}
+              <Form.Group md="4" controlId="validationCustomUsername">
+                <InputGroup hasValidation>
+                  <Form.Control
+                    required={true}
+                    ref={searchRef}
+                    as={Search}
+                    placeholder="Search users"
+                    value={search}
+                    onChange={(v) => setSearch(v)}
+                    onClearClick={() => setSearch("")}
                     style={{
-                      display: "block",
-                      margin: "-0.2em 0.8em .3em",
+                      flexGrow: 1,
+                      flexShrink: "initial",
                     }}
-                  >
-                    Please select at least one user.
-                  </Form.Control.Feedback>
-                )}
-              </>
-            )}
-            <Form.Group md="4" controlId="validationCustomUsername">
-              <InputGroup hasValidation>
-                <Form.Control
-                  required={true}
-                  ref={searchRef}
-                  as={Search}
-                  placeholder="Search users"
-                  value={search}
-                  onChange={(v) => setSearch(v)}
-                  onClearClick={() => setSearch("")}
-                  style={{
-                    flexGrow: 1,
-                    flexShrink: "initial",
-                  }}
-                />
-              </InputGroup>
-            </Form.Group>
-            {(search || searchRef.current) && (
-              <>
-                {userLoading ? (
-                  <div
-                    style={{
-                      justifyContent: "center",
-                      display: "flex",
-                      marginTop: "0.5em",
-                    }}
-                  >
-                    <Loader style={{ justifyContent: "center" }}></Loader>
-                  </div>
-                ) : (
-                  <ConversationList>
-                    {searchResult
-                      .filter((usr) => {
-                        return !selectedUsers
-                          .map((u) => u._id)
-                          .includes(usr._id);
-                      })
-                      .map((user) => {
-                        return (
-                          <Conversation
-                            key={user._id}
-                            name={user.username}
-                            info={user.email}
-                            onClick={() => {
-                              const newUser = {
-                                _id: user._id,
-                                username: user.username,
-                              };
-                              console.log(
-                                newUser,
-                                selectedUsers
-                                  .map((u) => u._id)
-                                  .includes(newUser._id)
-                              );
-                              if (
-                                !selectedUsers
-                                  .map((u) => u._id)
-                                  .includes(newUser._id)
-                              ) {
-                                setSelectedUsers([...selectedUsers, newUser]);
-                              }
-                            }}
-                            active={false}
-                          >
-                            <Avatar
+                  />
+                </InputGroup>
+              </Form.Group>
+              {(search || searchRef.current) && (
+                <>
+                  {userLoading ? (
+                    <div
+                      style={{
+                        justifyContent: "center",
+                        display: "flex",
+                        marginTop: "0.5em",
+                      }}
+                    >
+                      <Loader style={{ justifyContent: "center" }}></Loader>
+                    </div>
+                  ) : (
+                    <ConversationList>
+                      {searchResult
+                        .filter((usr) => {
+                          return !selectedUsers
+                            .map((u) => u._id)
+                            .includes(usr._id);
+                        })
+                        .map((user) => {
+                          return (
+                            <Conversation
+                              key={user._id}
                               name={user.username}
-                              src={`data:image/svg+xml;base64,${user.avatar}`}
-                            />
-                          </Conversation>
-                        );
-                      })}
-                  </ConversationList>
-                )}
-              </>
-            )}
+                              info={user.email}
+                              onClick={() => {
+                                const newUser = {
+                                  _id: user._id,
+                                  username: user.username,
+                                };
+                                console.log(
+                                  newUser,
+                                  selectedUsers
+                                    .map((u) => u._id)
+                                    .includes(newUser._id)
+                                );
+                                if (
+                                  !selectedUsers
+                                    .map((u) => u._id)
+                                    .includes(newUser._id)
+                                ) {
+                                  setSelectedUsers([...selectedUsers, newUser]);
+                                }
+                              }}
+                              active={false}
+                            >
+                              <Avatar
+                                name={user.username}
+                                src={`data:image/svg+xml;base64,${user.avatar}`}
+                              />
+                            </Conversation>
+                          );
+                        })}
+                    </ConversationList>
+                  )}
+                </>
+              )}
+            </Modal.Body>
+            <Modal.Footer>
+              {newGroup ? (
+                <Button border type="submit" className="btn btn-primary">
+                  Create Group
+                </Button>
+              ) : (
+                <>
+                  <Button
+                    className="btn btn-danger"
+                    border
+                    onClick={handleDelete}
+                  >
+                    Delete Group
+                  </Button>
+                  <Button border type="submit" className="btn btn-primary">
+                    Save Changes
+                  </Button>
+                </>
+              )}
+            </Modal.Footer>
+          </Form>
+        </Modal>
+      ) : (
+        <Modal show={show} onHide={handleClose} centered>
+          <Modal.Header closeButton>
+            <Modal.Title style={{ marginLeft: "auto" }}>
+              Not Authorized
+            </Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <p>You are not authorized to edit this chat.</p>
           </Modal.Body>
           <Modal.Footer>
-            {newGroup ? (
-              <Button border type="submit" className="btn btn-primary">
-                Create Group
-              </Button>
-            ) : (
-              <>
-                <Button
-                  className="btn btn-danger"
-                  border
-                  onClick={handleDelete}
-                >
-                  Delete Group
-                </Button>
-                <Button border type="submit" className="btn btn-primary">
-                  Save Changes
-                </Button>
-              </>
-            )}
-          </Modal.Footer>{" "}
-        </Form>
-      </Modal>
+            <Button className="btn btn-primary" border onClick={handleClose}>
+              Close
+            </Button>
+          </Modal.Footer>
+        </Modal>
+      )}
     </>
   );
 };
