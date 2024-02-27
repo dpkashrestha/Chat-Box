@@ -183,7 +183,11 @@ const ChatList = ({
                     />
                   )}
                   <Conversation.Content
-                    name={chat.chatName}
+                    name={
+                      otherUsers.length > 1
+                        ? chat.chatName
+                        : otherUsers[0].username
+                    }
                     lastSenderName={
                       lastMessage ? lastMessage.sender.username : null
                     }

@@ -183,7 +183,11 @@ const ChatWindow = ({ activeChat, onClickCallback, chatContainerStyle }) => {
               src={`data:image/svg+xml;base64,${otherUsers[0].avatar}`}
             />
           )}
-          <ConversationHeader.Content userName={thisChat.chatName} />
+          <ConversationHeader.Content
+            userName={
+              otherUsers.length > 1 ? thisChat.chatName : otherUsers[0].username
+            }
+          />
           <ConversationHeader.Actions>
             <CreateGroup
               newGroup={newGroup}
