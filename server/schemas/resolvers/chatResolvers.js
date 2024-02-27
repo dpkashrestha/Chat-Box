@@ -81,7 +81,7 @@ const chatResolvers = {
         await Chat.create({ chatName, users, groupAdmin: me })
       ).populate({
         path: "users",
-        select: ["username", "email", "avatar"],
+        select: ["_id", "username", "email", "avatar"],
       });
 
       return chat;

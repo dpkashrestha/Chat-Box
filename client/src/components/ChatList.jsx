@@ -17,8 +17,9 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSignOutAlt, faPlus } from "@fortawesome/free-solid-svg-icons";
 
 import { useState } from "react";
-import { useQuery } from "@apollo/client";
+import { useQuery, useMutation } from "@apollo/client";
 import { QUERY_CHATS, QUERY_USERS } from "../utils/queries";
+import { ADD_CHAT } from "../utils/mutations";
 import Auth from "../utils/auth";
 
 const ChatList = ({ onClickCallback }) => {
@@ -37,6 +38,9 @@ const ChatList = ({ onClickCallback }) => {
       console.log(data);
     },
   });
+  const [addChat, { error }] = useMutation(ADD_CHAT, {
+    refetchQueries: [QUERY_CHATS, "chatData"],
+  });
 
   const getOtherUsers = (users) => {
     return users.filter((user) => user._id !== currentUser._id);
@@ -46,6 +50,23 @@ const ChatList = ({ onClickCallback }) => {
     return getOtherUsers(users)
       .map((user) => user.username)
       .join(", ");
+  };
+
+  const handleConversationOnClick = async (chat) => {
+    console.log("handle conversation click");
+    if (!chat._id) {
+      const { data } = await addChat({
+        variables: {
+          chatName: chat.chatName,
+          users: chat.users,
+        },
+      });
+      console.log(data.addChat);
+
+      chat = data.addChat;
+    }
+    setSelectedChatId(chat._id);
+    onClickCallback(chat);
   };
 
   return (
@@ -112,10 +133,7 @@ const ChatList = ({ onClickCallback }) => {
                         info={
                           lastMessage ? lastMessage.content : "No messages yet"
                         }
-                        onClick={() => {
-                          setSelectedChatId(chat._id);
-                          onClickCallback(chat);
-                        }}
+                        onClick={() => handleConversationOnClick(chat)}
                         active={selectedChatId === chat._id}
                       >
                         {otherUsers.length > 1 ? (
@@ -153,8 +171,11 @@ const ChatList = ({ onClickCallback }) => {
                         key={user._id}
                         name={user.username}
                         onClick={() => {
-                          // setSelectedChatId(chat._id);
-                          // onClickCallback(chat);
+                          const chat = {
+                            chatName: user.username,
+                            users: [{ _id: user._id }],
+                          };
+                          handleConversationOnClick(chat);
                         }}
                         // active={selectedChatId === chat._id}
                       >
