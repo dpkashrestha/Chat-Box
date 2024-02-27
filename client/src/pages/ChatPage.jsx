@@ -3,14 +3,90 @@ import { MainContainer } from "@chatscope/chat-ui-kit-react";
 
 import ChatList from "../components/ChatList";
 import ChatWindow from "../components/ChatWindow";
-import { useState } from "react";
+import { useState, useCallback, useEffect } from "react";
 import Auth from "../utils/auth";
 
 const ChatPage = () => {
+  const [windowDimensions, setWindowDimensions] = useState(window.innerWidth);
   const [activeChat, setActiveChat] = useState(null);
-  const setActiveConversation = (chat) => {
-    setActiveChat(chat);
+
+  const [sidebarVisible, setSidebarVisible] = useState(true);
+  const [sidebarStyle, setSidebarStyle] = useState({
+    display: "flex",
+    flexBasis: "auto",
+    width: "100%",
+    maxWidth: "100%",
+  });
+  const [chatContainerStyle, setChatContainerStyle] = useState({
+    display: "none",
+  });
+  const [conversationContentStyle, setConversationContentStyle] = useState({
+    display: "flex",
+  });
+  const [conversationAvatarStyle, setConversationAvatarStyle] = useState({
+    marginRight: "1em",
+  });
+  const handleBackClick = () => {
+    setSidebarVisible(!sidebarVisible);
   };
+  const setActiveConversation = useCallback(
+    (chat) => {
+      setActiveChat(chat);
+      if (sidebarVisible) {
+        setSidebarVisible(false);
+      }
+    },
+    [sidebarVisible, setSidebarVisible]
+  );
+  useEffect(() => {
+    console.log("sidebar", sidebarVisible);
+    console.log("previous styles:", {
+      sidebarStyle,
+      chatContainerStyle,
+      conversationContentStyle,
+      conversationAvatarStyle,
+    });
+    if (sidebarVisible && windowDimensions < 768) {
+      setSidebarStyle({
+        display: "flex",
+        flexBasis: "auto",
+        width: "100%",
+        maxWidth: "100%",
+      });
+
+      setConversationContentStyle({
+        display: "flex",
+      });
+      setConversationAvatarStyle({
+        marginRight: "1em",
+      });
+      setChatContainerStyle({
+        display: "none",
+      });
+    } else {
+      setSidebarStyle({});
+      setConversationContentStyle({});
+      setConversationAvatarStyle({});
+      setChatContainerStyle({});
+    }
+  }, [
+    sidebarVisible,
+    setSidebarVisible,
+    setConversationContentStyle,
+    setConversationAvatarStyle,
+    setSidebarStyle,
+    setChatContainerStyle,
+    windowDimensions,
+  ]);
+
+  useEffect(() => {
+    function handleResize() {
+      setWindowDimensions(window.innerWidth);
+    }
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   if (!Auth.loggedIn()) {
     window.location.assign("/");
@@ -25,8 +101,19 @@ const ChatPage = () => {
       }}
     >
       <MainContainer responsive>
-        <ChatList onClickCallback={setActiveConversation} />
-        {activeChat && <ChatWindow activeChat={activeChat} />}
+        <ChatList
+          onClickCallback={setActiveConversation}
+          sidebarStyle={sidebarStyle}
+          conversationAvatarStyle={conversationAvatarStyle}
+          conversationContentStyle={conversationContentStyle}
+        />
+        {activeChat && (
+          <ChatWindow
+            onClickCallback={handleBackClick}
+            activeChat={activeChat}
+            chatContainerStyle={chatContainerStyle}
+          />
+        )}
       </MainContainer>
     </div>
   );

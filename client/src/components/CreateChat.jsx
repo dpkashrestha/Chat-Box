@@ -101,7 +101,7 @@ const CreateChat = ({ newGroup, chatId, children }) => {
   return (
     <>
       <span
-        style={{ margin: "-0.1em 0.2em 0.4em" }}
+        style={{ margin: "0.4em 0.2em 0em" }}
         id="newGroup"
         onClick={handleShow}
       >

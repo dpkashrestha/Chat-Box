@@ -19,7 +19,7 @@ import {
 import { useState, useRef, useMemo, useEffect, useCallback } from "react";
 import Auth from "../utils/auth";
 
-const ChatWindow = ({ activeChat }) => {
+const ChatWindow = ({ activeChat, onClickCallback, chatContainerStyle }) => {
   const currentUser = Auth.getCurrentUser();
   const [messageInputValue, setMessageInputValue] = useState("");
   const [allMessages, setAllMessages] = useState([]);
@@ -45,9 +45,6 @@ const ChatWindow = ({ activeChat }) => {
   };
 
   const otherUsers = getOtherUsers(activeChat.users);
-
-  //TODO: add get singleChat
-  // const { loading: chatLoading, data: chatData } = useQuery();
 
   const handleEmojiPickerHideShow = () => {
     setShowEmojiPicker(!showEmojiPicker);
@@ -138,9 +135,9 @@ const ChatWindow = ({ activeChat }) => {
 
   return (
     <>
-      <ChatContainer>
+      <ChatContainer style={chatContainerStyle}>
         <ConversationHeader className="test-class">
-          <ConversationHeader.Back />
+          <ConversationHeader.Back onClick={onClickCallback} />
           {otherUsers.length > 1 ? (
             <AvatarGroup
               size="sm"

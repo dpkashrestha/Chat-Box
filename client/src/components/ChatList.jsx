@@ -22,7 +22,12 @@ import { QUERY_CHATS, QUERY_USERS } from "../utils/queries";
 import { ADD_CHAT } from "../utils/mutations";
 import Auth from "../utils/auth";
 
-const ChatList = ({ onClickCallback }) => {
+const ChatList = ({
+  onClickCallback,
+  conversationAvatarStyle,
+  conversationContentStyle,
+  sidebarStyle,
+}) => {
   const currentUser = Auth.getCurrentUser();
   const [search, setSearch] = useState("");
   const [newGroup, setNewGroup] = useState(true);
@@ -70,16 +75,15 @@ const ChatList = ({ onClickCallback }) => {
   };
 
   return (
-    <Sidebar position="left" scrollable={false}>
+    <Sidebar position="left" scrollable={false} style={sidebarStyle}>
       <ConversationHeader>
         <Avatar
           name={currentUser.username}
           src={`data:image/svg+xml;base64,${currentUser.avatar}`}
         />
         <ConversationHeader.Content userName={currentUser.username} />
-        <ConversationHeader.Actions></ConversationHeader.Actions>
       </ConversationHeader>
-      <CreateChat newGroup={newGroup}>
+      <CreateChat newGroup={newGroup} style={{ marginTop: "0.5em" }}>
         <Button
           border
           style={{ width: "100%", height: "100%", margin: "0em" }}
@@ -107,16 +111,15 @@ const ChatList = ({ onClickCallback }) => {
               return (
                 <Conversation
                   key={chat._id}
-                  name={chat.chatName}
-                  lastSenderName={
-                    lastMessage ? lastMessage.sender.username : null
-                  }
-                  info={lastMessage ? lastMessage.content : "No messages yet"}
                   onClick={() => handleConversationOnClick(chat)}
                   active={selectedChatId === chat._id}
                 >
                   {otherUsers.length > 1 ? (
-                    <AvatarGroup size="sm" max={4}>
+                    <AvatarGroup
+                      size="sm"
+                      max={4}
+                      style={conversationAvatarStyle}
+                    >
                       {otherUsers.map((user) => {
                         return (
                           <Avatar
@@ -131,9 +134,18 @@ const ChatList = ({ onClickCallback }) => {
                     <Avatar
                       key={otherUsers[0]._id}
                       name={otherUsers[0].username}
+                      style={conversationAvatarStyle}
                       src={`data:image/svg+xml;base64,${otherUsers[0].avatar}`}
                     />
                   )}
+                  <Conversation.Content
+                    name={chat.chatName}
+                    lastSenderName={
+                      lastMessage ? lastMessage.sender.username : null
+                    }
+                    info={lastMessage ? lastMessage.content : "No messages yet"}
+                    style={conversationContentStyle}
+                  ></Conversation.Content>
                 </Conversation>
               );
             })}
