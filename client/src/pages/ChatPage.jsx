@@ -39,13 +39,6 @@ const ChatPage = () => {
     [sidebarVisible, setSidebarVisible]
   );
   useEffect(() => {
-    console.log("sidebar", sidebarVisible);
-    console.log("previous styles:", {
-      sidebarStyle,
-      chatContainerStyle,
-      conversationContentStyle,
-      conversationAvatarStyle,
-    });
     if (sidebarVisible && windowDimensions < 768) {
       setSidebarStyle({
         display: "flex",

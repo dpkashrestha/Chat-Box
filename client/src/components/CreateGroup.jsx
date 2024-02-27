@@ -16,7 +16,7 @@ import { useLazyQuery, useQuery, useMutation } from "@apollo/client";
 import { QUERY_USERS } from "../utils/queries";
 import { ADD_CHAT } from "../utils/mutations";
 
-const CreateGroup = ({ newGroup, chatId, children }) => {
+const CreateGroup = ({ onClickCallback, newGroup, chatId, children }) => {
   const [show, setShow] = useState(false);
   const [search, setSearch] = useState("");
   const [groupChatName, setGroupChatName] = useState("");
@@ -40,14 +40,17 @@ const CreateGroup = ({ newGroup, chatId, children }) => {
 
   const [createChat, { loading: chatLoading }] = useMutation(ADD_CHAT, {
     onCompleted: (d) => {
-      console.log(d);
+      const newChat = { ...d.addChat };
+      delete newChat["__typename"];
+      onClickCallback(newChat);
+      console.log("createChat Data:", d);
+      console.log("New Chat:", newChat);
     },
   });
 
   useEffect(() => {
     if (!search) {
       setSearchResult([]);
-      console.log("Clearing Results", searchResult);
       return;
     }
     console.log("searching:", search);
@@ -77,17 +80,29 @@ const CreateGroup = ({ newGroup, chatId, children }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     const form = e.currentTarget;
-    if (form.checkValidity() === false || !selectedUsers) {
+    if (form.checkValidity() === false) {
       e.stopPropagation();
-      console.log("not validated");
+      console.log("No Name");
       setValidated(true);
       setNoName(true);
+    } else if (!selectedUsers.length) {
+      e.stopPropagation();
+      console.log("No Users");
+      setValidated(true);
     } else {
       if (newGroup) {
+        console.log(!selectedUsers.length);
+        const userIds = selectedUsers.map((u) => {
+          return { _id: u._id };
+        });
         createChat({
-          variables: { chatName: groupChatName, users: selectedUsers },
+          variables: { chatName: groupChatName, users: userIds },
         });
         console.log(`Created: ${groupChatName}`);
+        setShow(false);
+        setSearch("");
+        setGroupChatName("");
+        setSelectedUsers([]);
       } else if (!newGroup) {
         console.log(`Edited: ${groupChatName}`);
       }
@@ -176,7 +191,7 @@ const CreateGroup = ({ newGroup, chatId, children }) => {
                 )}
               </InputGroup>
             </Form.Group>
-            {selectedUsers ? (
+            {selectedUsers.length ? (
               <div style={{ margin: "0.3em" }}>
                 {selectedUsers.map((user) => {
                   const _id = user._id;
@@ -221,7 +236,7 @@ const CreateGroup = ({ newGroup, chatId, children }) => {
               </div>
             ) : (
               <>
-                {!validated && (
+                {validated && (
                   <Form.Control.Feedback
                     type="invalid"
                     style={{
