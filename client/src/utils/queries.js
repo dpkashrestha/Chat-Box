@@ -43,6 +43,36 @@ export const QUERY_CHATS = gql`
         }
         createdAt
       }
+      groupAdmin {
+        _id
+      }
+    }
+  }
+`;
+
+export const SINGLE_CHAT = gql`
+  query singleChat($chatId: ID!) {
+    singleChat(chatId: $chatId) {
+      _id
+      chatName
+      users {
+        _id
+        username
+        avatar
+      }
+      lastMessage {
+        _id
+        content
+        sender {
+          _id
+          username
+          avatar
+        }
+        createdAt
+      }
+      groupAdmin {
+        _id
+      }
     }
   }
 `;

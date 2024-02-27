@@ -1,6 +1,6 @@
-import { useQuery, useMutation } from "@apollo/client";
-import { QUERY_MESSAGES, QUERY_ME } from "../utils/queries";
-import { ADD_MESSAGE } from "../utils/mutations";
+import { useQuery, useMutation, useLazyQuery } from "@apollo/client";
+import { QUERY_MESSAGES, QUERY_CHATS, SINGLE_CHAT } from "../utils/queries";
+import { ADD_MESSAGE, EDIT_CHAT } from "../utils/mutations";
 import Picker from "emoji-picker-react";
 import CreateGroup from "./CreateGroup";
 
@@ -27,6 +27,7 @@ const ChatWindow = ({ activeChat, onClickCallback, chatContainerStyle }) => {
   const [messageInputValue, setMessageInputValue] = useState("");
   const [allMessages, setAllMessages] = useState([]);
   const [newGroup, setNewGroup] = useState(false);
+  const [thisChat, setThisChat] = useState(activeChat);
 
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
 
@@ -42,17 +43,45 @@ const ChatWindow = ({ activeChat, onClickCallback, chatContainerStyle }) => {
       console.log(data);
     },
   });
+  const [singleChat, { loading: chatLoading, data: chatData }] = useLazyQuery(
+    SINGLE_CHAT,
+    {
+      variables: { chatId: activeChat._id },
+      onCompleted: (d) => {
+        const chat = d.singleChat;
+        setThisChat(chat);
+        console.log("This chat is:", chat);
+      },
+    }
+  );
+  const [editChat, { loading: editLoading }] = useMutation(EDIT_CHAT, {
+    onCompleted: (d) => {
+      const chat = d.editChat;
+      singleChat();
+      console.log("Edited:", chat);
+    },
+  });
+
+  useEffect(() => {
+    setThisChat(activeChat);
+    singleChat();
+  }, [activeChat]);
+
+  useEffect(() => {
+    document.addEventListener("click", handleClickOutside);
+    return () => {
+      document.removeEventListener("click", handleClickOutside);
+    };
+  }, []);
 
   const getOtherUsers = (users) => {
     return users.filter((user) => user._id !== currentUser._id);
   };
-
-  const otherUsers = getOtherUsers(activeChat.users);
+  const otherUsers = getOtherUsers(thisChat.users);
 
   const handleEmojiPickerHideShow = () => {
     setShowEmojiPicker(!showEmojiPicker);
   };
-
   const handleClickOutside = (event) => {
     if (
       emojiPickerRef.current &&
@@ -62,26 +91,17 @@ const ChatWindow = ({ activeChat, onClickCallback, chatContainerStyle }) => {
       setShowEmojiPicker(false);
     }
   };
-
-  useEffect(() => {
-    document.addEventListener("click", handleClickOutside);
-    return () => {
-      document.removeEventListener("click", handleClickOutside);
-    };
-  }, []);
-
   const handleEmojiClick = (emoji, event) => {
     let msg = messageInputValue;
     console.log("emoji:", emoji);
     msg += emoji.emoji;
     setMessageInputValue(msg);
   };
-
   const handleSend = async (message) => {
     const { data } = await addMessage({
       variables: {
         content: message,
-        chatId: activeChat._id,
+        chatId: thisChat._id,
       },
     });
 
@@ -159,9 +179,15 @@ const ChatWindow = ({ activeChat, onClickCallback, chatContainerStyle }) => {
               src={`data:image/svg+xml;base64,${otherUsers[0].avatar}`}
             />
           )}
-          <ConversationHeader.Content userName={activeChat.chatName} />
+          <ConversationHeader.Content userName={thisChat.chatName} />
           <ConversationHeader.Actions>
-            <CreateGroup newGroup={newGroup} activeChat={activeChat}>
+            <CreateGroup
+              newGroup={newGroup}
+              onConfirm={(variables) => {
+                editChat({ ...variables() });
+              }}
+              activeChat={thisChat}
+            >
               <Button
                 border
                 style={{ width: "100%", height: "100%", padding: "0 0.1em" }}

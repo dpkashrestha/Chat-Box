@@ -39,22 +39,21 @@ const CreateGroup = ({ onConfirm, newGroup, activeChat, children }) => {
       },
     }
   );
-  const [createChat, { loading: chatLoading }] = useMutation(ADD_CHAT, {
+  /* const [createChat, { loading: chatLoading }] = useMutation(ADD_CHAT, {
     onCompleted: (d) => {
       const newChat = { ...d.addChat };
       delete newChat["__typename"];
       console.log("createChat Data:", d);
       console.log("New Chat:", newChat);
     },
-  });
-  const [editChat, { loading: editLoading }] = useMutation(EDIT_CHAT, {
+  }); */
+  /* const [editChat, { loading: editLoading }] = useMutation(EDIT_CHAT, {
     onCompleted: (d) => {
-      const newChat = { ...d.addChat };
-      delete newChat["__typename"];
-      console.log("createChat Data:", d);
-      console.log("New Chat:", newChat);
+      const chat = d.editChat;
+      handleConversationOnClick(chat);
+      console.log("Created:", chat);
     },
-  });
+  }); */
 
   useEffect(() => {
     if (!search) {
@@ -66,27 +65,26 @@ const CreateGroup = ({ onConfirm, newGroup, activeChat, children }) => {
     console.log("result:", searchResult);
   }, [search]);
   useEffect(() => {
-    // setEditGroup(!newGroup);
     if (show) {
       if (!newGroup) {
         console.log("Editing:", activeChat);
+        const admin = activeChat.groupAdmin;
         setSelectedUsers([
-          ...activeChat.users.filter((user) => user._id !== currentUser._id),
+          ...activeChat.users.filter((user) => user._id !== admin._id),
         ]);
         setGroupChatName(activeChat.chatName);
-        console.log("editGroup", !newGroup);
-      } else {
-        console.log("newGroup", newGroup);
+        setValidated(true);
       }
+    } else {
+      setNoName(false);
+      setSearch("");
+      setGroupChatName("");
+      setSelectedUsers([]);
     }
   }, [show]);
 
   const handleClose = () => {
     setShow(false);
-    setNoName(false);
-    setSearch("");
-    setGroupChatName("");
-    setSelectedUsers([]);
   };
   const handleShow = async () => {
     setShow(true);
@@ -97,12 +95,12 @@ const CreateGroup = ({ onConfirm, newGroup, activeChat, children }) => {
     if (form.checkValidity() === false) {
       e.stopPropagation();
       console.log("No Name");
-      setValidated(true);
+      setValidated(false);
       setNoName(true);
     } else if (!selectedUsers.length) {
       e.stopPropagation();
       console.log("No Users");
-      setValidated(true);
+      setValidated(false);
     } else {
       if (newGroup) {
         const userIds = selectedUsers.map((u) => {
@@ -116,18 +114,19 @@ const CreateGroup = ({ onConfirm, newGroup, activeChat, children }) => {
         const userIds = selectedUsers.map((u) => {
           return { _id: u._id };
         });
-        editChat({
-          variables: {
-            chatId: activeChat._id,
-            chatName: groupChatName,
-            users: userIds,
-          },
+        onConfirm(() => {
+          return {
+            variables: {
+              chatId: activeChat._id,
+              chatName: groupChatName,
+              users: userIds,
+            },
+          };
         });
-        console.log(`Edited: ${groupChatName}`);
         handleClose();
       }
 
-      setValidated(false);
+      setValidated(true);
     }
   };
 
@@ -221,10 +220,9 @@ const CreateGroup = ({ onConfirm, newGroup, activeChat, children }) => {
                       className="cs-button cs-button--border"
                       onClick={() => {
                         const newUsers = selectedUsers.filter((u) => {
-                          console.log("id", u._id, _id);
                           return u._id !== _id;
                         });
-                        console.log(newUsers);
+                        console.log("newUsers", newUsers);
                         setSelectedUsers(newUsers);
                       }}
                       style={{
@@ -354,13 +352,7 @@ const CreateGroup = ({ onConfirm, newGroup, activeChat, children }) => {
                 <Button border onClick={handleClose}>
                   Delete Group
                 </Button>
-                <Button
-                  border
-                  type="submit"
-                  onClick={() => {
-                    console.log(newGroup);
-                  }}
-                >
+                <Button border type="submit">
                   Save Changes
                 </Button>
               </>
