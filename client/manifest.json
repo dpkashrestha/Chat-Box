@@ -1,33 +1,33 @@
 {
-  "short_name": "Manifest",
   "name": "Chat-box",
+  "short_name": "Chatbox",
   "icons": [
     {
-      "src": "./chat-logo.png",
+      "src": "../chat-logo.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "./chat-logo1.png",
+      "src": "../chat-logo1.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "./chat-logo.png",
+      "src": "../chat-logo.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "maskable"
     },
     {
-      "src": "./chat-logo1.png",
+      "src": "../chat-logo1.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
     },
     {
-      "src": "./chat-logo1.png",
+      "src": "../chat-logo1.png",
       "sizes": "144x144",
       "type": "image/png",
       "purpose": "any"
