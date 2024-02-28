@@ -36,7 +36,7 @@ const messageResolvers = {
       await Chat.findByIdAndUpdate(chatId, {
         lastMessage: message,
       });
-      pubsub.publish("ADD_MESSAGE", { messageCreated: message });
+      pubsub.publish("ADD_MESSAGE", { messageAdded: message });
       return message;
     },
   },

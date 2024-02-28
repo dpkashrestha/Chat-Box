@@ -62,13 +62,18 @@ const ChatWindow = ({ activeChat, onClickCallback, chatContainerStyle }) => {
 
   const [addMessage, { error }] = useMutation(ADD_MESSAGE, {
     refetchQueries: [QUERY_MESSAGES, "messages"],
-  });
-  const { loading, data } = useQuery(QUERY_MESSAGES, {
-    variables: { chatId: activeChat._id },
     onCompleted: (data) => {
-      console.log("Mutation: addMessage", data);
+      console.log("Mutation: ADD_MESSAGE", data);
     },
   });
+  const [getMessages, { loading, data, subscribeToMore, ...result }] =
+    useLazyQuery(QUERY_MESSAGES, {
+      variables: { chatId: activeChat._id },
+      onCompleted: (d) => {
+        setAllMessages(d.messages);
+        console.log("Query: QUERY_MESSAGES", d);
+      },
+    });
   const [singleChat, { loading: chatLoading, data: chatData }] = useLazyQuery(
     SINGLE_CHAT,
     {
@@ -76,7 +81,7 @@ const ChatWindow = ({ activeChat, onClickCallback, chatContainerStyle }) => {
       onCompleted: (d) => {
         const chat = d.singleChat;
         setThisChat(chat);
-        console.log("Query: singleChat", chat);
+        console.log("Query: SINGLE_CHAT", chat);
       },
     }
   );
@@ -133,9 +138,29 @@ const ChatWindow = ({ activeChat, onClickCallback, chatContainerStyle }) => {
       setIsSquare(true);
     }
   }, [windowDimensions]);
+  /* useEffect(() => {
+    subscribeToMore({
+      document: QUERY_MESSAGES,
+      variables: { chatId: activeChat._id },
+      updateQuery: (prev, { subscriptionData }) => {
+        setAllMessages(prev.messages);
+        console.log("prev", prev);
+        if (!subscriptionData.data) {
+          setAllMessages(prev.messages);
+        } else {
+          console.log("subscriptionData", subscriptionData.data);
+          setAllMessages(subscriptionData.data.messages);
+        }
+      },
+    });
+  }, []); */
   useEffect(() => {
+    // getMessages();
+    if (!subLoading) {
+      setAllMessages([...allMessages, subData.messageAdded]);
+    }
     console.log("New Message", subData);
-  }, [subData]);
+  }, [subData, subLoading]);
 
   const getOtherUsers = (users) => {
     return users.filter((user) => user._id !== currentUser._id);
@@ -209,10 +234,13 @@ const ChatWindow = ({ activeChat, onClickCallback, chatContainerStyle }) => {
       })
     );
   }, [allMessages]);
-
-  useMemo(() => {
+  useEffect(() => {
+    getMessages();
+  }, []);
+  /* useMemo(() => {
+    getMessages();
     setAllMessages(data?.messages);
-  }, [data]);
+  }, [data]); */
 
   if (loading) {
     return <Loader>Loading</Loader>;

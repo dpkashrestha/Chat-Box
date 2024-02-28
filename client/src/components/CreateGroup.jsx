@@ -35,7 +35,9 @@ const CreateGroup = ({ onCreate, onEdit, newGroup, activeChat, children }) => {
     {
       onCompleted: (d) => {
         setSearchResult(d.users);
-        console.log("Query: users", d);
+        if (show) {
+          console.log("Query: users", d);
+        }
       },
       onError: (err) => {
         console.error(err);
@@ -63,7 +65,9 @@ const CreateGroup = ({ onCreate, onEdit, newGroup, activeChat, children }) => {
       setSearchResult([]);
       return;
     } */
-    console.log("search:", search);
+    if (show) {
+      console.log("search:", search);
+    }
     searchUsers({ variables: { userSearch: search } });
   }, [search]);
   useEffect(() => {
