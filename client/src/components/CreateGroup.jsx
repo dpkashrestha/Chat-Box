@@ -381,19 +381,30 @@ const CreateGroup = ({ onCreate, onEdit, newGroup, activeChat, children }) => {
             </Modal.Body>
             <Modal.Footer>
               {newGroup ? (
-                <Button border type="submit" className="modal-button">
+                <Button
+                  border
+                  type="submit"
+                  className="modal-button"
+                  onClick={handleSubmit}
+                >
                   Create Group
                 </Button>
               ) : (
                 <>
                   <Button
-                    className="modal-button delete-button"
                     border
+                    type="button"
+                    className="modal-button delete-button"
                     onClick={handleDelete}
                   >
                     Delete Group
                   </Button>
-                  <Button border type="submit" className="modal-button">
+                  <Button
+                    border
+                    type="submit"
+                    className="modal-button"
+                    onClick={handleSubmit}
+                  >
                     Save Changes
                   </Button>
                 </>
