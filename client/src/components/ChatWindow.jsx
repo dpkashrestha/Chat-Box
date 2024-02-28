@@ -44,7 +44,7 @@ const ChatWindow = ({ activeChat, onClickCallback, chatContainerStyle }) => {
   const { loading, data } = useQuery(QUERY_MESSAGES, {
     variables: { chatId: activeChat._id },
     onCompleted: (data) => {
-      console.log(data);
+      console.log("Mutation: addMessage", data);
     },
   });
   const [singleChat, { loading: chatLoading, data: chatData }] = useLazyQuery(
@@ -54,7 +54,7 @@ const ChatWindow = ({ activeChat, onClickCallback, chatContainerStyle }) => {
       onCompleted: (d) => {
         const chat = d.singleChat;
         setThisChat(chat);
-        console.log("This chat is:", chat);
+        console.log("Query: singleChat", chat);
       },
     }
   );
@@ -66,7 +66,7 @@ const ChatWindow = ({ activeChat, onClickCallback, chatContainerStyle }) => {
         window.location.reload();
       }
       singleChat();
-      console.log("Edited:", chat);
+      console.log("Mutation: editChat", chat);
     },
   });
 

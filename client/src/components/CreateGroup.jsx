@@ -35,7 +35,7 @@ const CreateGroup = ({ onCreate, onEdit, newGroup, activeChat, children }) => {
     {
       onCompleted: (d) => {
         setSearchResult(d.users);
-        console.log("searchUsers", d);
+        console.log("Query: users", d);
       },
       onError: (err) => {
         console.error(err);
@@ -65,7 +65,6 @@ const CreateGroup = ({ onCreate, onEdit, newGroup, activeChat, children }) => {
     } */
     console.log("search:", search);
     searchUsers({ variables: { userSearch: search } });
-    console.log("searchResult:", searchResult);
   }, [search]);
   useEffect(() => {
     if (show) {
@@ -253,7 +252,6 @@ const CreateGroup = ({ onCreate, onEdit, newGroup, activeChat, children }) => {
               {selectedUsers.length ? (
                 <div style={{ margin: "0.3em" }}>
                   {selectedUsers.map((user) => {
-                    console.log("selectedUsers", selectedUsers);
                     const _id = user._id;
                     return (
                       <Btn
@@ -263,7 +261,6 @@ const CreateGroup = ({ onCreate, onEdit, newGroup, activeChat, children }) => {
                           const newUsers = selectedUsers.filter((u) => {
                             return u._id !== _id;
                           });
-                          console.log("newUsers", newUsers);
                           setSelectedUsers(newUsers);
                         }}
                         style={{}}
@@ -345,6 +342,7 @@ const CreateGroup = ({ onCreate, onEdit, newGroup, activeChat, children }) => {
                               name={user.username}
                               info={user.email}
                               onClick={() => {
+                                console.log("selectedUsers", selectedUsers);
                                 const newUser = {
                                   _id: user._id,
                                   username: user.username,

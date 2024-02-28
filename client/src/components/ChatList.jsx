@@ -36,13 +36,13 @@ const ChatList = ({
   const { loading: loadingChatData, data: chatData } = useQuery(QUERY_CHATS, {
     variables: { chatName: search },
     onCompleted: (data) => {
-      console.log(data);
+      console.log("Query: allChats", data);
     },
   });
   const [searchUsers, { loading: loadingUserData, data: userData }] =
     useLazyQuery(QUERY_USERS, {
       onCompleted: (data) => {
-        console.log(data);
+        console.log("Query: users", data);
       },
     });
   const [addChat, { error }] = useMutation(ADD_CHAT, {
@@ -50,7 +50,7 @@ const ChatList = ({
     onCompleted: (d) => {
       const chat = d.addChat;
       handleConversationOnClick(chat);
-      console.log("Created:", chat);
+      console.log("Mutation: addChat", chat);
     },
   });
 
