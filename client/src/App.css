@@ -182,6 +182,17 @@
   background-color: #dc3545 !important;
   color: white !important;
 }
+.logout-button {
+  background-color: #3173a5 !important;
+  color: white !important;
+  min-width: 40px !important;
+  min-height: 40px !important;
+}
+.logout-button:hover {
+  opacity: 0.9 !important;
+  background-color: #dc3545 !important;
+  color: white !important;
+}
 .newGroup {
   margin: 0.3em 0.1em !important;
 }

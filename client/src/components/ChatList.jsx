@@ -104,13 +104,8 @@ const ChatList = ({
           {!(768 >= windowDimensions && windowDimensions >= 579) && (
             <Button
               border
-              className="delete-button"
-              style={{
-                backgroundColor: "#3173a5",
-                color: "white",
-                minWidth: "40px",
-                minHeight: "40px",
-              }}
+              className="logout-button"
+              style={{}}
               onClick={Auth.logout}
               icon={
                 <FontAwesomeIcon icon={faSignOutAlt} className="button-icon" />
@@ -203,13 +198,8 @@ const ChatList = ({
       {768 >= windowDimensions && windowDimensions >= 579 && (
         <Button
           border
-          className="delete-button"
-          style={{
-            backgroundColor: "#3173a5",
-            color: "white",
-            minWidth: "40px",
-            minHeight: "40px",
-          }}
+          className="logout-button"
+          style={{}}
           onClick={Auth.logout}
           icon={<FontAwesomeIcon icon={faSignOutAlt} className="button-icon" />}
         ></Button>
