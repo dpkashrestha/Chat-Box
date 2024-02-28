@@ -55,7 +55,7 @@ const chatResolvers = {
       const chat = await Chat.findById(chatId)
         .populate({
           path: "users",
-          match: { _id: { $ne: groupAdmin } }, //don't include groupAdmin in users
+          /* match: { _id: { $ne: groupAdmin } }, */ //don't include groupAdmin in users
           select: ["username", "email", "avatar"],
         })
         .populate({
@@ -81,7 +81,7 @@ const chatResolvers = {
         await Chat.create({ chatName, users, groupAdmin: me })
       ).populate({
         path: "users",
-        select: ["username", "email", "avatar"],
+        select: ["_id", "username", "email", "avatar"],
       });
 
       return chat;
@@ -112,9 +112,7 @@ const chatResolvers = {
             path: "groupAdmin",
             select: ["username", "email", "avatar"],
           });
-
-        console.log(updatedChat.users.length);
-        if (updatedChat.users.length >= 1) {
+        if (updatedChat.users.length <= 1) {
           const deletedChat = await Chat.findByIdAndDelete(chatId);
           console.log("Deleted", deletedChat.chatName);
           return updatedChat;

@@ -1,11 +1,9 @@
-import { useQuery, useMutation } from "@apollo/client";
-import { QUERY_MESSAGES, QUERY_ME } from "../utils/queries";
-import { ADD_MESSAGE } from "../utils/mutations";
+import { useQuery, useMutation, useLazyQuery } from "@apollo/client";
+import { QUERY_MESSAGES, QUERY_CHATS, SINGLE_CHAT } from "../utils/queries";
+import { ADD_MESSAGE, EDIT_CHAT } from "../utils/mutations";
 import Picker from "emoji-picker-react";
-import CreateModal from "./CreateChat";
+import CreateGroup from "./CreateGroup";
 
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faFaceSmile } from "@fortawesome/free-solid-svg-icons";
 import {
   ChatContainer,
   MessageList,
@@ -16,23 +14,26 @@ import {
   ConversationHeader,
   Button,
   AvatarGroup,
-  VoiceCallButton,
-  VideoCallButton,
-  TypingIndicator,
   Loader,
 } from "@chatscope/chat-ui-kit-react";
-import { useState, useRef, useMemo, useCallback } from "react";
+
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faGear } from "@fortawesome/free-solid-svg-icons";
+import { useState, useRef, useMemo, useEffect, useCallback } from "react";
 import Auth from "../utils/auth";
 
-const ChatWindow = ({ activeChat }) => {
+const ChatWindow = ({ activeChat, onClickCallback, chatContainerStyle }) => {
   const currentUser = Auth.getCurrentUser();
   const [messageInputValue, setMessageInputValue] = useState("");
   const [allMessages, setAllMessages] = useState([]);
-  const [newGroup, setNewGroup] = useState(true);
+  const [newGroup, setNewGroup] = useState(false);
+  const [thisChat, setThisChat] = useState(activeChat);
 
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
 
   const inputRef = useRef();
+  const emojiPickerRef = useRef(null);
+
   const [addMessage, { error }] = useMutation(ADD_MESSAGE, {
     refetchQueries: [QUERY_MESSAGES, "messages"],
   });
@@ -42,32 +43,69 @@ const ChatWindow = ({ activeChat }) => {
       console.log(data);
     },
   });
+  const [singleChat, { loading: chatLoading, data: chatData }] = useLazyQuery(
+    SINGLE_CHAT,
+    {
+      variables: { chatId: activeChat._id },
+      onCompleted: (d) => {
+        const chat = d.singleChat;
+        setThisChat(chat);
+        console.log("This chat is:", chat);
+      },
+    }
+  );
+  const [editChat, { loading: editLoading }] = useMutation(EDIT_CHAT, {
+    onCompleted: (d) => {
+      const chat = d.editChat;
+      if (chat.users.length <= 1) {
+        console.log("Deleted:", chat);
+        window.location.reload();
+      }
+      singleChat();
+      console.log("Edited:", chat);
+    },
+  });
+
+  useEffect(() => {
+    setThisChat(activeChat);
+    singleChat();
+  }, [activeChat]);
+
+  useEffect(() => {
+    document.addEventListener("click", handleClickOutside);
+    return () => {
+      document.removeEventListener("click", handleClickOutside);
+    };
+  }, []);
 
   const getOtherUsers = (users) => {
     return users.filter((user) => user._id !== currentUser._id);
   };
-
-  const otherUsers = getOtherUsers(activeChat.users);
-
-  //TODO: add get singleChat
-  // const { loading: chatLoading, data: chatData } = useQuery();
+  const otherUsers = getOtherUsers(thisChat.users);
 
   const handleEmojiPickerHideShow = () => {
     setShowEmojiPicker(!showEmojiPicker);
   };
-
+  const handleClickOutside = (event) => {
+    if (
+      emojiPickerRef.current &&
+      !emojiPickerRef.current.contains(event.target) &&
+      !event.target.classList.contains("emoji-icon")
+    ) {
+      setShowEmojiPicker(false);
+    }
+  };
   const handleEmojiClick = (emoji, event) => {
     let msg = messageInputValue;
     console.log("emoji:", emoji);
     msg += emoji.emoji;
     setMessageInputValue(msg);
   };
-
   const handleSend = async (message) => {
     const { data } = await addMessage({
       variables: {
         content: message,
-        chatId: activeChat._id,
+        chatId: thisChat._id,
       },
     });
 
@@ -98,12 +136,11 @@ const ChatWindow = ({ activeChat }) => {
               position: "single",
             }}
           >
-            {/* {message?.sender?._id !== currentUser?._id && ( */}
             <Avatar
               name={message?.sender?.username}
               src={`data:image/svg+xml;base64,${message?.sender?.avatar}`}
             />
-            {/* )} */}
+
             <Message.Footer
               sender={message?.sender?.username}
               sentTime={sentAt}
@@ -124,12 +161,12 @@ const ChatWindow = ({ activeChat }) => {
 
   return (
     <>
-      <ChatContainer>
+      <ChatContainer style={chatContainerStyle}>
         <ConversationHeader className="test-class">
-          <ConversationHeader.Back />
+          <ConversationHeader.Back onClick={onClickCallback} />
           {otherUsers.length > 1 ? (
-            <AvatarGroup size="sm">
-              {otherUsers.slice(0, 4).map((user) => {
+            <AvatarGroup size="md" max={4}>
+              {otherUsers.map((user) => {
                 return (
                   <Avatar
                     key={user._id}
@@ -147,19 +184,40 @@ const ChatWindow = ({ activeChat }) => {
             />
           )}
           <ConversationHeader.Content
-            userName={activeChat.chatName}
-            info="Active 10 mins ago"
+            userName={
+              otherUsers.length > 1 ? thisChat.chatName : otherUsers[0].username
+            }
           />
           <ConversationHeader.Actions>
-            <CreateModal newGroup={newGroup}>
+            <CreateGroup
+              newGroup={newGroup}
+              onEdit={(func) => {
+                const vars = func();
+                if (vars.chatName === "") {
+                  setThisChat(null);
+                  editChat({ ...vars, users: [] });
+                } else {
+                  editChat({ ...vars });
+                }
+              }}
+              activeChat={thisChat}
+            >
               <Button
                 border
-                style={{ width: "100%", height: "100%", margin: "1em" }}
+                style={{ padding: "3.2px 0.3em", margin: "0", height: "100%" }}
                 onClick={() => setNewGroup(false)}
+                labelPosition="left"
+                icon={
+                  <FontAwesomeIcon
+                    icon={faGear}
+                    className="button-icon"
+                    style={{ margin: "0" }}
+                  />
+                }
               >
-                <span className="button-text">Edit Group</span>
+                <span className="edit-text">Edit Group </span>
               </Button>
-            </CreateModal>
+            </CreateGroup>
           </ConversationHeader.Actions>
         </ConversationHeader>
         <MessageList>{renderMessages()}</MessageList>
@@ -181,34 +239,49 @@ const ChatWindow = ({ activeChat }) => {
                 marginLeft: "0.5em",
                 marginRight: "-0.1em",
               }}
+              className="emoji-icon"
             >
               😃
             </div>
-            {showEmojiPicker && <Picker onEmojiClick={handleEmojiClick} />}
+            {showEmojiPicker && (
+              <div ref={emojiPickerRef}>
+                <Picker onEmojiClick={handleEmojiClick} />
+              </div>
+            )}
           </div>
-
-          <MessageInput
-            ref={inputRef}
-            onChange={(msg) => setMessageInputValue(msg)}
-            value={messageInputValue}
-            sendButton={false}
-            attachButton={false}
+          <div
+            as={MessageInput}
             style={{
-              flexGrow: 1,
-              borderTop: 0,
-              flexShrink: "initial",
-              marginRight: "0em",
+              display: "flex",
+              flexDirection: "row",
+              borderTop: "1px dashed #d1dbe4",
+              width: "100%",
             }}
-          />
-          <SendButton
-            border
-            onClick={() => handleSend(messageInputValue)}
-            disabled={messageInputValue.length === 0}
-            style={{
-              width: "10vw",
-              minWidth: "65px",
-            }}
-          />
+          >
+            <MessageInput
+              ref={inputRef}
+              onChange={(msg) => setMessageInputValue(msg)}
+              value={messageInputValue}
+              sendButton={false}
+              onSend={() => handleSend(messageInputValue)}
+              attachButton={false}
+              style={{
+                flexGrow: 1,
+                borderTop: 0,
+                flexShrink: "initial",
+                marginRight: "0em",
+              }}
+            />
+            <SendButton
+              border
+              onClick={() => handleSend(messageInputValue)}
+              disabled={messageInputValue.length === 0}
+              style={{
+                width: "65px",
+                minWidth: "65px",
+              }}
+            />
+          </div>
         </div>
       </ChatContainer>
     </>

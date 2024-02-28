@@ -45,6 +45,24 @@ export const ADD_CHAT = gql`
     addChat(chatName: $chatName, users: $users) {
       _id
       chatName
+      users {
+        _id
+        username
+        avatar
+      }
+    }
+  }
+`;
+export const EDIT_CHAT = gql`
+  mutation editChat($chatId: ID!, $chatName: String!, $users: [UserInput]!) {
+    editChat(chatId: $chatId, chatName: $chatName, users: $users) {
+      _id
+      chatName
+      users {
+        _id
+        username
+        avatar
+      }
     }
   }
 `;
