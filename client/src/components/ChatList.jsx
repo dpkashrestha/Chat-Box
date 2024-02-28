@@ -36,13 +36,13 @@ const ChatList = ({
   const { loading: loadingChatData, data: chatData } = useQuery(QUERY_CHATS, {
     variables: { chatName: search },
     onCompleted: (data) => {
-      console.log(data);
+      console.log("Query: allChats", data);
     },
   });
   const [searchUsers, { loading: loadingUserData, data: userData }] =
     useLazyQuery(QUERY_USERS, {
       onCompleted: (data) => {
-        console.log(data);
+        console.log("Query: users", data);
       },
     });
   const [addChat, { error }] = useMutation(ADD_CHAT, {
@@ -50,7 +50,7 @@ const ChatList = ({
     onCompleted: (d) => {
       const chat = d.addChat;
       handleConversationOnClick(chat);
-      console.log("Created:", chat);
+      console.log("Mutation: addChat", chat);
     },
   });
 
@@ -81,7 +81,6 @@ const ChatList = ({
         variables: {
           chatName: chat.chatName,
           users: chat.users,
-          // TODO: add non group chat variable?
         },
       });
       console.log(data.addChat);
@@ -105,13 +104,8 @@ const ChatList = ({
           {!(768 >= windowDimensions && windowDimensions >= 579) && (
             <Button
               border
-              className="btn btn-danger"
-              style={{
-                backgroundColor: "#3173a5",
-                color: "white",
-                minWidth: "40px",
-                minHeight: "40px",
-              }}
+              className="logout-button"
+              style={{}}
               onClick={Auth.logout}
               icon={
                 <FontAwesomeIcon icon={faSignOutAlt} className="button-icon" />
@@ -142,6 +136,7 @@ const ChatList = ({
         value={search}
         onChange={(v) => setSearch(v)}
         onClearClick={() => setSearch("")}
+        id="chatSearch"
       />
 
       {loadingChatData ? (
@@ -203,13 +198,8 @@ const ChatList = ({
       {768 >= windowDimensions && windowDimensions >= 579 && (
         <Button
           border
-          className="btn btn-danger"
-          style={{
-            backgroundColor: "#3173a5",
-            color: "white",
-            minWidth: "40px",
-            minHeight: "40px",
-          }}
+          className="logout-button"
+          style={{}}
           onClick={Auth.logout}
           icon={<FontAwesomeIcon icon={faSignOutAlt} className="button-icon" />}
         ></Button>

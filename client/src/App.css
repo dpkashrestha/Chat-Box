@@ -140,6 +140,10 @@
   background-color: #50447d;
 }
 
+.form-control {
+  border: none !important;
+}
+
 .cs-chat-container
   .cs-message-input
   .cs-message-input__content-editor-wrapper:last-child {
@@ -149,27 +153,73 @@
 .cs-conversation-header__avatar {
   width: auto !important;
 }
-
 .cs-search__clear-icon {
   visibility: visible !important;
 }
-.selectedUsers:hover {
-  opacity: 0.7;
+.cs-search {
+  box-sizing: border-box !important;
+  display: flex !important;
+  flex-direction: row !important;
+  margin: 0 !important;
+  background-color: #c6e3fa !important;
+  align-items: center !important;
+  position: relative !important;
+  border-radius: 0.7em !important;
+  padding: 0.6em 0.9em !important;
+  font-size: inherit !important;
+  font-family: inherit !important;
 }
-.btn:hover {
+#chatSearch {
+  margin: 0 0.1em 0.3em !important;
+}
+
+.modal-button:hover {
   opacity: 0.9 !important;
-}
-.btn-primary:hover {
   background-color: #3173a5 !important;
+  color: white !important;
+}
+.delete-button:hover {
+  background-color: #dc3545 !important;
+  color: white !important;
+}
+.logout-button {
+  background-color: #3173a5 !important;
+  color: white !important;
+  min-width: 40px !important;
+  min-height: 40px !important;
+}
+.logout-button:hover {
+  opacity: 0.9 !important;
+  background-color: #dc3545 !important;
+  color: white !important;
 }
 .newGroup {
-  margin: 0.3em 0.1em -0.1em !important;
+  margin: 0.3em 0.1em !important;
 }
 .editGroup {
   padding: 0 0.3em !important;
   margin: 0 !important;
   width: auto !important;
   height: 32.375px !important;
+}
+.selected-user {
+  opacity: 1 !important;
+  background-color: transparent !important;
+  color: #6ea9d7 !important;
+  border-color: #6ea9d7 !important;
+  margin: 0.1em !important;
+  display: inline-flex !important;
+  justify-content: flex-start !important;
+  align-items: center !important;
+}
+.selectedUsers {
+  font-size: 0.5em !important;
+  margin-left: 0.4em !important;
+  margin-right: -0.4em !important;
+  /*margin-top: 0.75em !important; */
+}
+.selectedUsers:hover {
+  opacity: 0.6;
 }
 
 @media (min-width: 577px) and (max-width: 768px) {
@@ -179,8 +229,11 @@
   .button-icon {
     margin-right: 0 !important;
   }
-  .newGroup {
+  /* .newGroup {
     margin: 0.3em 0.1em !important;
+  } */
+  #chatSearch {
+    display: none !important;
   }
 }
 @media (max-width: 576px) {
@@ -195,4 +248,10 @@
   .landing h2 {
     font-size: 1.3em;
   }
+}
+@media (max-width: 379px) {
+  /* .cs-conversation-header__avatar {
+    width: 43px !important;
+    height: 43px !important;
+  } */
 }

@@ -21,7 +21,7 @@ const CreateGroup = ({ onCreate, onEdit, newGroup, activeChat, children }) => {
   const currentUser = Auth.getCurrentUser();
   const [show, setShow] = useState(false);
   const [search, setSearch] = useState("");
-  const [searchFocus, setSearchFocus] = useState(true);
+  const [searchFocus, setSearchFocus] = useState(false);
   const [groupChatName, setGroupChatName] = useState("");
   const [selectedUsers, setSelectedUsers] = useState([]);
   const [searchResult, setSearchResult] = useState([]);
@@ -35,7 +35,7 @@ const CreateGroup = ({ onCreate, onEdit, newGroup, activeChat, children }) => {
     {
       onCompleted: (d) => {
         setSearchResult(d.users);
-        console.log("searchUsers", d);
+        console.log("Query: users", d);
       },
       onError: (err) => {
         console.error(err);
@@ -65,7 +65,6 @@ const CreateGroup = ({ onCreate, onEdit, newGroup, activeChat, children }) => {
     } */
     console.log("search:", search);
     searchUsers({ variables: { userSearch: search } });
-    console.log("searchResult:", searchResult);
   }, [search]);
   useEffect(() => {
     if (show) {
@@ -85,12 +84,13 @@ const CreateGroup = ({ onCreate, onEdit, newGroup, activeChat, children }) => {
         }
       }
     } else {
+      setValidated(false);
       setNoName(false);
       setNoUsers(false);
       setSearch("");
       setGroupChatName("");
       setSelectedUsers([]);
-      setSearchFocus(true);
+      setSearchFocus(false);
     }
   }, [show]);
 
@@ -252,39 +252,25 @@ const CreateGroup = ({ onCreate, onEdit, newGroup, activeChat, children }) => {
               {selectedUsers.length ? (
                 <div style={{ margin: "0.3em" }}>
                   {selectedUsers.map((user) => {
-                    console.log("selectedUsers", selectedUsers);
                     const _id = user._id;
                     return (
                       <Btn
                         key={_id}
-                        className="cs-button cs-button--border"
+                        className="cs-button cs-button--border selected-user"
                         onClick={() => {
                           const newUsers = selectedUsers.filter((u) => {
                             return u._id !== _id;
                           });
-                          console.log("newUsers", newUsers);
                           setSelectedUsers(newUsers);
                         }}
-                        style={{
-                          opacity: "1",
-                          backgroundColor: "transparent",
-                          color: "#6ea9d7",
-                          borderColor: "#6ea9d7",
-                          margin: "0.1em",
-                          justifyContent: "start",
-                          display: "inline-flex",
-                        }}
+                        style={{}}
                       >
                         {user.username}
                         <Badge
                           pill
                           bg="danger"
                           className="selectedUsers"
-                          style={{
-                            fontSize: "0.5em",
-                            marginLeft: "0.4em",
-                            marginBlockStart: "0.8em",
-                          }}
+                          style={{}}
                         >
                           X
                         </Badge>
@@ -318,8 +304,10 @@ const CreateGroup = ({ onCreate, onEdit, newGroup, activeChat, children }) => {
                     onChange={(v) => setSearch(v)}
                     onFocus={() => setSearchFocus(true)}
                     onClearClick={() => {
-                      /* setSearchFocus(false) */ setSearch("");
+                      setSearchFocus(false);
+                      setSearch("");
                     }}
+                    className="modal-search"
                     style={{
                       flexGrow: 1,
                       flexShrink: "initial",
@@ -354,6 +342,7 @@ const CreateGroup = ({ onCreate, onEdit, newGroup, activeChat, children }) => {
                               name={user.username}
                               info={user.email}
                               onClick={() => {
+                                console.log("selectedUsers", selectedUsers);
                                 const newUser = {
                                   _id: user._id,
                                   username: user.username,
@@ -371,6 +360,7 @@ const CreateGroup = ({ onCreate, onEdit, newGroup, activeChat, children }) => {
                                 ) {
                                   setSelectedUsers([...selectedUsers, newUser]);
                                   setSearch("");
+                                  setSearchFocus(false);
                                 }
                               }}
                               active={false}
@@ -389,19 +379,30 @@ const CreateGroup = ({ onCreate, onEdit, newGroup, activeChat, children }) => {
             </Modal.Body>
             <Modal.Footer>
               {newGroup ? (
-                <Button border type="submit" className="btn btn-primary">
+                <Button
+                  border
+                  type="submit"
+                  className="modal-button"
+                  onClick={handleSubmit}
+                >
                   Create Group
                 </Button>
               ) : (
                 <>
                   <Button
-                    className="btn btn-danger"
                     border
+                    type="button"
+                    className="modal-button delete-button"
                     onClick={handleDelete}
                   >
                     Delete Group
                   </Button>
-                  <Button border type="submit" className="btn btn-primary">
+                  <Button
+                    border
+                    type="submit"
+                    className="modal-button"
+                    onClick={handleSubmit}
+                  >
                     Save Changes
                   </Button>
                 </>
@@ -420,7 +421,7 @@ const CreateGroup = ({ onCreate, onEdit, newGroup, activeChat, children }) => {
             <p>You are not authorized to edit this chat.</p>
           </Modal.Body>
           <Modal.Footer>
-            <Button className="btn btn-primary" border onClick={handleClose}>
+            <Button className="modal-button" border onClick={handleClose}>
               Close
             </Button>
           </Modal.Footer>

@@ -1,4 +1,4 @@
-const { Chat, User } = require("../../models/index");
+const { Chat, User, Message } = require("../../models/index");
 const { AuthenticationError } = require("../../utils/auth");
 
 const chatResolvers = {
@@ -6,11 +6,45 @@ const chatResolvers = {
     allChats: async (parent, { chatName }, context) => {
       if (context.user) {
         if (chatName) {
+          const users = await User.where({
+            $and: [
+              { username: { $regex: chatName, $options: "i" } },
+              { _id: { $ne: context.user._id } },
+            ],
+          }).select("_id username");
+
+          console.log("\n\nUsers:", users);
+
           const chats = await Chat.find({
             $and: [
               { users: { _id: context.user._id } },
-              { chatName: { $regex: chatName, $options: "i" } },
+              {
+                $or: [
+                  { users: { $in: users } },
+                  { chatName: { $regex: chatName, $options: "i" } },
+                ],
+              },
             ],
+          })
+            .populate({
+              path: "users",
+              select: ["username", "email", "avatar"],
+            })
+            .populate({
+              path: "lastMessage",
+              select: ["content", "sender", "chat"],
+              populate: {
+                path: "sender",
+                select: ["username", "avatar"],
+              },
+            })
+            .sort({ updatedAt: "desc" });
+
+          return chats;
+        } else {
+          // find chats which contain a user with the current user's id
+          const chats = await Chat.find({
+            users: { _id: context.user._id },
           })
             .populate({
               path: "lastMessage",
@@ -27,25 +61,6 @@ const chatResolvers = {
             .sort({ updatedAt: "desc" });
           return chats;
         }
-
-        // find chats which contain a user with the current user's id
-        const chats = await Chat.find({
-          users: { _id: context.user._id },
-        })
-          .populate({
-            path: "lastMessage",
-            select: ["content", "sender", "chat"],
-            populate: {
-              path: "sender",
-              select: ["username", "avatar"],
-            },
-          })
-          .populate({
-            path: "users",
-            select: ["username", "email", "avatar"],
-          })
-          .sort({ updatedAt: "desc" });
-        return chats;
       }
       throw AuthenticationError;
     },
@@ -101,7 +116,7 @@ const chatResolvers = {
         users.push(me);
         const updatedChat = await Chat.findByIdAndUpdate(
           chatId,
-          { chatName, users },
+          { $set: { chatName: chatName, users: users } },
           { new: true }
         )
           .populate({
@@ -115,6 +130,10 @@ const chatResolvers = {
         if (updatedChat.users.length <= 1) {
           const deletedChat = await Chat.findByIdAndDelete(chatId);
           console.log("Deleted", deletedChat.chatName);
+          const deletedMessages = await Message.deleteMany({
+            chat: { _id: chatId },
+          });
+          console.log("Deleted Messages:", deletedMessages);
           return updatedChat;
         }
 

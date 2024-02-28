@@ -24,10 +24,14 @@ import Auth from "../utils/auth";
 
 const ChatWindow = ({ activeChat, onClickCallback, chatContainerStyle }) => {
   const currentUser = Auth.getCurrentUser();
+  const [windowDimensions, setWindowDimensions] = useState(window.innerWidth);
   const [messageInputValue, setMessageInputValue] = useState("");
   const [allMessages, setAllMessages] = useState([]);
   const [newGroup, setNewGroup] = useState(false);
   const [thisChat, setThisChat] = useState(activeChat);
+  const [avatarSize, setAvatarSize] = useState("md");
+  const [maxUsers, setMaxUsers] = useState(10);
+  const [isSquare, setIsSquare] = useState(false);
 
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
 
@@ -40,7 +44,7 @@ const ChatWindow = ({ activeChat, onClickCallback, chatContainerStyle }) => {
   const { loading, data } = useQuery(QUERY_MESSAGES, {
     variables: { chatId: activeChat._id },
     onCompleted: (data) => {
-      console.log(data);
+      console.log("Mutation: addMessage", data);
     },
   });
   const [singleChat, { loading: chatLoading, data: chatData }] = useLazyQuery(
@@ -50,7 +54,7 @@ const ChatWindow = ({ activeChat, onClickCallback, chatContainerStyle }) => {
       onCompleted: (d) => {
         const chat = d.singleChat;
         setThisChat(chat);
-        console.log("This chat is:", chat);
+        console.log("Query: singleChat", chat);
       },
     }
   );
@@ -62,7 +66,7 @@ const ChatWindow = ({ activeChat, onClickCallback, chatContainerStyle }) => {
         window.location.reload();
       }
       singleChat();
-      console.log("Edited:", chat);
+      console.log("Mutation: editChat", chat);
     },
   });
 
@@ -70,13 +74,43 @@ const ChatWindow = ({ activeChat, onClickCallback, chatContainerStyle }) => {
     setThisChat(activeChat);
     singleChat();
   }, [activeChat]);
+  useEffect(() => {
+    function handleResize() {
+      setWindowDimensions(window.innerWidth);
+    }
 
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
   useEffect(() => {
     document.addEventListener("click", handleClickOutside);
     return () => {
       document.removeEventListener("click", handleClickOutside);
     };
   }, []);
+  useEffect(() => {
+    if (windowDimensions >= 1024) {
+      setAvatarSize("md");
+      setMaxUsers(10);
+      setIsSquare(false);
+    } /* else if (windowDimensions >= 893) {
+      setAvatarSize("md");
+      setMaxUsers(10);
+      setIsSquare(false);
+    } */ else if (windowDimensions >= 769) {
+      setAvatarSize("md");
+      setMaxUsers(4);
+      setIsSquare(false);
+    } else if (windowDimensions >= 577) {
+      setAvatarSize("md");
+      setMaxUsers(6);
+      setIsSquare(false);
+    } else {
+      setAvatarSize("sm");
+      setMaxUsers(4);
+      setIsSquare(true);
+    }
+  }, [windowDimensions]);
 
   const getOtherUsers = (users) => {
     return users.filter((user) => user._id !== currentUser._id);
@@ -165,7 +199,11 @@ const ChatWindow = ({ activeChat, onClickCallback, chatContainerStyle }) => {
         <ConversationHeader className="test-class">
           <ConversationHeader.Back onClick={onClickCallback} />
           {otherUsers.length > 1 ? (
-            <AvatarGroup size="md" max={4}>
+            <AvatarGroup
+              size={avatarSize}
+              max={maxUsers}
+              style={isSquare ? { width: "43px", height: "43ps" } : {}}
+            >
               {otherUsers.map((user) => {
                 return (
                   <Avatar

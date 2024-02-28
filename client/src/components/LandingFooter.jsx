@@ -2,7 +2,7 @@ import React from "react";
 
 export function LandingFooter(props) {
   return (
-    <nav className="navbar fixed-bottom" style={{ width: "100%" }}>
+    <nav className="navbar sticky-bottom" style={{ width: "100%" }}>
       <div className="container-fluid">
         <span className="" style={{}}>
           UI components provided by:{" "}
