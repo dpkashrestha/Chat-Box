@@ -141,21 +141,45 @@
   margin-right: 0em !important;
 }
 
+.cs-conversation-header__avatar {
+  width: auto !important;
+}
+
+.cs-search__clear-icon {
+  visibility: visible !important;
+}
 .selectedUsers:hover {
   opacity: 0.7;
 }
+.btn:hover {
+  opacity: 0.9 !important;
+}
+.btn-primary:hover {
+  background-color: #3173a5 !important;
+}
+.newGroup {
+  margin: 0.3em 0.1em -0.1em !important;
+}
+.editGroup {
+  padding: 0 0.3em !important;
+  margin: 0 !important;
+  width: auto !important;
+  height: 32.375px !important;
+}
 
-@media (max-width: 768px) {
+@media (min-width: 577px) and (max-width: 768px) {
   .button-text {
-    display: none;
+    display: none !important;
   }
   .button-icon {
     margin-right: 0 !important;
   }
-  #newGroup {
-    margin-bottom: 0.4em !important;
+  .newGroup {
+    margin: 0.3em 0.1em !important;
   }
-  .headerAvatar {
-    margin-top: 0.8em !important;
+}
+@media (max-width: 576px) {
+  .edit-text {
+    display: none !important;
   }
 }

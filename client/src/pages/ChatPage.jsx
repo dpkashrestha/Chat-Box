@@ -27,6 +27,7 @@ const ChatPage = () => {
     marginRight: "1em",
   });
   const handleBackClick = () => {
+    setActiveChat(null);
     setSidebarVisible(!sidebarVisible);
   };
   const setActiveConversation = useCallback(
@@ -39,14 +40,7 @@ const ChatPage = () => {
     [sidebarVisible, setSidebarVisible]
   );
   useEffect(() => {
-    console.log("sidebar", sidebarVisible);
-    console.log("previous styles:", {
-      sidebarStyle,
-      chatContainerStyle,
-      conversationContentStyle,
-      conversationAvatarStyle,
-    });
-    if (sidebarVisible && windowDimensions < 768) {
+    if (sidebarVisible && 768 >= windowDimensions && windowDimensions <= 578) {
       setSidebarStyle({
         display: "flex",
         flexBasis: "auto",
@@ -104,6 +98,7 @@ const ChatPage = () => {
         <ChatList
           onClickCallback={setActiveConversation}
           sidebarStyle={sidebarStyle}
+          activeChat={activeChat}
           conversationAvatarStyle={conversationAvatarStyle}
           conversationContentStyle={conversationContentStyle}
         />

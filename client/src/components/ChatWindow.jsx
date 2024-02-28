@@ -1,8 +1,8 @@
-import { useQuery, useMutation } from "@apollo/client";
-import { QUERY_MESSAGES, QUERY_ME } from "../utils/queries";
-import { ADD_MESSAGE } from "../utils/mutations";
+import { useQuery, useMutation, useLazyQuery } from "@apollo/client";
+import { QUERY_MESSAGES, QUERY_CHATS, SINGLE_CHAT } from "../utils/queries";
+import { ADD_MESSAGE, EDIT_CHAT } from "../utils/mutations";
 import Picker from "emoji-picker-react";
-import CreateChat from "./CreateChat";
+import CreateGroup from "./CreateGroup";
 
 import {
   ChatContainer,
@@ -16,6 +16,9 @@ import {
   AvatarGroup,
   Loader,
 } from "@chatscope/chat-ui-kit-react";
+
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faGear } from "@fortawesome/free-solid-svg-icons";
 import { useState, useRef, useMemo, useEffect, useCallback } from "react";
 import Auth from "../utils/auth";
 
@@ -23,7 +26,8 @@ const ChatWindow = ({ activeChat, onClickCallback, chatContainerStyle }) => {
   const currentUser = Auth.getCurrentUser();
   const [messageInputValue, setMessageInputValue] = useState("");
   const [allMessages, setAllMessages] = useState([]);
-  const [newGroup, setNewGroup] = useState(true);
+  const [newGroup, setNewGroup] = useState(false);
+  const [thisChat, setThisChat] = useState(activeChat);
 
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
 
@@ -39,17 +43,49 @@ const ChatWindow = ({ activeChat, onClickCallback, chatContainerStyle }) => {
       console.log(data);
     },
   });
+  const [singleChat, { loading: chatLoading, data: chatData }] = useLazyQuery(
+    SINGLE_CHAT,
+    {
+      variables: { chatId: activeChat._id },
+      onCompleted: (d) => {
+        const chat = d.singleChat;
+        setThisChat(chat);
+        console.log("This chat is:", chat);
+      },
+    }
+  );
+  const [editChat, { loading: editLoading }] = useMutation(EDIT_CHAT, {
+    onCompleted: (d) => {
+      const chat = d.editChat;
+      if (chat.users.length <= 1) {
+        console.log("Deleted:", chat);
+        window.location.reload();
+      }
+      singleChat();
+      console.log("Edited:", chat);
+    },
+  });
+
+  useEffect(() => {
+    setThisChat(activeChat);
+    singleChat();
+  }, [activeChat]);
+
+  useEffect(() => {
+    document.addEventListener("click", handleClickOutside);
+    return () => {
+      document.removeEventListener("click", handleClickOutside);
+    };
+  }, []);
 
   const getOtherUsers = (users) => {
     return users.filter((user) => user._id !== currentUser._id);
   };
-
-  const otherUsers = getOtherUsers(activeChat.users);
+  const otherUsers = getOtherUsers(thisChat.users);
 
   const handleEmojiPickerHideShow = () => {
     setShowEmojiPicker(!showEmojiPicker);
   };
-
   const handleClickOutside = (event) => {
     if (
       emojiPickerRef.current &&
@@ -59,26 +95,17 @@ const ChatWindow = ({ activeChat, onClickCallback, chatContainerStyle }) => {
       setShowEmojiPicker(false);
     }
   };
-
-  useEffect(() => {
-    document.addEventListener("click", handleClickOutside);
-    return () => {
-      document.removeEventListener("click", handleClickOutside);
-    };
-  }, []);
-
   const handleEmojiClick = (emoji, event) => {
     let msg = messageInputValue;
     console.log("emoji:", emoji);
     msg += emoji.emoji;
     setMessageInputValue(msg);
   };
-
   const handleSend = async (message) => {
     const { data } = await addMessage({
       variables: {
         content: message,
-        chatId: activeChat._id,
+        chatId: thisChat._id,
       },
     });
 
@@ -138,12 +165,8 @@ const ChatWindow = ({ activeChat, onClickCallback, chatContainerStyle }) => {
         <ConversationHeader className="test-class">
           <ConversationHeader.Back onClick={onClickCallback} />
           {otherUsers.length > 1 ? (
-            <AvatarGroup
-              size="sm"
-              className="headerAvatar"
-              style={{ marginTop: "0.5em" }}
-            >
-              {otherUsers.slice(0, 4).map((user) => {
+            <AvatarGroup size="md" max={4}>
+              {otherUsers.map((user) => {
                 return (
                   <Avatar
                     key={user._id}
@@ -156,23 +179,45 @@ const ChatWindow = ({ activeChat, onClickCallback, chatContainerStyle }) => {
           ) : (
             <Avatar
               key={otherUsers[0]._id}
-              className="headerAvatar"
               name={otherUsers[0].username}
-              style={{ marginTop: "0.5em" }}
               src={`data:image/svg+xml;base64,${otherUsers[0].avatar}`}
             />
           )}
-          <ConversationHeader.Content userName={activeChat.chatName} />
+          <ConversationHeader.Content
+            userName={
+              otherUsers.length > 1 ? thisChat.chatName : otherUsers[0].username
+            }
+          />
           <ConversationHeader.Actions>
-            <CreateChat newGroup={newGroup} chatId={activeChat._id}>
+            <CreateGroup
+              newGroup={newGroup}
+              onEdit={(func) => {
+                const vars = func();
+                if (vars.chatName === "") {
+                  setThisChat(null);
+                  editChat({ ...vars, users: [] });
+                } else {
+                  editChat({ ...vars });
+                }
+              }}
+              activeChat={thisChat}
+            >
               <Button
                 border
-                style={{ width: "100%", height: "100%", margin: "1em" }}
+                style={{ padding: "3.2px 0.3em", margin: "0", height: "100%" }}
                 onClick={() => setNewGroup(false)}
+                labelPosition="left"
+                icon={
+                  <FontAwesomeIcon
+                    icon={faGear}
+                    className="button-icon"
+                    style={{ margin: "0" }}
+                  />
+                }
               >
-                <span>Edit Group</span>
+                <span className="edit-text">Edit Group </span>
               </Button>
-            </CreateChat>
+            </CreateGroup>
           </ConversationHeader.Actions>
         </ConversationHeader>
         <MessageList>{renderMessages()}</MessageList>

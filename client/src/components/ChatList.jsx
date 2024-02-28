@@ -10,14 +10,14 @@ import {
   Avatar,
   AvatarGroup,
 } from "@chatscope/chat-ui-kit-react";
-import CreateChat from "./CreateChat";
+import CreateGroup from "./CreateGroup";
 import { Accordion } from "react-bootstrap";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSignOutAlt, faPlus } from "@fortawesome/free-solid-svg-icons";
 
-import { useState } from "react";
-import { useQuery, useMutation } from "@apollo/client";
+import { useState, useEffect } from "react";
+import { useQuery, useMutation, useLazyQuery } from "@apollo/client";
 import { QUERY_CHATS, QUERY_USERS } from "../utils/queries";
 import { ADD_CHAT } from "../utils/mutations";
 import Auth from "../utils/auth";
@@ -27,6 +27,7 @@ const ChatList = ({
   conversationAvatarStyle,
   conversationContentStyle,
   sidebarStyle,
+  activeChat,
 }) => {
   const currentUser = Auth.getCurrentUser();
   const [search, setSearch] = useState("");
@@ -38,13 +39,19 @@ const ChatList = ({
       console.log(data);
     },
   });
-  const { loading: loadingUserData, data: userData } = useQuery(QUERY_USERS, {
-    onCompleted: (data) => {
-      console.log(data);
-    },
-  });
+  const [searchUsers, { loading: loadingUserData, data: userData }] =
+    useLazyQuery(QUERY_USERS, {
+      onCompleted: (data) => {
+        console.log(data);
+      },
+    });
   const [addChat, { error }] = useMutation(ADD_CHAT, {
-    refetchQueries: [QUERY_CHATS, "chatData"],
+    refetchQueries: [QUERY_CHATS, "allChats"],
+    onCompleted: (d) => {
+      const chat = d.addChat;
+      handleConversationOnClick(chat);
+      console.log("Created:", chat);
+    },
   });
 
   const getOtherUsers = (users) => {
@@ -57,6 +64,16 @@ const ChatList = ({
       .join(", ");
   };
 
+  const [windowDimensions, setWindowDimensions] = useState(window.innerWidth);
+  useEffect(() => {
+    function handleResize() {
+      setWindowDimensions(window.innerWidth);
+    }
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   const handleConversationOnClick = async (chat) => {
     console.log("handle conversation click");
     if (!chat._id) {
@@ -64,12 +81,14 @@ const ChatList = ({
         variables: {
           chatName: chat.chatName,
           users: chat.users,
+          // TODO: add non group chat variable?
         },
       });
       console.log(data.addChat);
 
       chat = data.addChat;
     }
+    console.log("Selected:", chat);
     setSelectedChatId(chat._id);
     onClickCallback(chat);
   };
@@ -83,23 +102,32 @@ const ChatList = ({
         />
         <ConversationHeader.Content userName={currentUser.username} />
         <ConversationHeader.Actions>
-          <Button
-            border
-            className="btn btn-danger"
-            style={{
-              backgroundColor: "#016DB3",
-              color: "white",
-              minWidth: "40px",
-              minHeight: "40px",
-            }}
-            onClick={Auth.logout}
-            icon={
-              <FontAwesomeIcon icon={faSignOutAlt} className="button-icon" />
-            }
-          ></Button>
+          {!(768 >= windowDimensions && windowDimensions >= 579) && (
+            <Button
+              border
+              className="btn btn-danger"
+              style={{
+                backgroundColor: "#3173a5",
+                color: "white",
+                minWidth: "40px",
+                minHeight: "40px",
+              }}
+              onClick={Auth.logout}
+              icon={
+                <FontAwesomeIcon icon={faSignOutAlt} className="button-icon" />
+              }
+            ></Button>
+          )}
         </ConversationHeader.Actions>
       </ConversationHeader>
-      <CreateChat newGroup={newGroup} style={{ marginTop: "0.5em" }}>
+      <CreateGroup
+        newGroup={newGroup}
+        style={{ marginTop: "0.5em" }}
+        onCreate={(variables) => {
+          console.log("test");
+          addChat({ ...variables() });
+        }}
+      >
         <Button
           border
           style={{ width: "100%", height: "100%", margin: "0em" }}
@@ -108,7 +136,7 @@ const ChatList = ({
         >
           <span className="button-text">New Group</span>
         </Button>
-      </CreateChat>
+      </CreateGroup>
       <Search
         placeholder="Search..."
         value={search}
@@ -128,7 +156,7 @@ const ChatList = ({
                 <Conversation
                   key={chat._id}
                   onClick={() => handleConversationOnClick(chat)}
-                  active={selectedChatId === chat._id}
+                  active={activeChat && activeChat._id === chat._id}
                 >
                   {otherUsers.length > 1 ? (
                     <AvatarGroup
@@ -155,7 +183,11 @@ const ChatList = ({
                     />
                   )}
                   <Conversation.Content
-                    name={chat.chatName}
+                    name={
+                      otherUsers.length > 1
+                        ? chat.chatName
+                        : otherUsers[0].username
+                    }
                     lastSenderName={
                       lastMessage ? lastMessage.sender.username : null
                     }
@@ -167,6 +199,20 @@ const ChatList = ({
             })}
           </ConversationList>
         </>
+      )}
+      {768 >= windowDimensions && windowDimensions >= 579 && (
+        <Button
+          border
+          className="btn btn-danger"
+          style={{
+            backgroundColor: "#3173a5",
+            color: "white",
+            minWidth: "40px",
+            minHeight: "40px",
+          }}
+          onClick={Auth.logout}
+          icon={<FontAwesomeIcon icon={faSignOutAlt} className="button-icon" />}
+        ></Button>
       )}
     </Sidebar>
   );
