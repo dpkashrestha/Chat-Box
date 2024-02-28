@@ -149,9 +149,21 @@
 .cs-conversation-header__avatar {
   width: auto !important;
 }
-
 .cs-search__clear-icon {
   visibility: visible !important;
+}
+.cs-search {
+  box-sizing: border-box !important;
+  display: flex !important;
+  flex-direction: row !important;
+  margin: 0 !important;
+  background-color: #c6e3fa !important;
+  align-items: center !important;
+  position: relative !important;
+  border-radius: 0.7em !important;
+  padding: 0.6em 0.9em !important;
+  font-size: inherit !important;
+  font-family: inherit !important;
 }
 .selectedUsers:hover {
   opacity: 0.7;
@@ -182,6 +194,9 @@
   .newGroup {
     margin: 0.3em 0.1em !important;
   }
+  .cs-search {
+    display: none !important;
+  }
 }
 @media (max-width: 576px) {
   .edit-text {
@@ -194,5 +209,10 @@
   }
   .landing h2 {
     font-size: 1.3em;
+  }
+}
+@media (max-width: 379px) {
+  .cs-conversation-header__avatar {
+    width: auto;
   }
 }
