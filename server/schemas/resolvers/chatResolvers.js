@@ -6,11 +6,45 @@ const chatResolvers = {
     allChats: async (parent, { chatName }, context) => {
       if (context.user) {
         if (chatName) {
+          const users = await User.where({
+            $and: [
+              { username: { $regex: chatName, $options: "i" } },
+              { _id: { $ne: context.user._id } },
+            ],
+          }).select("_id username");
+
+          console.log("\n\nUsers:", users);
+
           const chats = await Chat.find({
             $and: [
               { users: { _id: context.user._id } },
-              { chatName: { $regex: chatName, $options: "i" } },
+              {
+                $or: [
+                  { users: { $in: users } },
+                  { chatName: { $regex: chatName, $options: "i" } },
+                ],
+              },
             ],
+          })
+            .populate({
+              path: "users",
+              select: ["username", "email", "avatar"],
+            })
+            .populate({
+              path: "lastMessage",
+              select: ["content", "sender", "chat"],
+              populate: {
+                path: "sender",
+                select: ["username", "avatar"],
+              },
+            })
+            .sort({ updatedAt: "desc" });
+
+          return chats;
+        } else {
+          // find chats which contain a user with the current user's id
+          const chats = await Chat.find({
+            users: { _id: context.user._id },
           })
             .populate({
               path: "lastMessage",
@@ -25,39 +59,8 @@ const chatResolvers = {
               select: ["username", "email", "avatar"],
             })
             .sort({ updatedAt: "desc" });
-          /* const filter = chat.filter({
-            $or: [
-              { chatName: { $regex: chatName, $options: "i" } },
-              {
-                users: {
-                  _id: "65d80f6defcb47888bc2a431",
-                },
-              },
-            ],
-          });
-          console.log("filter", filter); */
-
           return chats;
         }
-
-        // find chats which contain a user with the current user's id
-        const chats = await Chat.find({
-          users: { _id: context.user._id },
-        })
-          .populate({
-            path: "lastMessage",
-            select: ["content", "sender", "chat"],
-            populate: {
-              path: "sender",
-              select: ["username", "avatar"],
-            },
-          })
-          .populate({
-            path: "users",
-            select: ["username", "email", "avatar"],
-          })
-          .sort({ updatedAt: "desc" });
-        return chats;
       }
       throw AuthenticationError;
     },
