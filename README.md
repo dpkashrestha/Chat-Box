@@ -70,7 +70,8 @@ Open the broswer in your terminal or through the link and click the install butt
 
 
 ### Credits
-- Instructional team help with troubleshooting PWA, as there were constant installation issues. 
+- Instructional team and TA help with troubleshooting PWA, as there were constant installation issues. 
+-
 
 
 
