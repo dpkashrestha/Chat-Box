@@ -12,7 +12,7 @@ export function LandingFooter(props) {
             target="_blank"
             className="ml-2"
           >
-            chatscope{" "}
+            chatscope
           </a>
         </span>
         <span className="" style={{}}>
