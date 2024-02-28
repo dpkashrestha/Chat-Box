@@ -1,4 +1,4 @@
-const { Chat, User } = require("../../models/index");
+const { Chat, User, Message } = require("../../models/index");
 const { AuthenticationError } = require("../../utils/auth");
 
 const chatResolvers = {
@@ -25,6 +25,18 @@ const chatResolvers = {
               select: ["username", "email", "avatar"],
             })
             .sort({ updatedAt: "desc" });
+          /* const filter = chat.filter({
+            $or: [
+              { chatName: { $regex: chatName, $options: "i" } },
+              {
+                users: {
+                  _id: "65d80f6defcb47888bc2a431",
+                },
+              },
+            ],
+          });
+          console.log("filter", filter); */
+
           return chats;
         }
 
@@ -101,7 +113,7 @@ const chatResolvers = {
         users.push(me);
         const updatedChat = await Chat.findByIdAndUpdate(
           chatId,
-          { chatName, users },
+          { $set: { chatName: chatName, users: users } },
           { new: true }
         )
           .populate({
@@ -115,6 +127,10 @@ const chatResolvers = {
         if (updatedChat.users.length <= 1) {
           const deletedChat = await Chat.findByIdAndDelete(chatId);
           console.log("Deleted", deletedChat.chatName);
+          const deletedMessages = await Message.deleteMany({
+            chat: { _id: chatId },
+          });
+          console.log("Deleted Messages:", deletedMessages);
           return updatedChat;
         }
 
