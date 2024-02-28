@@ -13,6 +13,9 @@ const resolvers = {
     ...chatResolvers.Mutation,
     ...messageResolvers.Mutation,
   },
+  Subscription: {
+    ...messageResolvers.Subscription,
+  },
 };
 
 module.exports = resolvers;

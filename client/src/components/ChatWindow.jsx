@@ -1,5 +1,14 @@
-import { useQuery, useMutation, useLazyQuery } from "@apollo/client";
-import { QUERY_MESSAGES, QUERY_CHATS, SINGLE_CHAT } from "../utils/queries";
+import {
+  useQuery,
+  useMutation,
+  useLazyQuery,
+  useSubscription,
+} from "@apollo/client";
+import {
+  QUERY_MESSAGES,
+  SINGLE_CHAT,
+  MESSAGES_SUBSCRIPTION,
+} from "../utils/queries";
 import { ADD_MESSAGE, EDIT_CHAT } from "../utils/mutations";
 import Picker from "emoji-picker-react";
 import CreateGroup from "./CreateGroup";
@@ -37,6 +46,19 @@ const ChatWindow = ({ activeChat, onClickCallback, chatContainerStyle }) => {
 
   const inputRef = useRef();
   const emojiPickerRef = useRef(null);
+
+  const { data: subData, loading: subLoading } = useSubscription(
+    MESSAGES_SUBSCRIPTION,
+    {
+      variables: { chatId: thisChat._id },
+      onComplete: (d) => {
+        console.log("subData", d);
+      },
+      onError: (err) => {
+        console.log("WS", err);
+      },
+    }
+  );
 
   const [addMessage, { error }] = useMutation(ADD_MESSAGE, {
     refetchQueries: [QUERY_MESSAGES, "messages"],
@@ -111,6 +133,9 @@ const ChatWindow = ({ activeChat, onClickCallback, chatContainerStyle }) => {
       setIsSquare(true);
     }
   }, [windowDimensions]);
+  useEffect(() => {
+    console.log("New Message", subData);
+  }, [subData]);
 
   const getOtherUsers = (users) => {
     return users.filter((user) => user._id !== currentUser._id);

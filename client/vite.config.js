@@ -42,6 +42,11 @@ export default defineConfig({
     port: 3000,
     open: false,
     proxy: {
+      "ws://localhost:3001/subscriptions": {
+        target: "ws://localhost:3001/subscriptions",
+        changeOrigin: true,
+        secure: false,
+      },
       "/graphql": {
         target: "http://localhost:3001",
         changeOrigin: true,

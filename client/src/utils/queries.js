@@ -91,3 +91,18 @@ export const QUERY_MESSAGES = gql`
     }
   }
 `;
+
+export const MESSAGES_SUBSCRIPTION = gql`
+  subscription onMessageAdded($chatId: ID!) {
+    messageAdded(chatId: $chatId) {
+      _id
+      content
+      sender {
+        _id
+        username
+        avatar
+      }
+      createdAt
+    }
+  }
+`;
