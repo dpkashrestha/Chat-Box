@@ -2,26 +2,30 @@ import React from "react";
 
 export function LandingFooter(props) {
   return (
-    <>
-      <div className="landing-footer">
-        <span>UI components provided by:</span>
-        <a
-          href="https://chatscope.io"
-          rel="noopener noreferrer"
-          target="_blank"
-          className="ml-2"
-        >
-          chatscope
-        </a>
-
-      <a 
-      href="https://buy.stripe.com/test_7sIaIqaxafRx4r66oo"
-      rel="noopener noreferrer"
-      target="_blank"
-      className="ml-2"
-      >Support the developers</a>
-       
+    <nav className="navbar fixed-bottom" style={{ width: "100%" }}>
+      <div className="container-fluid">
+        <span className="" style={{}}>
+          UI components provided by:{" "}
+          <a
+            href="https://chatscope.io"
+            rel="noopener noreferrer"
+            target="_blank"
+            className="ml-2"
+          >
+            chatscope
+          </a>
+        </span>
+        <span className="" style={{}}>
+          <a
+            href="https://buy.stripe.com/test_7sIaIqaxafRx4r66oo"
+            rel="noopener noreferrer"
+            target="_blank"
+            className="ml-2"
+          >
+            ❤️ Support the developers
+          </a>
+        </span>
       </div>
-    </>
+    </nav>
   );
 }

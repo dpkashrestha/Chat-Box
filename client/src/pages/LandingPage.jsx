@@ -53,10 +53,6 @@ const LandingPage = () => {
             </p>
           </>
         )}
-        <div id="textHeader">Click the button to install!</div>
-        <Button id="installBtn" variant="dark">
-          Install
-        </Button>
 
         <LandingFooter />
       </div>
