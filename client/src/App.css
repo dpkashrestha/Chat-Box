@@ -140,6 +140,10 @@
   background-color: #50447d;
 }
 
+.form-control {
+  border: none !important;
+}
+
 .cs-chat-container
   .cs-message-input
   .cs-message-input__content-editor-wrapper:last-child {
@@ -165,23 +169,46 @@
   font-size: inherit !important;
   font-family: inherit !important;
 }
-.selectedUsers:hover {
-  opacity: 0.7;
+#chatSearch {
+  margin: 0 0.1em 0.3em !important;
 }
-.btn:hover {
+
+.modal-button:hover {
   opacity: 0.9 !important;
-}
-.btn-primary:hover {
   background-color: #3173a5 !important;
+  color: white !important;
+}
+.delete-button:hover {
+  background-color: #dc3545 !important;
+  color: white !important;
 }
 .newGroup {
-  margin: 0.3em 0.1em -0.1em !important;
+  margin: 0.3em 0.1em !important;
 }
 .editGroup {
   padding: 0 0.3em !important;
   margin: 0 !important;
   width: auto !important;
   height: 32.375px !important;
+}
+.selected-user {
+  opacity: 1 !important;
+  background-color: transparent !important;
+  color: #6ea9d7 !important;
+  border-color: #6ea9d7 !important;
+  margin: 0.1em !important;
+  display: inline-flex !important;
+  justify-content: flex-start !important;
+  align-items: center !important;
+}
+.selectedUsers {
+  font-size: 0.5em !important;
+  margin-left: 0.4em !important;
+  margin-right: -0.4em !important;
+  /*margin-top: 0.75em !important; */
+}
+.selectedUsers:hover {
+  opacity: 0.6;
 }
 
 @media (min-width: 577px) and (max-width: 768px) {
@@ -191,10 +218,10 @@
   .button-icon {
     margin-right: 0 !important;
   }
-  .newGroup {
+  /* .newGroup {
     margin: 0.3em 0.1em !important;
-  }
-  .cs-search {
+  } */
+  #chatSearch {
     display: none !important;
   }
 }
@@ -212,7 +239,8 @@
   }
 }
 @media (max-width: 379px) {
-  .cs-conversation-header__avatar {
-    width: auto;
-  }
+  /* .cs-conversation-header__avatar {
+    width: 43px !important;
+    height: 43px !important;
+  } */
 }

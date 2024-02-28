@@ -81,7 +81,6 @@ const ChatList = ({
         variables: {
           chatName: chat.chatName,
           users: chat.users,
-          // TODO: add non group chat variable?
         },
       });
       console.log(data.addChat);
@@ -105,7 +104,7 @@ const ChatList = ({
           {!(768 >= windowDimensions && windowDimensions >= 579) && (
             <Button
               border
-              className="btn btn-danger"
+              className="delete-button"
               style={{
                 backgroundColor: "#3173a5",
                 color: "white",
@@ -142,6 +141,7 @@ const ChatList = ({
         value={search}
         onChange={(v) => setSearch(v)}
         onClearClick={() => setSearch("")}
+        id="chatSearch"
       />
 
       {loadingChatData ? (
@@ -203,7 +203,7 @@ const ChatList = ({
       {768 >= windowDimensions && windowDimensions >= 579 && (
         <Button
           border
-          className="btn btn-danger"
+          className="delete-button"
           style={{
             backgroundColor: "#3173a5",
             color: "white",

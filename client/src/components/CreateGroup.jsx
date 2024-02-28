@@ -21,7 +21,7 @@ const CreateGroup = ({ onCreate, onEdit, newGroup, activeChat, children }) => {
   const currentUser = Auth.getCurrentUser();
   const [show, setShow] = useState(false);
   const [search, setSearch] = useState("");
-  const [searchFocus, setSearchFocus] = useState(true);
+  const [searchFocus, setSearchFocus] = useState(false);
   const [groupChatName, setGroupChatName] = useState("");
   const [selectedUsers, setSelectedUsers] = useState([]);
   const [searchResult, setSearchResult] = useState([]);
@@ -90,7 +90,7 @@ const CreateGroup = ({ onCreate, onEdit, newGroup, activeChat, children }) => {
       setSearch("");
       setGroupChatName("");
       setSelectedUsers([]);
-      setSearchFocus(true);
+      setSearchFocus(false);
     }
   }, [show]);
 
@@ -257,7 +257,7 @@ const CreateGroup = ({ onCreate, onEdit, newGroup, activeChat, children }) => {
                     return (
                       <Btn
                         key={_id}
-                        className="cs-button cs-button--border"
+                        className="cs-button cs-button--border selected-user"
                         onClick={() => {
                           const newUsers = selectedUsers.filter((u) => {
                             return u._id !== _id;
@@ -265,26 +265,14 @@ const CreateGroup = ({ onCreate, onEdit, newGroup, activeChat, children }) => {
                           console.log("newUsers", newUsers);
                           setSelectedUsers(newUsers);
                         }}
-                        style={{
-                          opacity: "1",
-                          backgroundColor: "transparent",
-                          color: "#6ea9d7",
-                          borderColor: "#6ea9d7",
-                          margin: "0.1em",
-                          justifyContent: "start",
-                          display: "inline-flex",
-                        }}
+                        style={{}}
                       >
                         {user.username}
                         <Badge
                           pill
                           bg="danger"
                           className="selectedUsers"
-                          style={{
-                            fontSize: "0.5em",
-                            marginLeft: "0.4em",
-                            marginBlockStart: "0.8em",
-                          }}
+                          style={{}}
                         >
                           X
                         </Badge>
@@ -318,8 +306,10 @@ const CreateGroup = ({ onCreate, onEdit, newGroup, activeChat, children }) => {
                     onChange={(v) => setSearch(v)}
                     onFocus={() => setSearchFocus(true)}
                     onClearClick={() => {
-                      /* setSearchFocus(false) */ setSearch("");
+                      setSearchFocus(false);
+                      setSearch("");
                     }}
+                    className="modal-search"
                     style={{
                       flexGrow: 1,
                       flexShrink: "initial",
@@ -371,6 +361,7 @@ const CreateGroup = ({ onCreate, onEdit, newGroup, activeChat, children }) => {
                                 ) {
                                   setSelectedUsers([...selectedUsers, newUser]);
                                   setSearch("");
+                                  setSearchFocus(false);
                                 }
                               }}
                               active={false}
@@ -389,19 +380,19 @@ const CreateGroup = ({ onCreate, onEdit, newGroup, activeChat, children }) => {
             </Modal.Body>
             <Modal.Footer>
               {newGroup ? (
-                <Button border type="submit" className="btn btn-primary">
+                <Button border type="submit" className="modal-button">
                   Create Group
                 </Button>
               ) : (
                 <>
                   <Button
-                    className="btn btn-danger"
+                    className="modal-button delete-button"
                     border
                     onClick={handleDelete}
                   >
                     Delete Group
                   </Button>
-                  <Button border type="submit" className="btn btn-primary">
+                  <Button border type="submit" className="modal-button">
                     Save Changes
                   </Button>
                 </>
@@ -420,7 +411,7 @@ const CreateGroup = ({ onCreate, onEdit, newGroup, activeChat, children }) => {
             <p>You are not authorized to edit this chat.</p>
           </Modal.Body>
           <Modal.Footer>
-            <Button className="btn btn-primary" border onClick={handleClose}>
+            <Button className="modal-button" border onClick={handleClose}>
               Close
             </Button>
           </Modal.Footer>
