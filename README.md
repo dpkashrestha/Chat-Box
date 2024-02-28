@@ -1,5 +1,5 @@
 # Chat-Box
-The 3rd and final project for UMN coding Bootcamp.
+Join Chat-Box for the most user-friendly messaging app! Use it offline or just for fun!
 
 
 ## Description
@@ -17,6 +17,7 @@ The 3rd and final project for UMN coding Bootcamp.
 * [Screenshot](#Screenshot)
 * [Technologies Used](#TechnologiesUsed)
 * [Installation](#Installation)
+* [Future Developments](#futuredevelopments)
 * [Links](#Links)
 * [Credits](#Credits)
 * [License](#License)
@@ -30,38 +31,52 @@ The 3rd and final project for UMN coding Bootcamp.
 
 
 ## Technologies Used
-- will be added later 
-- 
-- 
-- 
-- 
-- 
+- GraphQL
+- PWA
+- BootStrap
+- Mongoose 
+- Apollo Client/Server
+- StripeJS
+- BCrypt
+- react-bootstrap
+- Chatscope component library
+- React
+- emoji-picker-react
+- JWT
+- Stripe Apis
 
 
 
 
 ### Installation
-- will be added later 
--
--
--
+Open the broswer in your terminal or through the link and click the install button on the right side of the link.
 
 
 
+## Future Developments
+- User can create groups with more than one other user
+- User can add or remove members from already existing groups
+- User can edit or delete previously sent messages
+- User can add friends to a friends list
+- User can use Stripe to submit payment for something
+- User can make voice call and video call
 
 
 
 ### Links
-[Link to GitHub Repo]()
-[Link to Deployed Application]()
+* [Link to GitHub Repo](https://github.com/Denitrix/Chat-Box)
+* [Link to Deployed Application](https://chat-box-fd95.onrender.com)
+
+
 
 ### Credits
 - Instructional team help with troubleshooting PWA, as there were constant installation issues. 
-- 
-- 
-- 
-- 
+
+
 
 ### License
 - N/A
+
+#### Notes
+- The 3rd and final project for UMN coding Bootcamp.
 
