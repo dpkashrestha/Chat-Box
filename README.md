@@ -27,7 +27,7 @@ Join Chat-Box for the most user-friendly messaging app! Use it offline or just f
 
 ## Screenshot
 * ![Screenshot of Application](./client/public/P2ss.png)
-
+* ![Screenshot of Application](./client/public/localhost_3000_chat.png)
 
 
 ## Technologies Used
