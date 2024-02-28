@@ -85,6 +85,7 @@ const CreateGroup = ({ onCreate, onEdit, newGroup, activeChat, children }) => {
         }
       }
     } else {
+      setValidated(false);
       setNoName(false);
       setNoUsers(false);
       setSearch("");

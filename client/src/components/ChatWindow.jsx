@@ -30,7 +30,7 @@ const ChatWindow = ({ activeChat, onClickCallback, chatContainerStyle }) => {
   const [newGroup, setNewGroup] = useState(false);
   const [thisChat, setThisChat] = useState(activeChat);
   const [avatarSize, setAvatarSize] = useState("md");
-  const [maxUsers, setMaxUsers] = useState(null);
+  const [maxUsers, setMaxUsers] = useState(10);
   const [isSquare, setIsSquare] = useState(false);
 
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
@@ -89,13 +89,27 @@ const ChatWindow = ({ activeChat, onClickCallback, chatContainerStyle }) => {
     };
   }, []);
   useEffect(() => {
-    /* switch (windowDimensions) {
-      case value:
-        break;
-
-      default:
-        break;
-    } */
+    if (windowDimensions >= 1024) {
+      setAvatarSize("md");
+      setMaxUsers(10);
+      setIsSquare(false);
+    } /* else if (windowDimensions >= 893) {
+      setAvatarSize("md");
+      setMaxUsers(10);
+      setIsSquare(false);
+    } */ else if (windowDimensions >= 769) {
+      setAvatarSize("md");
+      setMaxUsers(4);
+      setIsSquare(false);
+    } else if (windowDimensions >= 577) {
+      setAvatarSize("md");
+      setMaxUsers(6);
+      setIsSquare(false);
+    } else {
+      setAvatarSize("sm");
+      setMaxUsers(4);
+      setIsSquare(true);
+    }
   }, [windowDimensions]);
 
   const getOtherUsers = (users) => {
