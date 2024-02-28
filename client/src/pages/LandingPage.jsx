@@ -4,6 +4,7 @@ import SignUpForm from "../components/SignupForm";
 import { LandingHeader } from "../components/LandingHeader";
 import { LandingFooter } from "../components/LandingFooter";
 import Auth from "../utils/auth";
+import { Button } from "react-bootstrap";
 
 const LandingPage = () => {
   const [showSignup, setShowSignup] = useState(false);
@@ -52,6 +53,10 @@ const LandingPage = () => {
             </p>
           </>
         )}
+        <div id="textHeader">Click the button to install!</div>
+        <Button id="installBtn" variant="dark">
+          Install
+        </Button>
 
         <LandingFooter />
       </div>

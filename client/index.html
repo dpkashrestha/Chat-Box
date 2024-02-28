@@ -2,7 +2,12 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/chat-logo.png" />
+    <link
+      rel="icon"
+      type="image/svg+xml"
+      href="./chat-logo.png"
+      sizes="144x144"
+    />
     <link
       rel="stylesheet"
       href="./node_modules/@chatscope/chat-ui-kit-styles/dist/default/styles.min.css"
@@ -16,7 +21,6 @@
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
-    <script src="./service-worker.js"></script>
-    <script src="./assets/js/install.js"></script>
+    <script src="./registerSW.js"></script>
   </body>
 </html>
