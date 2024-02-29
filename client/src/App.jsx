@@ -26,7 +26,7 @@ const httpLink = createHttpLink({
 const authToken = localStorage.getItem("id_token");
 const wsLink = new GraphQLWsLink(
   createClient({
-    url: "ws://localhost:3001/subscriptions",
+    url: "ws://localhost:3001/graphql",
     connectionParams: {
       authToken: authToken,
     },

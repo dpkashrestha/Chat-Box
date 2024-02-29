@@ -17,19 +17,19 @@ export default defineConfig({
         theme_color: "#ffffff",
         icons: [
           {
-            src: "pwa-192x192.png",
+            src: "./chat-logo.png",
             sizes: "192x192",
             type: "image/png",
             purpose: "any",
           },
           {
-            src: "pwa-512x512.png",
+            src: "./chat-logo.png",
             sizes: "512x512",
             type: "image/png",
             purpose: "any",
           },
           {
-            src: "./chat-logo1.png",
+            src: "./chat-logo.png",
             sizes: "144x144",
             type: "image/png",
             purpose: "any",
@@ -42,8 +42,8 @@ export default defineConfig({
     port: 3000,
     open: false,
     proxy: {
-      "ws://localhost:3001/subscriptions": {
-        target: "ws://localhost:3001/subscriptions",
+      "ws://localhost:3001/graphql": {
+        target: "ws://localhost:3001/graphql",
         changeOrigin: true,
         secure: false,
       },

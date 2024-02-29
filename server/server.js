@@ -28,7 +28,7 @@ const wsServer = new WebSocketServer({
   server: httpServer,
   // Pass a different path here if app.use
   // serves expressMiddleware at a different path
-  path: "/subscriptions",
+  path: "/graphql",
 });
 // Hand in the schema we just created and have the
 // WebSocketServer start listening.
@@ -37,11 +37,8 @@ const server = new ApolloServer({
   schema,
   plugins: [
     // Proper shutdown for the HTTP server.
-
     ApolloServerPluginDrainHttpServer({ httpServer }),
-
     // Proper shutdown for the WebSocket server.
-
     {
       async serverWillStart() {
         return {
