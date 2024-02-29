@@ -26,7 +26,10 @@ const httpLink = createHttpLink({
 const authToken = localStorage.getItem("id_token");
 const wsLink = new GraphQLWsLink(
   createClient({
-    url: "ws://localhost:3001/graphql",
+    url:
+      process.env.NODE_ENV === "production"
+        ? "ws://chat-box-fd95.onrender.com/graphql"
+        : "ws://localhost:3001/graphql",
     connectionParams: {
       authToken: authToken,
     },

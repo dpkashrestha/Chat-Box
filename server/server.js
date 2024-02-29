@@ -25,6 +25,7 @@ const schema = makeExecutableSchema({ typeDefs, resolvers });
 // Creating the WebSocket server
 const wsServer = new WebSocketServer({
   // This is the `httpServer` we created in a previous step.
+  port: PORT,
   server: httpServer,
   // Pass a different path here if app.use
   // serves expressMiddleware at a different path
