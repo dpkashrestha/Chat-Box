@@ -1,5 +1,14 @@
-import { useQuery, useMutation, useLazyQuery } from "@apollo/client";
-import { QUERY_MESSAGES, QUERY_CHATS, SINGLE_CHAT } from "../utils/queries";
+import {
+  useQuery,
+  useMutation,
+  useLazyQuery,
+  useSubscription,
+} from "@apollo/client";
+import {
+  QUERY_MESSAGES,
+  SINGLE_CHAT,
+  MESSAGES_SUBSCRIPTION,
+} from "../utils/queries";
 import { ADD_MESSAGE, EDIT_CHAT } from "../utils/mutations";
 import Picker from "emoji-picker-react";
 import CreateGroup from "./CreateGroup";
@@ -38,15 +47,33 @@ const ChatWindow = ({ activeChat, onClickCallback, chatContainerStyle }) => {
   const inputRef = useRef();
   const emojiPickerRef = useRef(null);
 
+  const { data: subData, loading: subLoading } = useSubscription(
+    MESSAGES_SUBSCRIPTION,
+    {
+      variables: { user: { _id: currentUser._id } },
+      onComplete: (d) => {
+        console.log("subData", d);
+      },
+      onError: (err) => {
+        console.log("WS", err);
+      },
+    }
+  );
+
   const [addMessage, { error }] = useMutation(ADD_MESSAGE, {
     refetchQueries: [QUERY_MESSAGES, "messages"],
-  });
-  const { loading, data } = useQuery(QUERY_MESSAGES, {
-    variables: { chatId: activeChat._id },
     onCompleted: (data) => {
-      console.log("Mutation: addMessage", data);
+      console.log("Mutation: ADD_MESSAGE", data);
     },
   });
+  const [getMessages, { loading, data, subscribeToMore, refetch }] =
+    useLazyQuery(QUERY_MESSAGES, {
+      variables: { chatId: activeChat._id },
+      onCompleted: (d) => {
+        setAllMessages(d.messages);
+        console.log("Query: QUERY_MESSAGES", d);
+      },
+    });
   const [singleChat, { loading: chatLoading, data: chatData }] = useLazyQuery(
     SINGLE_CHAT,
     {
@@ -54,7 +81,7 @@ const ChatWindow = ({ activeChat, onClickCallback, chatContainerStyle }) => {
       onCompleted: (d) => {
         const chat = d.singleChat;
         setThisChat(chat);
-        console.log("Query: singleChat", chat);
+        console.log("Query: SINGLE_CHAT", chat);
       },
     }
   );
@@ -71,8 +98,12 @@ const ChatWindow = ({ activeChat, onClickCallback, chatContainerStyle }) => {
   });
 
   useEffect(() => {
+    getMessages();
+  }, []);
+  useEffect(() => {
     setThisChat(activeChat);
     singleChat();
+    getMessages();
   }, [activeChat]);
   useEffect(() => {
     function handleResize() {
@@ -111,6 +142,34 @@ const ChatWindow = ({ activeChat, onClickCallback, chatContainerStyle }) => {
       setIsSquare(true);
     }
   }, [windowDimensions]);
+  /* useEffect(() => {
+    subscribeToMore({
+      document: QUERY_MESSAGES,
+      variables: { chatId: activeChat._id },
+      updateQuery: (prev, { subscriptionData }) => {
+        setAllMessages(prev.messages);
+        console.log("prev", prev);
+        if (!subscriptionData.data) {
+          setAllMessages(prev.messages);
+        } else {
+          console.log("subscriptionData", subscriptionData.data);
+          setAllMessages(subscriptionData.data.messages);
+        }
+      },
+    });
+  }, []); */
+  useEffect(() => {
+    // getMessages();
+    if (!subLoading) {
+      const newMessage = subData.messageAdded;
+      if (newMessage.chat._id === thisChat._id) {
+        setAllMessages([...allMessages, newMessage]);
+        console.log("New Message added", subData);
+      }
+      console.log("New Message not added", subData);
+    }
+    refetch();
+  }, [subData, subLoading]);
 
   const getOtherUsers = (users) => {
     return users.filter((user) => user._id !== currentUser._id);
@@ -184,13 +243,13 @@ const ChatWindow = ({ activeChat, onClickCallback, chatContainerStyle }) => {
       })
     );
   }, [allMessages]);
-
-  useMemo(() => {
+  /* useMemo(() => {
+    getMessages();
     setAllMessages(data?.messages);
-  }, [data]);
+  }, [data]); */
 
   if (loading) {
-    return <Loader>Loading</Loader>;
+    return <Loader style={{ margin: "auto" }}>Loading</Loader>;
   }
 
   return (

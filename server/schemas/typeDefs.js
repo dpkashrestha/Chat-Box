@@ -53,6 +53,10 @@ const typeDefs = `
     token: ID!
     user: User
   }
+
+  type Subscription {
+  messageAdded(user: UserInput!): Message
+}
 `;
 
 module.exports = typeDefs;

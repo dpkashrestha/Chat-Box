@@ -7,8 +7,14 @@ import {
   ApolloProvider,
   InMemoryCache,
   createHttpLink,
+  split,
+  HttpLink,
 } from "@apollo/client";
 import { setContext } from "@apollo/client/link/context";
+// Apollo server subscription requirements
+import { GraphQLWsLink } from "@apollo/client/link/subscriptions";
+import { createClient } from "graphql-ws";
+import { getMainDefinition } from "@apollo/client/utilities";
 
 import { Outlet } from "react-router-dom";
 
@@ -16,6 +22,19 @@ import { Outlet } from "react-router-dom";
 const httpLink = createHttpLink({
   uri: "/graphql",
 });
+// initalize websocket link
+const authToken = localStorage.getItem("id_token");
+const wsLink = new GraphQLWsLink(
+  createClient({
+    url:
+      process.env.NODE_ENV === "production"
+        ? "wss://chat-box-fd95.onrender.com/graphql"
+        : "ws://localhost:3001/graphql",
+    connectionParams: {
+      authToken: authToken,
+    },
+  })
+);
 
 // Construct request middleware that will attach the JWT token to every request as an `authorization` header
 const authLink = setContext((_, { headers }) => {
@@ -29,10 +48,25 @@ const authLink = setContext((_, { headers }) => {
     },
   };
 });
-
+// The split function takes three parameters:
+//
+// * A function that's called for each operation to execute
+// * The Link to use for an operation if the function returns a "truthy" value
+// * The Link to use for an operation if the function returns a "falsy" value
+const splitLink = split(
+  ({ query }) => {
+    const definition = getMainDefinition(query);
+    return (
+      definition.kind === "OperationDefinition" &&
+      definition.operation === "subscription"
+    );
+  },
+  wsLink,
+  authLink.concat(httpLink)
+);
 const client = new ApolloClient({
   // Set up our client to execute the `authLink` middleware prior to making the request to our GraphQL API
-  link: authLink.concat(httpLink),
+  link: splitLink,
   cache: new InMemoryCache(),
   /*  defaultOptions: {
     watchQuery: {

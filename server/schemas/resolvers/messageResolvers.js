@@ -1,5 +1,7 @@
 const { Message, Chat, User } = require("../../models/index");
+const { PubSub } = require("graphql-subscriptions");
 
+const pubsub = new PubSub();
 const messageResolvers = {
   Query: {
     messages: async (parent, { chatId }) => {
@@ -34,10 +36,29 @@ const messageResolvers = {
       await Chat.findByIdAndUpdate(chatId, {
         lastMessage: message,
       });
-
+      pubsub.publish("ADD_MESSAGE", { messageAdded: message });
       return message;
     },
   },
+  Subscription: {
+    messageAdded: {
+      subscribe: () => pubsub.asyncIterator(["ADD_MESSAGE"]),
+    },
+  },
+  /* Subscription: {
+    hello: {
+      // Example using an async generator
+      subscribe: async function* () {
+        for await (const word of ["Hello", "Bonjour", "Ciao"]) {
+          yield { hello: word };
+        }
+      },
+    },
+    postCreated: {
+      // More on pubsub below
+      subscribe: () => pubsub.asyncIterator(["POST_CREATED"]),
+    },
+  }, */
 };
 
 module.exports = messageResolvers;
