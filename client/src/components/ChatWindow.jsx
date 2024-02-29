@@ -249,7 +249,7 @@ const ChatWindow = ({ activeChat, onClickCallback, chatContainerStyle }) => {
   }, [data]); */
 
   if (loading) {
-    return <Loader>Loading</Loader>;
+    return <Loader style={{ margin: "auto" }}>Loading</Loader>;
   }
 
   return (
