@@ -55,7 +55,7 @@ const typeDefs = `
   }
 
   type Subscription {
-  messageAdded(chatId: ID!): Message
+  messageAdded(user: UserInput!): Message
 }
 `;
 

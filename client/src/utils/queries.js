@@ -93,8 +93,8 @@ export const QUERY_MESSAGES = gql`
 `;
 
 export const MESSAGES_SUBSCRIPTION = gql`
-  subscription onMessageAdded($chatId: ID!) {
-    messageAdded(chatId: $chatId) {
+  subscription onMessageAdded($user: UserInput!) {
+    messageAdded(user: $user) {
       _id
       content
       chat {

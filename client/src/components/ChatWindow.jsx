@@ -50,7 +50,7 @@ const ChatWindow = ({ activeChat, onClickCallback, chatContainerStyle }) => {
   const { data: subData, loading: subLoading } = useSubscription(
     MESSAGES_SUBSCRIPTION,
     {
-      variables: { chatId: thisChat._id },
+      variables: { user: { _id: currentUser._id } },
       onComplete: (d) => {
         console.log("subData", d);
       },

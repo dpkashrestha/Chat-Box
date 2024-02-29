@@ -79,7 +79,7 @@ const ChatList = ({
   const { data: subData, loading: subLoading } = useSubscription(
     MESSAGES_SUBSCRIPTION,
     {
-      variables: { chatId: selectedChatId },
+      variables: { user: { _id: currentUser._id } },
       onComplete: (d) => {
         console.log("subData", d);
       },
@@ -91,7 +91,7 @@ const ChatList = ({
   useEffect(() => {
     // getMessages();
     refetch();
-    console.log("Chats updated");
+    console.log("Chats Updated");
   }, [subData, subLoading]);
 
   const [windowDimensions, setWindowDimensions] = useState(window.innerWidth);
