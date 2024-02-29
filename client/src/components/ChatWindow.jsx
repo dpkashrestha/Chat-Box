@@ -61,12 +61,12 @@ const ChatWindow = ({ activeChat, onClickCallback, chatContainerStyle }) => {
   );
 
   const [addMessage, { error }] = useMutation(ADD_MESSAGE, {
-    // refetchQueries: [QUERY_MESSAGES, "messages"],
+    refetchQueries: [QUERY_MESSAGES, "messages"],
     onCompleted: (data) => {
       console.log("Mutation: ADD_MESSAGE", data);
     },
   });
-  const [getMessages, { loading, data, subscribeToMore, ...result }] =
+  const [getMessages, { loading, data, subscribeToMore, refetch }] =
     useLazyQuery(QUERY_MESSAGES, {
       variables: { chatId: activeChat._id },
       onCompleted: (d) => {
@@ -98,8 +98,12 @@ const ChatWindow = ({ activeChat, onClickCallback, chatContainerStyle }) => {
   });
 
   useEffect(() => {
+    getMessages();
+  }, []);
+  useEffect(() => {
     setThisChat(activeChat);
     singleChat();
+    getMessages();
   }, [activeChat]);
   useEffect(() => {
     function handleResize() {
@@ -163,9 +167,8 @@ const ChatWindow = ({ activeChat, onClickCallback, chatContainerStyle }) => {
         console.log("New Message added", subData);
       }
       console.log("New Message not added", subData);
-    } else {
-      console.log("No New Messages", subData);
     }
+    refetch();
   }, [subData, subLoading]);
 
   const getOtherUsers = (users) => {
@@ -240,9 +243,6 @@ const ChatWindow = ({ activeChat, onClickCallback, chatContainerStyle }) => {
       })
     );
   }, [allMessages]);
-  useEffect(() => {
-    getMessages();
-  }, []);
   /* useMemo(() => {
     getMessages();
     setAllMessages(data?.messages);
