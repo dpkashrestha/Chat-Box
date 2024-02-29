@@ -28,8 +28,8 @@ const wsLink = new GraphQLWsLink(
   createClient({
     url:
       process.env.NODE_ENV === "production"
-        ? "ws://chat-box-fd95.onrender.com/graphql"
-        : "ws://localhost:3001/graphql",
+        ? "/subscriptions"
+        : "wss://localhost:3001/graphql",
     connectionParams: {
       authToken: authToken,
     },
