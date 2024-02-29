@@ -17,8 +17,17 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSignOutAlt, faPlus } from "@fortawesome/free-solid-svg-icons";
 
 import { useState, useEffect } from "react";
-import { useQuery, useMutation, useLazyQuery } from "@apollo/client";
-import { QUERY_CHATS, QUERY_USERS } from "../utils/queries";
+import {
+  useQuery,
+  useMutation,
+  useLazyQuery,
+  useSubscription,
+} from "@apollo/client";
+import {
+  QUERY_CHATS,
+  QUERY_USERS,
+  MESSAGES_SUBSCRIPTION,
+} from "../utils/queries";
 import { ADD_CHAT } from "../utils/mutations";
 import Auth from "../utils/auth";
 
@@ -33,7 +42,11 @@ const ChatList = ({
   const [search, setSearch] = useState("");
   const [newGroup, setNewGroup] = useState(true);
   const [selectedChatId, setSelectedChatId] = useState(null);
-  const { loading: loadingChatData, data: chatData } = useQuery(QUERY_CHATS, {
+  const {
+    loading: loadingChatData,
+    data: chatData,
+    refetch,
+  } = useQuery(QUERY_CHATS, {
     variables: { chatName: search },
     onCompleted: (data) => {
       console.log("Query: allChats", data);
@@ -63,6 +76,23 @@ const ChatList = ({
       .map((user) => user.username)
       .join(", ");
   };
+  const { data: subData, loading: subLoading } = useSubscription(
+    MESSAGES_SUBSCRIPTION,
+    {
+      variables: { chatId: selectedChatId },
+      onComplete: (d) => {
+        console.log("subData", d);
+      },
+      onError: (err) => {
+        console.log("WS", err);
+      },
+    }
+  );
+  useEffect(() => {
+    // getMessages();
+    refetch();
+    console.log("Chats updated");
+  }, [subData, subLoading]);
 
   const [windowDimensions, setWindowDimensions] = useState(window.innerWidth);
   useEffect(() => {
