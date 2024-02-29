@@ -97,6 +97,9 @@ export const MESSAGES_SUBSCRIPTION = gql`
     messageAdded(chatId: $chatId) {
       _id
       content
+      chat {
+        _id
+      }
       sender {
         _id
         username

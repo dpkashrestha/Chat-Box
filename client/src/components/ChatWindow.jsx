@@ -61,7 +61,7 @@ const ChatWindow = ({ activeChat, onClickCallback, chatContainerStyle }) => {
   );
 
   const [addMessage, { error }] = useMutation(ADD_MESSAGE, {
-    refetchQueries: [QUERY_MESSAGES, "messages"],
+    // refetchQueries: [QUERY_MESSAGES, "messages"],
     onCompleted: (data) => {
       console.log("Mutation: ADD_MESSAGE", data);
     },
@@ -157,9 +157,15 @@ const ChatWindow = ({ activeChat, onClickCallback, chatContainerStyle }) => {
   useEffect(() => {
     // getMessages();
     if (!subLoading) {
-      setAllMessages([...allMessages, subData.messageAdded]);
+      const newMessage = subData.messageAdded;
+      if (newMessage.chat._id === thisChat._id) {
+        setAllMessages([...allMessages, newMessage]);
+        console.log("New Message added", subData);
+      }
+      console.log("New Message not added", subData);
+    } else {
+      console.log("No New Messages", subData);
     }
-    console.log("New Message", subData);
   }, [subData, subLoading]);
 
   const getOtherUsers = (users) => {
