@@ -2,9 +2,9 @@ import React from "react";
 
 export function LandingFooter(props) {
   return (
-    <nav className="navbar sticky-bottom" style={{ width: "100%" }}>
+    <nav className="navbar fixed-bottom" style={{ width: "100%" }}>
       <div className="container-fluid">
-        <span className="" style={{}}>
+        <span /* className="landing-footer-left" */>
           UI components provided by:{" "}
           <a
             href="https://chatscope.io"
@@ -15,7 +15,7 @@ export function LandingFooter(props) {
             chatscope
           </a>
         </span>
-        <span className="" style={{}}>
+        <span /* className="landing-footer-right "*/>
           <a
             href="https://buy.stripe.com/test_7sIaIqaxafRx4r66oo"
             rel="noopener noreferrer"
