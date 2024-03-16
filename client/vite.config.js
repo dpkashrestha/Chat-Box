@@ -11,8 +11,8 @@ export default defineConfig({
       registerType: "autoUpdate",
 
       manifest: {
-        name: "Chat-box",
-        short_name: "Chat-box",
+        name: "chat-box",
+        short_name: "chat-box",
         description: "My messaging app",
         theme_color: "#ffffff",
         icons: [
@@ -43,12 +43,12 @@ export default defineConfig({
     open: false,
     proxy: {
       "/subscriptions": {
-        target: "wss://localhost:3001/graphql",
+        target: "wss://localhost:4001/graphql",
         changeOrigin: true,
         secure: false,
       },
       "/graphql": {
-        target: "http://localhost:3001",
+        target: "http://localhost:4001",
         changeOrigin: true,
         secure: false,
       },
