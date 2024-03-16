@@ -12,16 +12,8 @@
     "render": "npm install && npm run build",
     "seed": "cd server && npm run seed"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/Denitrix/Chat-Box.git"
-  },
   "author": "",
   "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/Denitrix/Chat-Box/issues"
-  },
-  "homepage": "https://github.com/Denitrix/Chat-Box#readme",
   "devDependencies": {
     "concurrently": "^8.2.2"
   }
