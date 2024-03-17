@@ -9,7 +9,7 @@
       "purpose": "any"
     },
     {
-      "src": "../chat-logo1.png",
+      "src": "../chat-logo.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
@@ -21,13 +21,13 @@
       "purpose": "maskable"
     },
     {
-      "src": "../chat-logo1.png",
+      "src": "../chat-logo.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
     },
     {
-      "src": "../chat-logo1.png",
+      "src": "../chat-logo.png",
       "sizes": "144x144",
       "type": "image/png",
       "purpose": "any"

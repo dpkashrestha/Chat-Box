@@ -43,15 +43,33 @@ export default defineConfig({
     open: false,
     proxy: {
       "/subscriptions": {
-        target: "wss://localhost:4001/graphql",
+        target: `wss://localhost:${process.env.PORT || 3001}/graphql`,
         changeOrigin: true,
         secure: false,
       },
       "/graphql": {
-        target: "http://localhost:4001",
+        target: `http://localhost:${process.env.PORT || 3001}`,
         changeOrigin: true,
         secure: false,
       },
     },
+  },
+  // Production-specific configuration
+  build: {
+    // Options for production build
+    minify: true,
+    rollupOptions: {
+      output: {
+        manualChunks: undefined, // Enables automatic code splitting
+      },
+    },
+  },
+  optimizeDeps: {
+    include: [
+      "@fortawesome/fontawesome-svg-core",
+      "@fortawesome/free-solid-svg-icons",
+      "@fortawesome/fontawesome-free",
+      "@fortawesome/react-fontawesome",
+    ],
   },
 });
